@@ -5,25 +5,41 @@
     <title>Project NP | Grandparent Sentinel Decipher</title>
     <style>
         body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; line-height: 1.4; }
-        .container { max-width: 900px; margin: auto; border: 1px solid #00ff41; padding: 25px; box-shadow: 0 0 30px #002200; }
+        .container { max-width: 950px; margin: auto; border: 1px solid #00ff41; padding: 25px; box-shadow: 0 0 30px #002200; }
+        
+        /* Tabs Styling */
+        .tab-system { margin-bottom: 20px; border-bottom: 1px solid #00ff41; }
+        .tab-btn { background: none; border: none; color: #00ff41; padding: 10px 20px; cursor: pointer; font-family: inherit; font-size: 1em; opacity: 0.5; transition: 0.3s; }
+        .tab-btn.active { opacity: 1; border: 1px solid #00ff41; border-bottom: 1px solid #0a0a0a; margin-bottom: -1px; background: #111; }
+        .tab-btn:hover { opacity: 1; background: #111; }
+
         .input-box { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; background: #111; padding: 15px; border: 1px dashed #00ff41; }
         label { display: block; font-size: 0.8em; margin-bottom: 5px; opacity: 0.8; }
         input { background: #000; color: #00ff41; border: 1px solid #00ff41; padding: 8px; width: 250px; font-size: 1em; }
-        button { background: #00ff41; color: #000; border: none; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: 0.3s; }
-        button:hover { background: #fff; box-shadow: 0 0 20px #fff; }
+        
+        button.action-btn { background: #00ff41; color: #000; border: none; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: 0.3s; }
+        button.action-btn:hover { background: #fff; box-shadow: 0 0 20px #fff; }
+
         .log { background: #000; padding: 15px; height: 450px; overflow-y: scroll; border: 1px solid #333; margin-top: 20px; font-size: 0.85em; border-left: 4px solid #00ff41; }
         .success { color: #ffff00; font-weight: bold; }
         .collision { color: #ff3300; font-style: italic; }
         .bit-one { color: #00ff41; }
         .bit-zero { color: #555; }
+        .trit-val { color: #00d4ff; font-weight: bold; }
         h1 { margin-top: 0; letter-spacing: 2px; text-transform: uppercase; }
+        .mode-tag { color: #ff00ff; font-weight: bold; margin-left: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>7EARTH ORACLE: 60-Bit Deciphering</h1>
-    <p>Target Ring: $\mathbb{Z}_{2^{60}}$ | Formula: $NP = (N \times P) + N$</p>
+    <h1>7EARTH ORACLE: Multi-Base Deciphering</h1>
+    
+    <div class="tab-system">
+        <button class="tab-btn active" onclick="switchMode('BINARY', this)">STANDARD (2-ADIC)</button>
+        <button class="tab-btn" onclick="switchMode('TERNARY', this)">ADVANCED (3-ADIC)</button>
+        <span id="currentModeDisplay" class="mode-tag">MODE: 2-ADIC</span>
+    </div>
     
     <div class="input-box">
         <div>
@@ -34,17 +50,24 @@
             <label>ENTER OPERATOR N (Public):</label>
             <input type="number" id="secretN" value="7">
         </div>
-        <button onclick="runDecipher()">INITIATE ATTACK</button>
+        <button class="action-btn" onclick="runInference()">INITIATE EXTRACTION</button>
     </div>
 
     <div id="outputLog" class="log">
-        [SYSTEM ONLINE] Awaiting 2-Adic Parameters...
+        [SYSTEM ONLINE] Awaiting Deciphering Parameters...
     </div>
 </div>
 
 <script>
-    const RING_SIZE = 60n;
-    const MODULO = 1n << 60n;
+    let currentMode = 'BINARY';
+
+    function switchMode(mode, btn) {
+        currentMode = mode;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('currentModeDisplay').innerText = `MODE: ${mode === 'BINARY' ? '2-ADIC' : '3-ADIC'}`;
+        log(`[SYSTEM] Switched to ${mode} mode. Target Ring updated.`);
+    }
 
     function log(msg, className = "") {
         const out = document.getElementById('outputLog');
@@ -55,59 +78,70 @@
         out.scrollTop = out.scrollHeight;
     }
 
-    function transition(p, n) {
-        return ((p * n) + n) & (MODULO - 1n);
-    }
-
-    function runDecipher() {
+    // --- Core Inference Logic ---
+    function runInference() {
         const out = document.getElementById('outputLog');
         out.innerHTML = ""; 
         
-        const P_input = BigInt(document.getElementById('secretP').value) & (MODULO - 1n);
-        const N_input = BigInt(document.getElementById('secretN').value) & (MODULO - 1n);
-        
-        // Calculate the NP observed by the "world"
-        const NP_observed = transition(P_input, N_input);
+        const P_input = BigInt(document.getElementById('secretP').value);
+        const N_input = BigInt(document.getElementById('secretN').value);
 
-        log(`[NP ENTER] P: ${P_input} | N: ${N_input}`);
-        log(`[NP FORMULATED] Observed NP: ${NP_observed}`);
-        log(`[ATTACK] Commencing Bit-by-Bit Deciphering...`);
+        if (currentMode === 'BINARY') {
+            decipher2Adic(P_input, N_input);
+        } else {
+            decipher3Adic(P_input, N_input);
+        }
+    }
+
+    // --- ORIGINAL 2-ADIC LOGIC ---
+    function decipher2Adic(P, N) {
+        const MODULO_2 = 1n << 60n;
+        const NP_obs = ((P * N) + N) & (MODULO_2 - 1n);
+
+        log(`[NP ENTER] P: ${P} | N: ${N} | Modulo: 2^60`);
+        log(`[DATA] Observed NP: ${NP_obs}`);
         log(`--------------------------------------------------`);
 
         let pGuess = 0n;
         let bitString = "";
 
-        // The Liar Paradox Inference Loop (60 steps)
-        for (let k = 0n; k < RING_SIZE; k++) {
+        for (let k = 0n; k < 60n; k++) {
             let hypothesis = pGuess | (1n << k);
-            let currentModulo = 1n << (k + 1n);
-
-            // Simulate the N*P + N at the current modular scale
-            let testVal = ((hypothesis * N_input) + N_input) & (currentModulo - 1n);
-            let targetVal = NP_observed & (currentModulo - 1n);
+            let currentMod = 1n << (k + 1n);
+            let testVal = ((hypothesis * N) + N) & (currentMod - 1n);
+            let targetVal = NP_obs & (currentMod - 1n);
 
             if (testVal === targetVal) {
-                // Consistency found: Bit k is 1
                 pGuess = hypothesis;
                 bitString = `<span class="bit-one">1</span>` + bitString;
-                log(`Bit ${k.toString().padStart(2, '0')}: [1] | Growth: ${bitString}`);
+                log(`Bit ${k.toString().padStart(2, '0')}: [1] | Path: ${bitString}`);
             } else {
-                // Paradox detected: Hypothesis k=1 fails, bit must be 0
                 bitString = `<span class="bit-zero">0</span>` + bitString;
-                log(`Bit ${k.toString().padStart(2, '0')}: [0] | Growth: ${bitString}`);
+                log(`Bit ${k.toString().padStart(2, '0')}: [0] | Path: ${bitString}`);
             }
         }
-
-        log(`--------------------------------------------------`);
-        log(`[VERDICT] Final Deciphered P: ${pGuess}`, "success");
-        
-        if (pGuess !== P_input) {
-            log(`[COLLISION] Deciphered P does not match Original. Entropy loss detected via Even N.`, "collision");
-        } else {
-            log(`[SUCCESS] Unique Invariant Recovered.`, "success");
-        }
+        finalize(pGuess, P);
     }
-</script>
 
-</body>
-</html>
+    // --- INFUSED 3-ADIC LOGIC ---
+    function decipher3Adic(P, N) {
+        const MODULO_3 = 3n ** 60n;
+        const NP_obs = ((P * N) + N) % MODULO_3;
+
+        log(`[NP ENTER] P: ${P} | N: ${N} | Modulo: 3^60`);
+        log(`[DATA] Observed NP: ${NP_obs}`);
+        log(`--------------------------------------------------`);
+
+        let pGuess = 0n;
+        let tritString = "";
+
+        for (let k = 0n; k < 60n; k++) {
+            let currentPower = 3n ** k;
+            let currentMod = 3n ** (k + 1n);
+            let foundTrit = 0n;
+
+            // Ternary Search: Test Trits 0, 1, and 2
+            for (let val = 0n; val <= 2n; val++) {
+                let hypothesis = pGuess + (val * currentPower);
+                let testVal = ((hypothesis * N) + N) % currentMod;
+                let targetVal = NP_obs % currentMod;
