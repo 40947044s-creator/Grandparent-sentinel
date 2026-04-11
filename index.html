@@ -145,3 +145,29 @@
                 let hypothesis = pGuess + (val * currentPower);
                 let testVal = ((hypothesis * N) + N) % currentMod;
                 let targetVal = NP_obs % currentMod;
+
+                if (testVal === targetVal) {
+                    pGuess = hypothesis;
+                    foundTrit = val;
+                    break;
+                }
+            }
+            tritString = `<span class="trit-val">${foundTrit}</span>` + tritString;
+            log(`Trit ${k.toString().padStart(2, '0')}: [${foundTrit}] | Path: ${tritString}`);
+        }
+        finalize(pGuess, P);
+    }
+
+    function finalize(guess, original) {
+        log(`--------------------------------------------------`);
+        log(`[VERDICT] Final Deciphered P: ${guess}`, "success");
+        if (guess !== original) {
+            log(`[COLLISION] Branch mismatch. Invariant hidden by zero-divisors.`, "collision");
+        } else {
+            log(`[SUCCESS] Recursive Limit Confirmed. Unique Invariant Recovered.`, "success");
+        }
+    }
+</script>
+
+</body>
+</html>
