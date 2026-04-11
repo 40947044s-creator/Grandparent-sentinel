@@ -45,51 +45,58 @@
         out.scrollTop = out.scrollHeight;
     }
 
-    function transition(p, n) {
-        return (p * (n + 1n)) & (MODULO - 1n);
-    }
+    // --- PROJECT NP: DECIPHERING MODE ---
 
-    function runDemo() {
-        const out = document.getElementById('outputLog');
-        out.innerHTML = ""; // Clear log
-        
-        const secretP = BigInt(document.getElementById('secretP').value);
-        const inputs = [10n, 42n, 99n];
-        const pairs = inputs.map(n => ({ n, delta: transition(secretP, n) }));
+function transition(p, n) {
+    // Formula: NP = N*P + N
+    return ((p * n) + n) & (MODULO - 1n);
+}
 
-        log(`[NP ENTER] Secret P set to ${secretP}`);
-        log(`[DATA] Generated ${pairs.length} NP Pairs.`);
+function runDemo() {
+    const out = document.getElementById('outputLog');
+    out.innerHTML = ""; 
+    
+    const secretP = BigInt(document.getElementById('secretP').value);
+    const inputs = [7n, 13n, 25n]; // Using primes for N ensures they are units (odd)
+    const pairs = inputs.map(n => ({ n, delta: transition(secretP, n) }));
 
-        let pGuess = 0n;
+    log(`[NP ENTER] Formula: N*P + N | Secret P: ${secretP}`);
+    log(`[DATA] Deciphering with ${pairs.length} observation pairs...`);
 
-        // Extraction Loop
-        for (let k = 0n; k < RING_SIZE; k++) {
-            let hypothesis = pGuess | (1n << k);
-            let bitIsLiar = false;
+    let pGuess = 0n;
 
-            // Check against the Grandparent Sentinel for all pairs
-            for (let pair of pairs) {
-                let res = transition(hypothesis, pair.n);
-                let targetMSB = pair.delta & MSB_MASK;
+    // Recursive Deciphering Loop
+    for (let k = 0n; k < RING_SIZE; k++) {
+        let hypothesis = pGuess | (1n << k);
+        let bitIsLiar = false;
+        let currentModulo = 1n << (k + 1n);
 
-                // Liar Paradox: If the growth flips the MSB wrongly at the limit
-                if (k === RING_SIZE - 1n && (res & MSB_MASK) !== targetMSB) {
-                    bitIsLiar = true;
-                    break;
-                }
-            }
+        for (let pair of pairs) {
+            // Re-simulate the N*P + N at the current modular scale
+            let testVal = ((hypothesis * pair.n) + pair.n) & (currentModulo - 1n);
+            let observedVal = pair.delta & (currentModulo - 1n);
 
-            if (bitIsLiar) {
-                log(`[LIAR] Bit ${k}: Paradox detected. Branch pruned.`);
-            } else {
-                pGuess = hypothesis;
+            if (testVal !== observedVal) {
+                bitIsLiar = true;
+                break;
             }
         }
 
-        log(`-----------------------------------`);
-        log(`[VERDICT] Extracted P: ${pGuess}`, true);
-        log(`[STATUS] Axiomatic Necessity Confirmed.`, true);
+        if (bitIsLiar) {
+            // Paradox detected: If bit k=1 fails, it must be 0
+            // We do not change pGuess (bit k remains 0)
+        } else {
+            // Consistency found: Bit k is 1
+            pGuess = hypothesis;
+        }
     }
+
+    log(`-----------------------------------`);
+    log(`[VERDICT] Deciphered P: ${pGuess}`, true);
+    log(`[STATUS] 2-Adic Limit Reached.`, true);
+}
+
+    
 </script>
 
 </body>
