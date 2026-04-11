@@ -2,55 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Project NP | Grandparent Sentinel Decipher</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project NP | 7EARTH ORACLE</title>
     <style>
-        body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; line-height: 1.4; }
-        .container { max-width: 950px; margin: auto; border: 1px solid #00ff41; padding: 25px; box-shadow: 0 0 30px #002200; }
+        body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; line-height: 1.4; overflow-x: hidden; }
+        .container { max-width: 950px; margin: auto; border: 1px solid #00ff41; padding: 25px; box-shadow: 0 0 30px #002200; background: #050505; }
         
-        /* Tabs Styling */
-        .tab-system { margin-bottom: 20px; border-bottom: 1px solid #00ff41; }
-        .tab-btn { background: none; border: none; color: #00ff41; padding: 10px 20px; cursor: pointer; font-family: inherit; font-size: 1em; opacity: 0.5; transition: 0.3s; }
-        .tab-btn.active { opacity: 1; border: 1px solid #00ff41; border-bottom: 1px solid #0a0a0a; margin-bottom: -1px; background: #111; }
+        /* Tabs */
+        .tab-system { margin-bottom: 20px; border-bottom: 1px solid #00ff41; display: flex; align-items: flex-end; }
+        .tab-btn { background: none; border: none; color: #00ff41; padding: 10px 20px; cursor: pointer; font-family: inherit; font-size: 0.9em; opacity: 0.5; transition: 0.3s; }
+        .tab-btn.active { opacity: 1; border: 1px solid #00ff41; border-bottom: 2px solid #0a0a0a; background: #111; font-weight: bold; }
         .tab-btn:hover { opacity: 1; background: #111; }
 
-        .input-box { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; background: #111; padding: 15px; border: 1px dashed #00ff41; }
-        label { display: block; font-size: 0.8em; margin-bottom: 5px; opacity: 0.8; }
-        input { background: #000; color: #00ff41; border: 1px solid #00ff41; padding: 8px; width: 250px; font-size: 1em; }
+        .input-box { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; background: #111; padding: 20px; border: 1px dashed #00ff41; }
+        .field { flex: 1; min-width: 200px; }
+        label { display: block; font-size: 0.75em; margin-bottom: 8px; opacity: 0.7; letter-spacing: 1px; }
+        input { background: #000; color: #00ff41; border: 1px solid #00ff41; padding: 10px; width: 100%; box-sizing: border-box; font-size: 1em; outline: none; }
+        input:focus { box-shadow: 0 0 10px #00ff41; }
         
-        button.action-btn { background: #00ff41; color: #000; border: none; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: 0.3s; }
-        button.action-btn:hover { background: #fff; box-shadow: 0 0 20px #fff; }
+        button.action-btn { background: #00ff41; color: #000; border: none; padding: 15px 40px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: 0.2s; letter-spacing: 2px; }
+        button.action-btn:hover { background: #fff; box-shadow: 0 0 20px #fff; transform: scale(1.02); }
 
-        .log { background: #000; padding: 15px; height: 450px; overflow-y: scroll; border: 1px solid #333; margin-top: 20px; font-size: 0.85em; border-left: 4px solid #00ff41; }
-        .success { color: #ffff00; font-weight: bold; }
+        .log { background: #000; padding: 15px; height: 500px; overflow-y: scroll; border: 1px solid #333; margin-top: 20px; font-size: 0.85em; border-left: 4px solid #00ff41; scroll-behavior: smooth; }
+        .success { color: #ffff00; font-weight: bold; padding: 5px 0; }
         .collision { color: #ff3300; font-style: italic; }
-        .bit-one { color: #00ff41; }
-        .bit-zero { color: #555; }
+        .bit-one { color: #00ff41; font-weight: bold; }
+        .bit-zero { color: #444; }
         .trit-val { color: #00d4ff; font-weight: bold; }
-        h1 { margin-top: 0; letter-spacing: 2px; text-transform: uppercase; }
-        .mode-tag { color: #ff00ff; font-weight: bold; margin-left: 10px; }
+        
+        h1 { margin: 0 0 10px 0; letter-spacing: 4px; text-transform: uppercase; font-size: 1.8em; }
+        .mode-tag { color: #ff00ff; font-size: 0.8em; margin-left: auto; padding-bottom: 10px; }
+
+        /* Scrollbar */
+        .log::-webkit-scrollbar { width: 8px; }
+        .log::-webkit-scrollbar-track { background: #000; }
+        .log::-webkit-scrollbar-thumb { background: #00ff41; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>7EARTH ORACLE: Multi-Base Deciphering</h1>
+    <h1>7EARTH ORACLE: Project NP</h1>
     
     <div class="tab-system">
         <button class="tab-btn active" onclick="switchMode('BINARY', this)">STANDARD (2-ADIC)</button>
         <button class="tab-btn" onclick="switchMode('TERNARY', this)">ADVANCED (3-ADIC)</button>
-        <span id="currentModeDisplay" class="mode-tag">MODE: 2-ADIC</span>
+        <span id="currentModeDisplay" class="mode-tag">LAYER: 2-ADIC</span>
     </div>
     
     <div class="input-box">
-        <div>
-            <label>ENTER INVARIANT P (Secret):</label>
-            <input type="number" id="secretP" value="123456789">
+        <div class="field">
+            <label>INVARIANT P (SECRET)</label>
+            <input type="text" id="secretP" value="123456789">
         </div>
-        <div>
-            <label>ENTER OPERATOR N (Public):</label>
-            <input type="number" id="secretN" value="7">
+        <div class="field">
+            <label>OPERATOR N (PUBLIC)</label>
+            <input type="text" id="secretN" value="7">
         </div>
-        <button class="action-btn" onclick="runInference()">INITIATE EXTRACTION</button>
+        <div style="width: 100%; text-align: right;">
+            <button class="action-btn" onclick="runInference()">INITIATE EXTRACTION</button>
+        </div>
     </div>
 
     <div id="outputLog" class="log">
@@ -65,8 +76,12 @@
         currentMode = mode;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById('currentModeDisplay').innerText = `MODE: ${mode === 'BINARY' ? '2-ADIC' : '3-ADIC'}`;
-        log(`[SYSTEM] Switched to ${mode} mode. Target Ring updated.`);
+        document.getElementById('currentModeDisplay').innerText = `LAYER: ${mode === 'BINARY' ? '2-ADIC' : '3-ADIC'}`;
+        clearLog(`[SYSTEM] Modulo ring shifted to ${mode}. Ready for lift.`);
+    }
+
+    function clearLog(msg) {
+        document.getElementById('outputLog').innerHTML = `<div>${msg}</div>`;
     }
 
     function log(msg, className = "") {
@@ -78,13 +93,20 @@
         out.scrollTop = out.scrollHeight;
     }
 
-    // --- Core Inference Logic ---
     function runInference() {
         const out = document.getElementById('outputLog');
         out.innerHTML = ""; 
         
-        const P_input = BigInt(document.getElementById('secretP').value);
-        const N_input = BigInt(document.getElementById('secretN').value);
+        let pStr = document.getElementById('secretP').value.replace(/\D/g, '');
+        let nStr = document.getElementById('secretN').value.replace(/\D/g, '');
+
+        if (!pStr || !nStr) {
+            log("[ERROR] Invalid Input. Numerical parameters required.", "collision");
+            return;
+        }
+
+        const P_input = BigInt(pStr);
+        const N_input = BigInt(nStr);
 
         if (currentMode === 'BINARY') {
             decipher2Adic(P_input, N_input);
@@ -93,19 +115,19 @@
         }
     }
 
-    // --- ORIGINAL 2-ADIC LOGIC ---
     function decipher2Adic(P, N) {
-        const MODULO_2 = 1n << 60n;
+        const RING_SIZE = 60n;
+        const MODULO_2 = 1n << RING_SIZE;
         const NP_obs = ((P * N) + N) & (MODULO_2 - 1n);
 
-        log(`[NP ENTER] P: ${P} | N: ${N} | Modulo: 2^60`);
-        log(`[DATA] Observed NP: ${NP_obs}`);
+        log(`[NP ENTER] P: ${P} | N: ${N}`);
+        log(`[DATA] Observed Target: ${NP_obs}`);
         log(`--------------------------------------------------`);
 
         let pGuess = 0n;
         let bitString = "";
 
-        for (let k = 0n; k < 60n; k++) {
+        for (let k = 0n; k < RING_SIZE; k++) {
             let hypothesis = pGuess | (1n << k);
             let currentMod = 1n << (k + 1n);
             let testVal = ((hypothesis * N) + N) & (currentMod - 1n);
@@ -114,33 +136,34 @@
             if (testVal === targetVal) {
                 pGuess = hypothesis;
                 bitString = `<span class="bit-one">1</span>` + bitString;
-                log(`Bit ${k.toString().padStart(2, '0')}: [1] | Path: ${bitString}`);
             } else {
                 bitString = `<span class="bit-zero">0</span>` + bitString;
-                log(`Bit ${k.toString().padStart(2, '0')}: [0] | Path: ${bitString}`);
+            }
+            // Log every 5 bits to balance performance and visual feedback
+            if (k % 5n === 0n || k === 59n) {
+                log(`Step ${k.toString().padStart(2, '0')}: Growth Path -> [${bitString}]`);
             }
         }
-        finalize(pGuess, P);
+        finalize(pGuess, P, MODULO_2);
     }
 
-    // --- INFUSED 3-ADIC LOGIC ---
     function decipher3Adic(P, N) {
-        const MODULO_3 = 3n ** 60n;
+        const RING_SIZE = 60n;
+        const MODULO_3 = 3n ** RING_SIZE;
         const NP_obs = ((P * N) + N) % MODULO_3;
 
-        log(`[NP ENTER] P: ${P} | N: ${N} | Modulo: 3^60`);
-        log(`[DATA] Observed NP: ${NP_obs}`);
+        log(`[NP ENTER] P: ${P} | N: ${N}`);
+        log(`[DATA] Observed Target: ${NP_obs}`);
         log(`--------------------------------------------------`);
 
         let pGuess = 0n;
         let tritString = "";
 
-        for (let k = 0n; k < 60n; k++) {
+        for (let k = 0n; k < RING_SIZE; k++) {
             let currentPower = 3n ** k;
             let currentMod = 3n ** (k + 1n);
             let foundTrit = 0n;
 
-            // Ternary Search: Test Trits 0, 1, and 2
             for (let val = 0n; val <= 2n; val++) {
                 let hypothesis = pGuess + (val * currentPower);
                 let testVal = ((hypothesis * N) + N) % currentMod;
@@ -153,18 +176,22 @@
                 }
             }
             tritString = `<span class="trit-val">${foundTrit}</span>` + tritString;
-            log(`Trit ${k.toString().padStart(2, '0')}: [${foundTrit}] | Path: ${tritString}`);
+            if (k % 5n === 0n || k === 59n) {
+                log(`Step ${k.toString().padStart(2, '0')}: Growth Path -> [${tritString}]`);
+            }
         }
-        finalize(pGuess, P);
+        finalize(pGuess, P, MODULO_3);
     }
 
-    function finalize(guess, original) {
+    function finalize(guess, original, mod) {
         log(`--------------------------------------------------`);
         log(`[VERDICT] Final Deciphered P: ${guess}`, "success");
-        if (guess !== original) {
-            log(`[COLLISION] Branch mismatch. Invariant hidden by zero-divisors.`, "collision");
+        
+        // If the original P was already larger than the ring, we compare mod ring
+        if (guess !== (original % mod)) {
+            log(`[COLLISION] Identification failed. Operator N is a zero-divisor.`, "collision");
         } else {
-            log(`[SUCCESS] Recursive Limit Confirmed. Unique Invariant Recovered.`, "success");
+            log(`[SUCCESS] Grandparent Sentinel Confirmed. Invariant recovered.`, "success");
         }
     }
 </script>
