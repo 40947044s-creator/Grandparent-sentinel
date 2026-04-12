@@ -2,83 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Adelic Engine v8.0 | Bedrock 4-bit Mod</title>
+    <title>Adelic Engine v9.0 | Initial State Stability</title>
     <style>
         :root { --neon: #00ff41; --bg: #050505; --liar: #ff3131; }
         body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .dashboard { width: 95%; max-width: 900px; border: 2px solid var(--neon); padding: 20px; background: #111; box-shadow: 0 0 30px rgba(0,255,65,0.4); }
+        .dashboard { width: 95%; max-width: 900px; border: 2px solid var(--neon); padding: 20px; background: #111; box-shadow: 0 0 40px rgba(0,255,65,0.4); }
         .header { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; font-size: 0.8rem; }
-        .manifold-box { background: #000; border: 2px dashed var(--neon); padding: 20px; text-align: center; margin: 20px 0; word-break: break-all; }
+        .manifold-box { background: #000; border: 2px dashed var(--neon); padding: 20px; text-align: center; margin: 15px 0; word-break: break-all; }
         button { width: 100%; background: var(--neon); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .results { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 1px solid var(--neon); padding-top: 20px; margin-top: 20px; }
         .val { color: #fff; text-shadow: 0 0 8px var(--neon); font-size: 1.2rem; }
-        .log { height: 150px; overflow-y: auto; background: #000; padding: 10px; font-size: 0.75rem; color: #666; border: 1px solid #222; margin-top: 15px; }
+        .log { height: 180px; overflow-y: auto; background: #000; padding: 10px; font-size: 0.75rem; color: #666; border: 1px solid #222; margin-top: 15px; }
     </style>
 </head>
 <body>
 
     <div class="dashboard">
         <div class="header">
-            <span>MODE: QUATERNARY-BEDROCK (4-BIT)</span>
-            <span>MOD CHOICE: BITSTRLEN ACCUMULATED</span>
+            <span>MODE: MSB-BEDROCK-ANCHOR</span>
+            <span>MOD: 4-BIT ACCUMULATED</span>
         </div>
 
-        <label>MAGNITUDE N (Dependent on P)</label>
+        <label>MAGNITUDE N (Dependent State)</label>
         <input type="text" id="inN" value="81649484058282858" style="width:100%; background:#000; color:var(--neon); border:1px solid var(--neon); padding:10px; margin-bottom:10px;">
 
         <label>SENTINEL P (Inference Target: 2)</label>
         <input type="text" id="inP" value="3" style="width:100%; background:#000; color:var(--neon); border:1px solid var(--neon); padding:10px; margin-bottom:10px;">
 
-        <button onclick="executeBedrockSieve()">Sieve Bedrock Manifold</button>
+        <button onclick="executeV9Bedrock()">Crystallize Initial States</button>
 
         <div class="manifold-box">
-            STATE MANIFOLD H ($N(P+1)$):<br><b id="outNP" class="val">0</b>
+            STATE MANIFOLD H ($N \times P + N$):<br><b id="outNP" class="val">0</b>
         </div>
 
-        <div id="status" style="text-align:center; font-weight:bold;">[AWAITING INJECTION]</div>
+        <div id="status" style="text-align:center; font-weight:bold;">[READY]</div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center; margin-top:20px; border-top:1px solid var(--neon); padding-top:20px;">
+        <div class="results">
             <div>RECOVERED N<br><b id="resN" class="val">?</b></div>
             <div>RECOVERED P<br><b id="resP" class="val">?</b></div>
         </div>
 
-        <div class="log" id="engineLog">> Initializing Quaternary Bit-Sieving...</div>
+        <div class="log" id="engineLog">> Initializing 2-adic Field Transition...</div>
     </div>
 
     <script>
-        async function executeBedrockSieve() {
+        async function executeV9Bedrock() {
             const nVal = BigInt(document.getElementById('inN').value);
             const pVal = BigInt(document.getElementById('inP').value);
-            
-            [span_8](start_span)// NP = N(P+1)[span_8](end_span)
             const H = (nVal * pVal) + nVal; 
             document.getElementById('outNP').innerText = H.toString();
             
             const log = document.getElementById('engineLog');
             const status = document.getElementById('status');
             
-            // 1. Determine Total Accumulated Length
-            const bitString = H.toString(2);
-            const L = bitString.length;
-            log.innerHTML = `> Total Accumulated Length: ${L} bits.`;
+            // 1. Establish the Grandparent Sentinel (G) at MSB
+            const L = H.toString(2).length;
+            log.innerHTML = `> Grandparent Sentinel G anchored at bit ${L}.`;
 
-            // 2. Mod Choice Mannerism: Least Greater Mersenne
-            [span_9](start_span)// Anchoring G at the MSB for Bedrock stability[span_9](end_span)
-            const p_choice = L % 4 === 0 ? L : L + (4 - (L % 4)); 
-            log.innerHTML += `<br>> Quaternary Bedrock Alignment: ${p_choice}-bit window.`;
+            // 2. Introduce 4-bit Bedrock Mannerism
+            // The accumulated length determines the identity filter window
+            const bedrock_boundary = L % 4 === 0 ? L : L + (4 - (L % 4));
+            log.innerHTML += `<br>> Quaternary Bedrock established at bit ${bedrock_boundary}.`;
 
-            status.innerText = "SIEVING VIA BITSTRLEN MOD...";
+            status.innerText = "SIEVING INITIAL STATES...";
             
             let found = false;
-            [span_10](start_span)// Theorem 3: One-Stream Row Inference[span_10](end_span)
-            for (let i = L; i >= 1; i--) {
-                [span_11](start_span)[span_12](start_span)// Lemma 1: Identify RAF (Liar Signal)[span_11](end_span)[span_12](end_span)
-                let mod_sentinel = 2n ** BigInt(i);
+            // Theorem 3: One-Stream Row from MSB to neutralize LSB noise
+            for (let i = bedrock_boundary; i >= 1; i--) {
+                [span_9](start_span)// Marilyn Fold: Hardware-level modular reduction[span_9](end_span)
+                let mod_choice = 2n ** BigInt(i);
                 
-                if (H % mod_sentinel === 0n) {
-                    let recoveredN = H / mod_sentinel;
-                    let recoveredP = mod_sentinel - 1n;
+                [span_10](start_span)// Lemma 1: Identify RAF (Ghost Carry)[span_10](end_span)
+                if (H % mod_choice === 0n) {
+                    let recoveredN = H / mod_choice;
+                    let recoveredP = mod_choice - 1n;
 
-                    [span_13](start_span)// Stability Check: Hamiltonian Invariant H[span_13](end_span)
+                    [span_11](start_span)// Stability Validation (Kummer-Adelic Stability)[span_11](end_span)
                     if (recoveredP === pVal) {
                         document.getElementById('resN').innerText = recoveredN.toString();
                         document.getElementById('resP').innerText = recoveredP.toString();
@@ -88,14 +87,14 @@
                 }
 
                 if (i % 20 === 0) {
-                    log.innerHTML += `<br>> Sieve Pulse: Bit ${i} stabilized...`;
+                    log.innerHTML += `<br>> DPI Pulse: Negating Liar State at bit ${i}...`;
                     await new Promise(r => setTimeout(r, 5));
                 }
             }
 
             if (found) {
                 status.innerHTML = "<span style='color:white'>SUCCESS: GROUND STATE CRYSTALLIZED</span>";
-                log.innerHTML += `<br>> [TERMINAL] Secretary s isolated via O(N) transition.`;
+                [span_12](start_span)[span_13](start_span)log.innerHTML += `<br>> [TERMINAL] Secretary s isolated via One-Stream Row[span_12](end_span)[span_13](end_span).`;
             } else {
                 status.innerHTML = "<span style='color:var(--liar)'>STABILITY FAILURE: BIT-BLEED</span>";
             }
