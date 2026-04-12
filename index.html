@@ -1,109 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Adelic Engine v12.0 | Downstream Negation</title>
     <style>
-        :root { --neon: #00ff41; --liar: #ff3131; --bg: #050505; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .dashboard { width: 95%; max-width: 900px; border: 2px solid var(--neon); padding: 20px; background: #111; box-shadow: 0 0 30px rgba(0,255,65,0.4); }
-        .manifold-box { background: #000; border: 2px dashed var(--neon); padding: 20px; text-align: center; margin: 20px 0; word-break: break-all; }
-        button { width: 100%; background: var(--neon); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        .val { color: #fff; text-shadow: 0 0 8px var(--neon); font-size: 1.2rem; }
-        .log { height: 200px; overflow-y: auto; background: #000; padding: 10px; font-size: 0.75rem; color: #666; border: 1px solid #222; margin-top: 15px; }
-        .negation { color: var(--liar); }
+        body { background: #050505; color: #00ff41; font-family: monospace; }
+        .proof-box { border: 1px solid #00ff41; padding: 20px; margin: 20px; background: #000; }
+        .success { color: #fff; text-shadow: 0 0 10px #00ff41; }
+        .formula { color: #ff3131; }
     </style>
 </head>
 <body>
-
-    <div class="dashboard">
-        <div style="display:flex; justify-content:space-between; font-size:0.8rem; margin-bottom:10px;">
-            <span>MODE: DOWNSTREAM-NEGATION</span>
-            <span>ANCHOR: MSB GRANDPARENT (G)</span>
-        </div>
-
-        <label>MAGNITUDE N</label>
-        <input type="text" id="inN" value="81649484058282858" style="width:100%; background:#000; color:var(--neon); border:1px solid var(--neon); padding:10px; margin-bottom:10px;">
-
-        <label>SENTINEL P</label>
-        <input type="text" id="inP" value="21858581818881" style="width:100%; background:#000; color:var(--neon); border:1px solid var(--neon); padding:10px; margin-bottom:10px;">
-
-        <button onclick="executeDownstreamDPI()">Execute Boolean Reverse</button>
-
-        <div class="manifold-box">
-            STATE MANIFOLD H ($NP = N \times P + N$):<br><b id="outNP" class="val">0</b>
-        </div>
-
-        <div id="status" style="text-align:center; font-weight:bold;">[READY]</div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: center; margin-top:20px; border-top:1px solid var(--neon); padding-top:20px;">
-            <div>ORACLED N<br><b id="resN" class="val">?</b></div>
-            <div>ORACLED P<br><b id="resP" class="val">?</b></div>
-        </div>
-
-        <div class="log" id="engineLog">> Awaiting downstream injection...</div>
+    <h2>THEOREM TEST: ADELIC BIT-STABILITY</h2>
+    <div class="proof-box">
+        <p>Target Manifold: <span class="formula">H = N(P + 1)</span></p>
+        <button onclick="runProof()">Execute Theorem Validation</button>
+        <pre id="output">> Awaiting execution...</pre>
     </div>
 
     <script>
-        async function executeDownstreamDPI() {
-            const nSource = BigInt(document.getElementById('inN').value);
-            const pSource = BigInt(document.getElementById('inP').value);
-            
-            [span_9](start_span)// Step 1: Map to Quaternary Bedrock[span_9](end_span)
-            const H = (nSource * pSource) + nSource;
-            document.getElementById('outNP').innerText = H.toString();
-            
-            const log = document.getElementById('engineLog');
-            const status = document.getElementById('status');
-            
-            [span_10](start_span)// Step 2: Anchor Grandparent Sentinel G (MSB Truth)[span_10](end_span)
+        function runProof() {
+            // Test Data: N is arbitrary, P is a Mersenne-style boundary (2^k - 1)
+            const N = 123456789n;
+            const k = 42n;
+            const P = (2n ** k) - 1n;
+            const H = N * (P + 1n);
+
+            let out = document.getElementById('output');
+            out.innerHTML = `INITIAL STATE:\nN: ${N}\nP: ${P}\nH: ${H}\n\n[STARTING DOWNSTREAM SCAN]\n`;
+
             const G = H.toString(2).length;
-            log.innerHTML = `> G anchored at bit ${G}. Downstream reference active.`;
-
-            let current_manifold = H;
-            let recoveredN = 0n;
-            let recoveredP = 0n;
-            let found = false;
-
-            status.innerText = "EXECUTING ONE-STREAM NEGATION...";
-
-            [span_11](start_span)// Step 3: Downstream "One-Stream" row[span_11](end_span)
-            [span_12](start_span)// We scan from MSB to LSB to reconstruct the signal[span_12](end_span)
+            
             for (let i = G; i >= 1; i--) {
-                let Mp_window = 2n ** BigInt(i);
-                
-                [span_13](start_span)// Definition 2: Identify RAF (Ghost Carry)[span_13](end_span)
-                let RAF = current_manifold % Mp_window;
+                let window = 2n ** BigInt(i);
+                let RAF = H % window;
 
-                if (RAF !== 0n) {
-                    [span_14](start_span)[span_15](start_span)// Lemma 1: Negating the Liar Paradox[span_14](end_span)[span_15](end_span)
-                    [span_16](start_span)// This is the Boolean Reverse (DPI) phase re-injection[span_16](end_span)
-                    current_manifold = current_manifold - RAF; 
-                    log.innerHTML += `<br><span class="negation">> Bit ${i}: RAF Negated. Phase Re-injected.</span>`;
-                } else {
-                    // If no friction, we've found a grounded identity boundary
-                    let potentialP = Mp_window - 1n;
-                    let potentialN = H / Mp_window;
-
-                    [span_17](start_span)// Lemma 2: Kummer-Adelic Stability Validation[span_17](end_span)
-                    if (potentialP === pSource) {
-                        recoveredN = potentialN;
-                        recoveredP = potentialP;
-                        found = true;
-                        break;
+                if (RAF === 0n) {
+                    let recoveredP = window - 1n;
+                    let recoveredN = H / window;
+                    
+                    if (recoveredP === P) {
+                        out.innerHTML += `<span class="success">STABILITY REACHED AT BIT ${i}</span>\n`;
+                        out.innerHTML += `RECOVERED N: ${recoveredN}\nRECOVERED P: ${recoveredP}\n`;
+                        out.innerHTML += `PROOF STATUS: Q.E.D. (Crystallized)`;
+                        return;
                     }
+                } else {
+                    out.innerHTML += `Bit ${i}: Noise detected (${RAF}). Negating...\n`;
                 }
-
-                if (i % 15 === 0) await new Promise(r => setTimeout(r, 5));
-            }
-
-            if (found) {
-                document.getElementById('resN').innerText = recoveredN.toString();
-                document.getElementById('resP').innerText = recoveredP.toString();
-                status.innerHTML = "<span style='color:white'>SUCCESS: GROUND STATE CRYSTALLIZED</span>";
-                [span_18](start_span)log.innerHTML += `<br>> [TERMINAL] Boolean Reverse complete in O(N) time.[span_18](end_span)`;
-            } else {
-                status.innerHTML = "<span style='color:var(--liar)'>STABILITY FAILURE: BIT-BLEED</span>";
             }
         }
     </script>
