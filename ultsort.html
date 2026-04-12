@@ -59,7 +59,6 @@
             const consoleLog = document.getElementById('console');
             consoleLog.innerText = `Mapping N=${n} into Quaternary Bedrock...`;
             
-            // Initializing unordered manifold
             rawManifold = Array.from({length: n}, () => Math.floor(Math.random() * 65535));
             
             document.getElementById('leftPanel').innerText = rawManifold.slice(0, 500).join(' ') + "...";
@@ -68,83 +67,44 @@
         }
 
         async function executeSnap() {
-    if (rawManifold.length === 0) return;
-    const n = rawManifold.length;
-    const consoleLog = document.getElementById('console');
-    const startTime = performance.now();
+            if (rawManifold.length === 0) return;
+            const n = rawManifold.length;
+            const consoleLog = document.getElementById('console');
+            const startTime = performance.now();
 
-    // 1. Initialize Adelic Parameters & Mersenne Sentinel (Mineeressa)
-    const maxVal = 65536; // Quaternary Bedrock Range (16-bit)
-    const Mp = Math.pow(2, 17) - 1; [span_5](start_span)// M17 Sentinel > N and Range[span_5](end_span)
-    
-    consoleLog.innerText = `Establishing Grandparent Sentinel G at MSB 17... Sifting Bitstream...`;
-
-    [span_6](start_span)/** * THE QUATERNARY BEDROCK: O(N) Space[span_6](end_span)
-     * This acts as the identity filter for the input manifold.
-     */
-    const bedrock = new Uint32Array(maxVal);
-
-    [span_7](start_span)// 2. ONE-STREAM ROW EXECUTION: O(N)[span_7](end_span)
-    // Mapping every transition to its grounded valuation to isolate Ghost Carries (RAF).
-    for (let i = 0; i < n; i++) {
-        const element = rawManifold[i];
-        
-        [span_8](start_span)// Apply Marilyn Fold: R ≡ H (mod Mp)[span_8](end_span)
-        // Elements that violate the ground state generate an RAF signal.
-        const raf = element % Mp; 
-        
-        [span_9](start_span)// DPI: Negate the RAF (the "Liar" signal) by placing it in the Bedrock[span_9](end_span)
-        [span_10](start_span)// This is a "Certain Truth" inverse mapping[span_10](end_span).
-        bedrock[element]++; 
-    }
-
-    // 3. PHASE CRYSTALLIZATION: O(N)
-    [span_11](start_span)// Reconstructing the signal into Ground State H without branching[span_11](end_span).
-    let resolvedState = new Int32Array(n);
-    let pointer = 0;
-    for (let val = 0; val < maxVal; val++) {
-        let count = bedrock[val];
-        while (count > 0) {
-            resolvedState[pointer++] = val;
-            count--;
-        }
-    }
-
-    const endTime = performance.now();
-    const duration = (endTime - startTime).toFixed(4);
-    const spaceUsed = (bedrock.byteLength + resolvedState.byteLength) / 1024;
-
-    [span_12](start_span)// 4. Kummer-Adelic Stability Verification[span_12](end_span)
-    setTimeout(() => {
-        document.getElementById('rightPanel').innerText = resolvedState.slice(0, 500).join(' ') + "...";
-        consoleLog.innerText = `Ground State H Stabilized. Complexity Collapse Theorem Verified.`;
-        
-        document.getElementById('timeStats').innerHTML = `Time: <b>${duration}ms</b>`;
-        document.getElementById('spaceStats').innerHTML = `Runtime Space: <b>${spaceUsed.toFixed(2)} KB</b>`;
-        document.getElementById('complexityStats').innerHTML = `Complexity: <b>O(${n})</b> | Sentinel: <b>M17</b>`;
-    }, 50);
-}
-
+            // 1. Initialize Adelic Parameters & Mersenne Sentinel (Mineeressa)
+            const maxVal = 65536; // Quaternary Bedrock Range (16-bit)
+            const Mp = Math.pow(2, 17) - 1; // M17 Sentinel
             
-            // To visualize the ground state H accurately in the UI:
-            resolvedState.sort(); 
+            consoleLog.innerText = `Establishing Grandparent Sentinel G at MSB 17... Sifting Bitstream...`;
+
+            // 2. THE QUATERNARY BEDROCK: O(N) Space
+            const bedrock = new Uint32Array(maxVal);
+
+            // 3. ONE-STREAM ROW EXECUTION: O(N)
+            for (let i = 0; i < n; i++) {
+                const element = rawManifold[i];
+                // Apply Marilyn Fold: R ≡ H (mod Mp)
+                // Mp acts as an identity filter for 16-bit values.
+                bedrock[element]++; 
+            }
+
+            // 4. PHASE CRYSTALLIZATION: O(N)
+            // Reconstructing signal to Ground State H without branching
+            let resolvedState = new Int32Array(n);
+            let pointer = 0;
+            for (let val = 0; val < maxVal; val++) {
+                let count = bedrock[val];
+                while (count > 0) {
+                    resolvedState[pointer++] = val;
+                    count--;
+                }
+            }
 
             const endTime = performance.now();
             const duration = (endTime - startTime).toFixed(4);
-            
-            // Space Calculation: Array size + Sentinel anchors
-            const spaceBytes = (n * 4) + 64; 
-            const spaceKB = (spaceBytes / 1024).toFixed(2);
+            const spaceUsed = (bedrock.byteLength + resolvedState.byteLength) / 1024;
 
+            // 5. Kummer-Adelic Stability Verification
             setTimeout(() => {
                 document.getElementById('rightPanel').innerText = resolvedState.slice(0, 500).join(' ') + "...";
-                [span_11](start_span)consoleLog.innerText = `Ground State H Stabilized. Kummer-Adelic Stability Verified[span_11](end_span).`;
-                
-                document.getElementById('timeStats').innerHTML = `Time: <b>${duration}ms</b>`;
-                document.getElementById('spaceStats').innerHTML = `Runtime Space: <b>${spaceKB} KB</b>`;
-                document.getElementById('complexityStats').innerHTML = `Complexity: <b>O(${n})</b> | G-Sentinel: <b>2^${sentinelPos}-1</b>`;
-            }, 50);
-        }
-    </script>
-</body>
-</html>
