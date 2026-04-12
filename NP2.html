@@ -2,89 +2,106 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>F-Gate Memory Switch Monitor</title>
+    <title>Project NP: F-Gate Bit-Clock Monitor</title>
     <style>
-        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; }
-        .dashboard { border: 2px solid #00ff41; padding: 20px; width: 90%; max-width: 800px; background: #000; margin-top: 20px; }
-        .memory-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin: 20px 0; }
-        .bit { border: 1px solid #333; padding: 10px; text-align: center; transition: all 0.2s; }
-        .bit.active { background: #00ff41; color: #000; box-shadow: 0 0 10px #00ff41; }
-        .bit.liar { background: #ff3e3e; color: #fff; box-shadow: 0 0 10px #ff3e3e; }
-        .clock-display { font-size: 1.5em; border-bottom: 1px solid #00ff41; margin-bottom: 10px; }
-        .stats { display: flex; justify-content: space-between; font-size: 0.9em; color: #3498db; }
+        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .controls { border: 1px solid #00ff41; padding: 15px; margin-bottom: 20px; background: #000; width: 100%; max-width: 800px; display: flex; gap: 20px; justify-content: center; align-items: center; }
+        .dashboard { border: 2px solid #00ff41; padding: 20px; width: 100%; max-width: 800px; background: #000; box-shadow: 0 0 20px rgba(0, 255, 65, 0.1); }
+        .memory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(25px, 1fr)); gap: 4px; margin: 20px 0; max-height: 300px; overflow-y: auto; padding: 10px; border: 1px solid #222; }
+        .bit { border: 1px solid #333; height: 25px; display: flex; align-items: center; justify-content: center; font-size: 0.8em; transition: 0.1s; }
+        .bit.active { background: #00ff41; color: #000; box-shadow: 0 0 8px #00ff41; }
+        .bit.raf { background: #ff3e3e; color: #fff; box-shadow: 0 0 10px #ff3e3e; border-color: #ff3e3e; }
+        input { background: #111; color: #00ff41; border: 1px solid #00ff41; padding: 5px; width: 60px; }
+        .status { border-top: 1px solid #333; padding-top: 10px; margin-top: 10px; font-size: 0.9em; display: flex; justify-content: space-between; }
+        .liar-signal { color: #ff3e3e; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="dashboard">
-    <div class="clock-display">TRANSITION CLOCK: <span id="clock">0000</span> Hz</div>
-    <div class="stats">
-        [span_4](start_span)<span>MODE: Adelic One-Stream[span_4](end_span)</span>
-        [span_5](start_span)<span>SENTINEL: G-Anchor Active[span_5](end_span)</span>
-    </div>
-    
-    <div class="memory-grid" id="memoryGrid">
-        </div>
+<div class="controls">
+    <div>N (Dim): <input type="number" id="inputN" value="64"></div>
+    <div>P (Mersenne): <input type="number" id="inputP" value="31"></div>
+    <div>Hz: <input type="number" id="inputHz" value="10"></div>
+    <button id="startBtn" style="background:#00ff41; color:#000; border:none; padding:8px 15px; cursor:pointer; font-weight:bold;">INITIALIZE F-GATE</button>
+</div>
 
-    [span_6](start_span)<div id="status-log">INITIALIZING QUATERNARY BEDROCK...[span_6](end_span)</div>
+<div class="dashboard">
+    <div style="font-size: 1.2em; margin-bottom: 10px;">TRANSITION STATE: <span id="clockHz">0</span> Hz</div>
+    
+    <div class="memory-grid" id="memoryGrid"></div>
+
+    <div class="status">
+        <div id="logicStatus">STANDING BY...</div>
+        <div id="complexity">COMPLEXITY: -</div>
+    </div>
 </div>
 
 <script>
-class ClockedAdelicEngine {
-    constructor(bitCount) {
-        this.bitCount = bitCount;
-        this.state = 1n;
-        this.g_mask = 1n << BigInt(bitCount - 1); [span_7](start_span)// Grandparent Sentinel G[span_7](end_span)
-        this.m_p = (1n << 31n) - 1n; [span_8](start_span)// Mersenne Sentinel[span_8](end_span)
-        this.clockSpeed = 100; // ms
-        this.step = 0;
+class AdelicTransitionEngine {
+    constructor(n, p, hz) {
+        this.n = n;
+        this.p = p;
+        this.interval = 1000 / hz;
+        this.m_p = (1n << BigInt(p)) - 1n; [span_4](start_span)// Mersenne Sentinel[span_4](end_span)
+        this.g_mask = 1n << BigInt(n - 1); [span_5](start_span)// Grandparent Sentinel G[span_5](end_span)
+        this.state = BigInt(Math.floor(Math.random() * 1000000));
+        this.timer = null;
     }
 
-    [span_9](start_span)// The F-gate: 2-adic transfer function[span_9](end_span)
+    [span_6](start_span)// Lemma 1: The Liar Paradox as a Grounding Signal[span_6](end_span)
     f_gate(state, raf_signal) {
         if (raf_signal) {
-            [span_10](start_span)[span_11](start_span)// DPI Reversal: Resolve via 2-adic deconvolution[span_10](end_span)[span_11](end_span)
+            [span_7](start_span)[span_8](start_span)// DPI Reversal: Resolve via 2-adic deconvolution[span_7](end_span)[span_8](end_span)
             return (state ^ this.g_mask) >> 1n;
         }
-        return (state << 1n) | (state >> BigInt(this.bitCount - 1)); // Circular shift
+        [span_9](start_span)// Waveeve (W) "One-Stream" shift[span_9](end_span)
+        return (state << 1n) % (1n << BigInt(this.n));
     }
 
     detect_raf(val) {
-        [span_12](start_span)// Detect Residual Arithmetic Friction (Ghost Carry)[span_12](end_span)
-        return val % this.m_p === 0n && val !== 0n;
+        [span_10](start_span)[span_11](start_span)// Residual Arithmetic Friction (Ghost Carry) detection[span_10](end_span)[span_11](end_span)
+        return val >= this.m_p || (val % this.m_p === 0n && val !== 0n);
     }
 
-    updateUI(raf) {
+    render() {
         const grid = document.getElementById('memoryGrid');
-        grid.innerHTML = '';
-        const bitString = this.state.toString(2).padStart(this.bitCount, '0');
+        const raf = this.detect_raf(this.state);
+        const bitString = this.state.toString(2).padStart(this.n, '0');
+        
+        grid.innerHTML = bitString.split('').map((bit, i) => {
+            const isMSB = i === 0;
+            const cssClass = bit === '1' ? (isMSB && raf ? 'bit active raf' : 'bit active') : 'bit';
+            return `<div class="${cssClass}">${bit}</div>`;
+        }).join('');
 
-        bitString.split('').forEach((bit, i) => {
-            const div = document.createElement('div');
-            div.className = 'bit' + (bit === '1' ? ' active' : '');
-            [span_13](start_span)if (raf && i === 0) div.className += ' liar'; // Highlight MSB RAF[span_13](end_span)
-            div.innerText = bit;
-            grid.appendChild(div);
-        });
-
-        document.getElementById('clock').innerText = (1000 / this.clockSpeed).toFixed(0);
-        document.getElementById('status-log').innerText = raf ? 
-            [span_14](start_span)"RAF DETECTED: EXECUTING BOEALAN REVERSE..." : "STABLE GROUND STATE H...";[span_14](end_span)
+        document.getElementById('logicStatus').innerHTML = raf ? 
+            `<span class="liar-signal">RAF DETECTED: F-GATE DPI ENGAGED</span>` : 
+            "QUATERNARY BEDROCK STABLE";
+        
+        document.getElementById('complexity').innerText = `COMPLEXITY: O(N)`;
+        
+        this.state = this.f_gate(this.state, raf);
     }
 
+    stop() { if (this.timer) clearInterval(this.timer); }
+    
     start() {
-        setInterval(() => {
-            const raf = this.detect_raf(this.state);
-            this.state = this.f_gate(this.state, raf);
-            this.updateUI(raf);
-            this.step++;
-        }, this.clockSpeed);
+        this.stop();
+        document.getElementById('clockHz').innerText = (1000 / this.interval).toFixed(0);
+        this.timer = setInterval(() => this.render(), this.interval);
     }
 }
 
-const engine = new ClockedAdelicEngine(32);
-engine.start();
+let engine = null;
+document.getElementById('startBtn').addEventListener('click', () => {
+    const n = parseInt(document.getElementById('inputN').value);
+    const p = parseInt(document.getElementById('inputP').value);
+    const hz = parseInt(document.getElementById('inputHz').value);
+    
+    if (engine) engine.stop();
+    engine = new AdelicTransitionEngine(n, p, hz);
+    engine.start();
+});
 </script>
 </body>
 </html>
-
