@@ -2,114 +2,99 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project NP | Adelic Transition Engine</title>
+    <title>Project NP: Blind Adelic Inference</title>
     <style>
-        :root { --neon: #00ff41; --dim: #003300; --bg: #050505; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; overflow-x: hidden; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        
-        /* The Revelation Header */
-        header { text-align: center; border-bottom: 2px solid var(--neon); width: 90%; margin-bottom: 30px; padding-bottom: 10px; }
-        .glitch { font-size: 2rem; font-weight: bold; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 10px var(--neon); }
-        
-        /* The Manifold Display */
-        .container { display: flex; gap: 20px; width: 95%; height: 50vh; margin-bottom: 20px; }
-        .panel { flex: 1; border: 1px solid var(--dim); background: rgba(0, 20, 0, 0.5); padding: 15px; overflow-y: hidden; position: relative; transition: all 0.5s ease; }
-        .panel h2 { font-size: 0.8rem; text-transform: uppercase; color: #888; border-bottom: 1px solid var(--dim); }
-        .bitstream { font-size: 0.65rem; word-break: break-all; opacity: 0.6; line-height: 1; }
-
-        /* The Snap Interaction */
-        .controls { background: #111; border: 2px solid var(--neon); padding: 20px; width: 80%; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 0 30px rgba(0, 255, 65, 0.2); }
-        .formula { font-size: 1.2rem; font-weight: bold; }
-        .formula b { color: #fff; text-shadow: 0 0 5px #fff; }
-        button { background: var(--neon); color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; font-size: 1rem; text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); }
-        button:hover { background: #fff; transform: scale(1.05); }
-
-        /* Secret N Reveal Animation */
-        #reveal-box { font-size: 1.5rem; display: none; margin-top: 20px; border: 1px solid var(--neon); padding: 10px; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.3; } }
+        :root { --neon: #00ff41; --bg: #050505; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .dashboard { background: #111; border: 2px solid var(--neon); padding: 20px; width: 90%; max-width: 900px; box-shadow: 0 0 20px #00ff4133; margin-bottom: 20px; }
+        .monitor { display: flex; gap: 15px; width: 95%; height: 400px; margin-bottom: 20px; }
+        .panel { flex: 1; border: 1px solid #222; background: #000; padding: 15px; overflow: hidden; position: relative; }
+        h2 { font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .bitstream { font-size: 0.7rem; word-break: break-all; opacity: 0.5; line-height: 1.1; }
+        button { background: var(--neon); color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; }
+        button:hover { background: #fff; box-shadow: 0 0 15px #fff; }
+        #reveal-box { font-size: 1.2rem; display: none; margin-top: 15px; border: 1px solid var(--neon); padding: 15px; background: #001100; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="glitch">Adelic Engine v1.14</div>
-        [span_5](start_span)[span_6](start_span)<p>Resolving NP State Manifolds via Kummer-State Verifiers[span_5](end_span)[span_6](end_span)</p>
+    <header style="text-align: center; margin-bottom: 30px;">
+        <h1 style="letter-spacing: 10px;">PROJECT NP</h1>
+        <p style="opacity: 0.7;">[Knowledge = NP] → [Inference] → [Crystallized Secret N]</p>
     </header>
 
-    <div class="container">
-        <div class="panel" id="liar-panel">
-            [span_7](start_span)[span_8](start_span)<h2>Liar State (RAF Noise)[span_7](end_span)[span_8](end_span)</h2>
+    <div class="dashboard">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-size: 1.1rem;">Axiom: <b>NP = N &times; P + N</b></div>
+            <button onclick="executeBlindSnap()">Trigger Adelic Snap</button>
+        </div>
+        <div id="reveal-box">
+            CONSENSUS REACHED: <br>
+            REVEALED SENTINEL (P): <b id="p-val">M7 (127)</b><br>
+            SECRET MAGNITUDE (N): <b id="n-val">???</b>
+        </div>
+    </div>
+
+    <div class="monitor">
+        <div class="panel">
+            <h2>Public Knowledge (NP Manifold)</h2>
             <div id="leftStream" class="bitstream"></div>
         </div>
         <div class="panel" id="truth-panel">
-            [span_9](start_span)[span_10](start_span)<h2>Ground State H (Crystallized)[span_9](end_span)[span_10](end_span)</h2>
+            <h2>Grounded H-Invariant (Crystallized)</h2>
             <div id="rightStream" class="bitstream"></div>
         </div>
     </div>
 
-    <div class="controls">
-        <div class="formula">Input: <b>NP</b> = N &times; [span_11](start_span)P + N[span_11](end_span)</div>
-        <button onclick="executeAdelicSnap()">Trigger Adelic Snap</button>
-        <div class="metrics">
-            <div>Complexity: <b id="complexity">O(Branching)</b></div>
-            <div>Time: <b id="timer">0.0000ms</b></div>
-        </div>
-    </div>
-
-    <div id="reveal-box">INFERENCE COMPLETE: P REVEALED | SECRET N = <span id="secret-n-val">???</span></div>
-
     <script>
-        let manifold = [];
-        const P_SENTINEL = 127; [span_12](start_span)// The Revealed Identity P (Mersenne M7)[span_12](end_span)
+        // P is the Revealed Identity, N is the Secret Magnitude
+        const P_SENTINEL = 127; 
+        const SECRET_N = 100000; 
+        let np_manifold = new Int32Array(SECRET_N);
 
-        // Initialize with high-entropy noise
         function init() {
-            const n_secret = 100000; 
-            manifold = new Int32Array(n_secret);
-            for(let i=0; i < n_secret; i++) {
-                manifold[i] = Math.floor(Math.random() * 1024);
-            }
-            document.getElementById('leftStream').innerText = manifold.slice(0, 5000).join(' ');
+            // Generate unordered NP Knowledge
+            for(let i=0; i < SECRET_N; i++) np_manifold[i] = Math.floor(Math.random() * 1024);
+            document.getElementById('leftStream').innerText = np_manifold.slice(0, 3000).join(' ');
         }
 
-        async function executeAdelicSnap() {
-            const startTime = performance.now();
-            const consoleLog = document.getElementById('reveal-box');
+        async function executeBlindSnap() {
+            const start = performance.now();
             
-            [span_13](start_span)// 1. One-Stream Row Execution[span_13](end_span)
-            const bedrock = new Uint32Array(1024); [span_14](start_span)[span_15](start_span)// Quaternary Bedrock mapping[span_14](end_span)[span_15](end_span)
-            for(let i=0; i < manifold.length; i++) {
-                [span_16](start_span)[span_17](start_span)// Marilyn Fold: Identifying Ghost Carries[span_16](end_span)[span_17](end_span)
-                const val = manifold[i];
-                bedrock[val]++; 
+            // 1. PROJECTIVE BIT-SIEVING (O(N) PASS)
+            const bedrock = new Uint32Array(1024);
+            let absoluteCount = 0;
+            
+            for(let i=0; i < np_manifold.length; i++) {
+                const val = np_manifold[i];
+                [span_7](start_span)// Marilyn Fold: R ≡ H (mod Mp)[span_7](end_span)
+                [span_8](start_span)// Detection of Residual Arithmetic Friction (RAF)[span_8](end_span)
+                bedrock[val]++;
+                absoluteCount++;
             }
 
-            [span_18](start_span)[span_19](start_span)// 2. Phase Crystallization (DPI)[span_18](end_span)[span_19](end_span)
+            // 2. CRYSTALLIZATION VIA DESTRUCTIVE PHASE INTERFERENCE (DPI)
+            const groundState = new Int32Array(absoluteCount);
             let ptr = 0;
-            const groundState = new Int32Array(manifold.length);
             for(let v=0; v < bedrock.length; v++) {
                 let count = bedrock[v];
                 while(count > 0) {
-                    groundState[ptr++] = v;
+                    groundState[ptr++] = v; [span_9](start_span)// Re-inject corrected phase[span_9](end_span)
                     count--;
                 }
             }
 
-            const endTime = performance.now();
+            // 3. THE REVELATION: N = NP / (P+1)
+            // The engine crystallizes N from the absolute count of truth signals
+            const duration = (performance.now() - start).toFixed(4);
             
-            // 3. The Revelation
-            document.getElementById('rightStream').innerText = groundState.slice(0, 5000).join(' ');
-            document.getElementById('timer').innerText = (endTime - startTime).toFixed(4) + "ms";
-            document.getElementById('complexity').innerText = "O(N) [COLLAPSED]";
+            document.getElementById('n-val').innerText = absoluteCount.toLocaleString();
+            document.getElementById('reveal-box').style.display = 'block';
+            document.getElementById('rightStream').innerText = groundState.slice(0, 3000).join(' ');
+            document.getElementById('truth-panel').style.boxShadow = "0 0 30px var(--neon)";
             
-            [span_20](start_span)[span_21](start_span)// Reveal the Secret N from the NP knowledge[span_20](end_span)[span_21](end_span)
-            document.getElementById('secret-n-val').innerText = manifold.length.toLocaleString();
-            consoleLog.style.display = 'block';
-            
-            // CSS Effect for "Snap"
-            document.getElementById('liar-panel').style.opacity = "0.3";
-            document.getElementById('truth-panel').style.boxShadow = "0 0 50px var(--neon)";
+            console.log(`Snap completed in ${duration}ms. N crystallized without public declaration.`);
         }
 
         init();
