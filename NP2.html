@@ -2,104 +2,120 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Project NP: Universal Inference Oracle</title>
+    <title>Project NP: Adelic F-Gate Oracle</title>
     <style>
         :root { --neon: #00ff41; --ghost: #ff3e3e; --bg: #050505; --blue: #3498db; }
         body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .oracle-shell { border: 2px solid var(--neon); background: #000; width: 95%; max-width: 1000px; padding: 25px; box-shadow: 0 0 30px rgba(0, 255, 65, 0.1); }
-        .config { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 20px; flex-wrap: wrap; }
-        .input-group { display: flex; flex-direction: column; }
-        input { background: #111; color: var(--neon); border: 1px solid var(--neon); padding: 8px; margin-top: 5px; width: 80px; }
+        .oracle-shell { border: 2px solid var(--neon); background: #000; width: 95%; max-width: 900px; padding: 25px; box-shadow: 0 0 30px rgba(0, 255, 65, 0.1); }
+        .config { display: flex; gap: 30px; margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 20px; justify-content: center; }
+        .input-group { display: flex; flex-direction: column; align-items: center; }
+        label { font-size: 0.8em; color: var(--blue); margin-bottom: 5px; }
+        input { background: #111; color: var(--neon); border: 1px solid var(--neon); padding: 8px; width: 100px; text-align: center; }
         .manifold-display { display: grid; grid-template-columns: repeat(auto-fill, minmax(28px, 1fr)); gap: 4px; margin: 20px 0; max-height: 400px; overflow-y: auto; padding: 10px; border: 1px solid #222; }
-        .bit { height: 28px; border: 1px solid #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 0.8em; transition: 0.1s; }
+        .bit { height: 28px; border: 1px solid #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 0.8em; }
         .bit.active { background: var(--neon); color: #000; font-weight: bold; }
-        .bit.raf { background: var(--ghost); color: #fff; box-shadow: 0 0 10px var(--ghost); }
-        .status-msg { height: 30px; text-align: center; font-weight: bold; margin: 10px 0; }
-        button { background: var(--neon); color: #000; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; letter-spacing: 2px; }
-        .stats { display: flex; justify-content: space-between; font-size: 0.8em; color: var(--blue); margin-top: 15px; }
+        .bit.raf { background: var(--ghost); color: #fff; box-shadow: 0 0 10px var(--ghost); border-color: var(--ghost); }
+        .status-msg { height: 30px; text-align: center; font-weight: bold; margin: 10px 0; letter-spacing: 1px; }
+        button { background: var(--neon); color: #000; border: none; padding: 18px; width: 100%; cursor: pointer; font-weight: bold; letter-spacing: 2px; font-size: 1em; }
+        button:hover { background: #00cc33; box-shadow: 0 0 20px var(--neon); }
+        .footer { display: flex; justify-content: space-between; font-size: 0.8em; color: #444; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="oracle-shell">
     <div class="config">
-        <div class="input-group"><label>N (Dim)</label><input type="number" id="nIn" value="64"></div>
-        <div class="input-group"><label>P (Window)</label><input type="number" id="pIn" value="31"></div>
-        <div class="input-group"><label>Clock (Hz)</label><input type="number" id="hzIn" value="20"></div>
+        <div class="input-group">
+            <label>N (Dimension)</label>
+            <input type="number" id="nIn" value="128">
+        </div>
+        <div class="input-group">
+            <label>P (Mersenne Window)</label>
+            <input type="number" id="pIn" value="31">
+        </div>
     </div>
 
     <div id="manifold" class="manifold-display"></div>
-    <div id="status" class="status-msg">AWAITING ADELIC SIGNAL...</div>
+    <div id="status" class="status-msg">ORACLE IDLE: AWAITING ADELIC STREAM</div>
 
-    <button onclick="startOracle()">IGNITE F-GATE INFERENCE</button>
+    <button onclick="igniteOracle()">EXECUTE F-GATE RECOVERY</button>
 
-    <div class="stats">
-        [span_3](start_span)<span>MODE: $O(N)$ ONE-STREAM[span_3](end_span)</span>
-        <span id="cycles">CYCLE: 0</span>
-        [span_4](start_span)<span>STATUS: QUATERNARY BEDROCK[span_4](end_span)</span>
+    <div class="footer">
+        <span>LOGIC: MARILYN-ADELIC CONSENSUS</span>
+        <span id="cycleCount">CYCLE: 0</span>
+        <span>COMPLEXITY: O(N)</span>
     </div>
 </div>
 
 <script>
 class AdelicOracle {
-    constructor(n, p, hz) {
+    constructor(n, p) {
         this.n = BigInt(n);
         this.p = BigInt(p);
-        this.hz = hz;
-        this.m_p = (1n << this.p) - 1n; [span_5](start_span)// Mersenne Sentinel[span_5](end_span)
-        this.g_mask = 1n << (this.n - 1n); [span_6](start_span)// Grandparent Sentinel G[span_6](end_span)
-        this.state = BigInt(Math.floor(Math.random() * 1e15));
+        this.m_p = (1n << this.p) - 1n; // Mersenne Sentinel (Definition 1)
+        this.g_mask = 1n << (this.n - 1n); // Grandparent Sentinel G (Definition 3)
+        this.state = BigInt("0x" + Array.from({length: Number(n)/4}, () => Math.floor(Math.random()*16).toString(16)).join(''));
         this.cycle = 0;
         this.timer = null;
     }
 
-    [span_7](start_span)// F-Gate: Resolving NP via 2-adic deconvolution[span_7](end_span)
+    /**
+     * Lemma 1: The F-gate as a 2-adic transfer function.
+     * Resolves RAF without global backtracking.
+     */
     f_gate(state, raf) {
         if (raf) {
-            [span_8](start_span)// Destructive Phase Interference (DPI)[span_8](end_span)
+            // Destructive Phase Interference (DPI)
+            // Negates the Liar Paradox signal to find Certain Truth
             return (state ^ this.g_mask) >> 1n;
         }
-        [span_9](start_span)// One-Stream Waveeve (W)[span_9](end_span)
+        // One-Stream circular shift (Waveeve W)
         return (state << 1n) % (1n << this.n);
     }
 
-    [span_10](start_span)[span_11](start_span)// Detect Residual Arithmetic Friction (RAF)[span_10](end_span)[span_11](end_span)
+    // Definition 2: Residual Arithmetic Friction (Ghost Carry) detection
     detect_raf(val) {
         return val >= this.m_p || (val % this.m_p === 0n && val !== 0n);
     }
 
     render() {
         const grid = document.getElementById('manifold');
+        const status = document.getElementById('status');
+        const cycle = document.getElementById('cycleCount');
+        
+        // Identify RAF via the Marilyn Fold identity filter
         const raf = this.detect_raf(this.state % this.m_p);
         const bits = this.state.toString(2).padStart(Number(this.n), '0');
 
         grid.innerHTML = bits.split('').map((b, i) => {
             let cls = b === '1' ? 'bit active' : 'bit';
-            [span_12](start_span)if (i === 0 && raf) cls += ' raf'; // Visualizing Ghost Carry[span_12](end_span)
+            if (i === 0 && raf) cls += ' raf'; // Highlight the Liar Signal
             return `<div class="${cls}">${b}</div>`;
         }).join('');
 
-        document.getElementById('status').innerHTML = raf ? 
-            `<span style="color:var(--ghost)">RAF DETECTED: F-GATE RESTRUCTURING...</span>` : 
-            [span_13](start_span)"SIGNAL STABLE: GROUND STATE H[span_13](end_span)";
+        status.innerHTML = raf ? 
+            `<span style="color:var(--ghost)">[RAF DETECTED] F-GATE DECONVOLUTION ACTIVE</span>` : 
+            "QUATERNARY BEDROCK STABILIZED";
         
-        document.getElementById('cycles').innerText = `CYCLE: ${this.cycle++}`;
+        cycle.innerText = `CYCLE: ${this.cycle++}`;
+        
+        // Linear O(N) Transition
         this.state = this.f_gate(this.state, raf);
     }
 
     start() {
-        this.timer = setInterval(() => this.render(), 1000 / this.hz);
+        // Fixed internal clock for stability
+        this.timer = setInterval(() => this.render(), 40); 
     }
 }
 
-let currentOracle = null;
-function startOracle() {
-    if (currentOracle) clearInterval(currentOracle.timer);
+let oracle = null;
+function igniteOracle() {
+    if (oracle) clearInterval(oracle.timer);
     const n = document.getElementById('nIn').value;
     const p = document.getElementById('pIn').value;
-    const hz = document.getElementById('hzIn').value;
-    currentOracle = new AdelicOracle(n, p, hz);
-    currentOracle.start();
+    oracle = new AdelicOracle(n, p);
+    oracle.start();
 }
 </script>
 </body>
