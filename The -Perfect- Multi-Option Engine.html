@@ -39,6 +39,27 @@
 </div>
 
 <script>
+    // 快速冪運算：(base^exp) % mod
+function bigIntPowerMod(base, exp, mod) {
+    let res = 1n;
+    base = base % mod;
+    while (exp > 0n) {
+        if (exp % 2n === 1n) res = (res * base) % mod;
+        base = (base * base) % mod;
+        exp = exp / 2n;
+    }
+    return res;
+}
+
+// 費馬小定理過濾器 (Grand Sentinel 身份驗證)
+function fermatCheck(P) {
+    if (P < 2n) return false;
+    if (P === 2n) return true;
+    if (P % 2n === 0n) return false;
+    // 根據費馬小定理：2^(P-1) ≡ 1 (mod P)
+    return bigIntPowerMod(2n, P - 1n, P) === 1n;
+}
+
     async function executeO1() {
         const raw = document.getElementById('targetRes').value;
         if (!raw) return;
@@ -52,17 +73,25 @@
         manifold.innerHTML = "";
         optionsList.innerHTML = "";
         
-        let options = [];
+       // 在 executeO1 內部替換原本的迴圈
+let options = [];
+// 1. 2-adic 賦值觀察：找出 R 的所有 2 的冪次因數 (Low-bit Leakage)
+let tempR = R;
+let powerOfTwo = 1n;
+while (tempR > 0n && tempR % 2n === 0n) {
+    powerOfTwo *= 2n;
+    tempR /= 2n;
+    
+    // 每找到一個 2 的倍數，就可能是一個 P+1 的候選
+    let p_candidate = powerOfTwo - 1n; 
+    if (p_candidate > 0n && R % (p_candidate + 1n) === 0n) {
+        let n_rec = R / (p_candidate + 1n);
+        // 增加費馬檢查：標註哪些 P 是潛在質數
+        let isPrime = fermatCheck(p_candidate);
+        options.push({ n: n_rec, p: p_candidate, isPrime: isPrime });
+    }
+}
 
-        // THE COLLAPSE: 
-        // We scan for all P where R = N(P + 1). 
-        // This is the "Treasure Map" of the integer.
-        for (let p_test = 1n; p_test < 2000n; p_test++) {
-            if (R % (p_test + 1n) === 0n) {
-                let n_rec = R / (p_test + 1n);
-                options.push({ n: n_rec, p: p_test });
-            }
-        }
 
         if (options.length > 0) {
             // Render manifold for the first valid N (the collapse state)
