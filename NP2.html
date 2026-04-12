@@ -63,15 +63,25 @@ class AdelicOracle {
      * Lemma 1: The F-gate as a 2-adic transfer function.
      * Resolves RAF without global backtracking.
      */
-    f_gate(state, raf) {
-        if (raf) {
-            // Destructive Phase Interference (DPI)
-            // Negates the Liar Paradox signal to find Certain Truth
-            return (state ^ this.g_mask) >> 1n;
-        }
-        // One-Stream circular shift (Waveeve W)
-        return (state << 1n) % (1n << this.n);
+    // Hardened detect_raf to prevent transparency
+detect_raf(val) {
+    const r1 = val % this.m_p;
+    const r2 = val % ((1n << 61n) - 1n); // Secondary Mersenne Sentinel
+    // If windows disagree or residue is a "Ghost Carry", signal the Liar
+    return (val >= this.m_p) || (r1 === 0n && val !== 0n) || (r1 !== r2 % this.m_p);
+}
+
+// Hardened F-gate (Lemma 1)
+f_gate(state, has_raf) {
+    if (has_raf) {
+        // Destructive Phase Interference (DPI)
+        // Negate the RAF to execute the Boolean Reverse
+        return (state ^ this.g_mask) >> 1n;
     }
+    // Stabilized Waveeve: Maintain p-adic coherence
+    return (state << 1n) & ((1n << this.n) - 1n);
+}
+
 
     // Definition 2: Residual Arithmetic Friction (Ghost Carry) detection
     detect_raf(val) {
