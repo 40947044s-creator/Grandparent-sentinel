@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>F-Gate Memory Switch Monitor</title>
+    <style>
+        body { background: #050505; color: #00ff41; font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; }
+        .dashboard { border: 2px solid #00ff41; padding: 20px; width: 90%; max-width: 800px; background: #000; margin-top: 20px; }
+        .memory-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; margin: 20px 0; }
+        .bit { border: 1px solid #333; padding: 10px; text-align: center; transition: all 0.2s; }
+        .bit.active { background: #00ff41; color: #000; box-shadow: 0 0 10px #00ff41; }
+        .bit.liar { background: #ff3e3e; color: #fff; box-shadow: 0 0 10px #ff3e3e; }
+        .clock-display { font-size: 1.5em; border-bottom: 1px solid #00ff41; margin-bottom: 10px; }
+        .stats { display: flex; justify-content: space-between; font-size: 0.9em; color: #3498db; }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <div class="clock-display">TRANSITION CLOCK: <span id="clock">0000</span> Hz</div>
+    <div class="stats">
+        [span_4](start_span)<span>MODE: Adelic One-Stream[span_4](end_span)</span>
+        [span_5](start_span)<span>SENTINEL: G-Anchor Active[span_5](end_span)</span>
+    </div>
+    
+    <div class="memory-grid" id="memoryGrid">
+        </div>
+
+    [span_6](start_span)<div id="status-log">INITIALIZING QUATERNARY BEDROCK...[span_6](end_span)</div>
+</div>
+
+<script>
+class ClockedAdelicEngine {
+    constructor(bitCount) {
+        this.bitCount = bitCount;
+        this.state = 1n;
+        this.g_mask = 1n << BigInt(bitCount - 1); [span_7](start_span)// Grandparent Sentinel G[span_7](end_span)
+        this.m_p = (1n << 31n) - 1n; [span_8](start_span)// Mersenne Sentinel[span_8](end_span)
+        this.clockSpeed = 100; // ms
+        this.step = 0;
+    }
+
+    [span_9](start_span)// The F-gate: 2-adic transfer function[span_9](end_span)
+    f_gate(state, raf_signal) {
+        if (raf_signal) {
+            [span_10](start_span)[span_11](start_span)// DPI Reversal: Resolve via 2-adic deconvolution[span_10](end_span)[span_11](end_span)
+            return (state ^ this.g_mask) >> 1n;
+        }
+        return (state << 1n) | (state >> BigInt(this.bitCount - 1)); // Circular shift
+    }
+
+    detect_raf(val) {
+        [span_12](start_span)// Detect Residual Arithmetic Friction (Ghost Carry)[span_12](end_span)
+        return val % this.m_p === 0n && val !== 0n;
+    }
+
+    updateUI(raf) {
+        const grid = document.getElementById('memoryGrid');
+        grid.innerHTML = '';
+        const bitString = this.state.toString(2).padStart(this.bitCount, '0');
+
+        bitString.split('').forEach((bit, i) => {
+            const div = document.createElement('div');
+            div.className = 'bit' + (bit === '1' ? ' active' : '');
+            [span_13](start_span)if (raf && i === 0) div.className += ' liar'; // Highlight MSB RAF[span_13](end_span)
+            div.innerText = bit;
+            grid.appendChild(div);
+        });
+
+        document.getElementById('clock').innerText = (1000 / this.clockSpeed).toFixed(0);
+        document.getElementById('status-log').innerText = raf ? 
+            [span_14](start_span)"RAF DETECTED: EXECUTING BOEALAN REVERSE..." : "STABLE GROUND STATE H...";[span_14](end_span)
+    }
+
+    start() {
+        setInterval(() => {
+            const raf = this.detect_raf(this.state);
+            this.state = this.f_gate(this.state, raf);
+            this.updateUI(raf);
+            this.step++;
+        }, this.clockSpeed);
+    }
+}
+
+const engine = new ClockedAdelicEngine(32);
+engine.start();
+</script>
+</body>
+</html>
+
