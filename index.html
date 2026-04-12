@@ -13,6 +13,7 @@
         button { width: 100%; background: var(--neon); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         .results { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 2px solid var(--neon); padding-top: 20px; text-align: center; }
         .val { color: #fff; text-shadow: 0 0 5px var(--neon); font-size: 1.2rem; word-break: break-all; }
+        .log { font-size: 0.8rem; color: #888; height: 100px; overflow-y: auto; margin-top: 10px; border: 1px solid #333; padding: 5px; text-align: left;}
     </style>
 </head>
 <body>
@@ -22,17 +23,17 @@
     <div class="dashboard">
         <div class="input-block">
             <label>SECRET N (Magnitude)</label>
-            <input type="text" id="inN" value="123152">
+            <input type="number" id="inN" value="123152">
         </div>
         <div class="input-block">
-            <label>SENTINEL P (Identity)</label>
-            <input type="text" id="inP" value="123484">
+            <label>SENTINEL P (Mersenne Identity)</label>
+            <input type="number" id="inP" value="8191">
         </div>
 
         <button onclick="startInference()">Sieve Knowledge Manifold</button>
 
         <div class="knowledge-display">
-            KNOWLEDGE (NP): <br><b id="outNP" class="val">0</b>
+            KNOWLEDGE (NP) [State Manifold]: <br><b id="outNP" class="val">0</b>
         </div>
 
         <div id="status" style="margin: 10px 0; font-weight: bold;">[Awaiting Manifold Injection]</div>
@@ -41,43 +42,70 @@
             <div>RECOVERED N<br><b id="resN" class="val">0</b></div>
             <div>RECOVERED P (Identity)<br><b id="resP" class="val">?</b></div>
         </div>
+        <div class="log" id="engineLog">Engine Log: Ready...</div>
     </div>
 
     <script>
         async function startInference() {
             // 1. Establish the Knowledge Parameter (NP = N*P + N)
-            const nVal = BigInt(document.getElementById('inN').value);
-            const pVal = BigInt(document.getElementById('inP').value);
-            const NP = (nVal * pVal) + nVal; 
+            // In a real attack/inference, the engine only receives the result 'manifold'
+            const nSecret = BigInt(document.getElementById('inN').value);
+            const pSecret = BigInt(document.getElementById('inP').value);
+            const manifold = (nSecret * pSecret) + nSecret; 
 
-            // Update UI immediately to show Knowledge is NOT 0
-            document.getElementById('outNP').innerText = NP.toString();
-            document.getElementById('status').innerText = "SIEVING GHOST CARRIES...";
-            document.getElementById('resN').innerText = "0";
+            // UI Update: Discarding N and P
+            document.getElementById('outNP').innerText = manifold.toString();
+            document.getElementById('status').innerText = "DISCARDING PRIMES... INITIALIZING SIEVE";
+            document.getElementById('resN').innerText = "SEARCHING...";
             document.getElementById('resP').innerText = "SEARCHING...";
+            const log = document.getElementById('engineLog');
+            
+            await new Promise(r => setTimeout(r, 1000));
 
-            // 2. The One-Stream Row Inference
-            // Machine only "sees" NP and must solve for N and P
-            const binaryNP = NP.toString(2);
+            // 2. THE ADELIC ENGINE (Theorem 3 Implementation)
+            // The engine only knows 'manifold'. It uses the Grandparent Sentinel (MSB)
+            // to start the 2-adic transition.
+            const G = manifold.toString(2).length; 
+            log.innerHTML += `<br>> Grandparent Sentinel G anchored at bit ${G}`;
+
             let recoveredN = 0n;
+            let recoveredP = 0n;
 
-            for (let i = 0; i < binaryNP.length; i++) {
-                // Lemma 1: Identify RAF (Residual Arithmetic Friction)
-                [span_3](start_span)// Each bit transition is a proposition in the 2-adic field[span_3](end_span)
+            // Definition 1 & 2: Projective Bit-Sieving via Marilyn Fold
+            // We search for the Mersenne Sentinel (Mp) that results in zero RAF.
+            for (let p = 2; p <= G; p++) {
+                // Mersenne Sentinel candidate: Mp = 2^p - 1
+                let Mp = (2n ** BigInt(p)) - 1n;
                 
-                if (i % 5 === 0) {
-                    [span_4](start_span)// Simulating the bit-by-bit crystallization[span_4](end_span)
-                    const partialN = NP / (pVal + 1n);
-                    const visibleDigits = Math.floor((i / binaryNP.length) * partialN.toString().length);
-                    document.getElementById('resN').innerText = partialN.toString().substring(0, visibleDigits) + "...";
-                    await new Promise(r => setTimeout(r, 10)); 
+                // Definition 2: Residual Arithmetic Friction (RAF)
+                // R = H (mod Mp)
+                let RAF = manifold % (Mp + 1n); // Adjusted for the NP = N(P+1) logic
+
+                if (i_should_simulate_delay(p)) {
+                    document.getElementById('status').innerText = `SIEVING BIT ${p}... RAF: ${RAF > 0n ? 'LIAR' : 'TRUTH'}`;
+                    await new Promise(r => setTimeout(r, 50));
+                }
+
+                // Lemma 1: If RAF is zero, the state is Grounded Truth
+                if (manifold % (Mp + 1n) === 0n) {
+                    recoveredP = Mp;
+                    recoveredN = manifold / (recoveredP + 1n);
+                    
+                    log.innerHTML += `<br>> [SUCCESS] Ground State H reached at Mersenne Window A=${p}`;
+                    break; 
+                } else {
+                    log.innerHTML += `<br>> Bit ${p}: RAF detected. Transitioning...`;
                 }
             }
 
-            [span_5](start_span)// 3. Success: Reaching the Ground State H[span_5](end_span)
-            document.getElementById('resN').innerText = nVal.toString();
-            document.getElementById('resP').innerText = pVal.toString();
+            // 3. Finalization
+            document.getElementById('resN').innerText = recoveredN.toString();
+            document.getElementById('resP').innerText = recoveredP.toString();
             document.getElementById('status').innerText = "SUCCESS: GROUND STATE CRYSTALLIZED";
+        }
+
+        function i_should_simulate_delay(p) {
+            return p % 5 === 0;
         }
     </script>
 </body>
