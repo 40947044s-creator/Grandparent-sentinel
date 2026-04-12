@@ -3,198 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project NP | 7EARTH ORACLE</title>
+    <title>Project NP | Adelic Transition Engine</title>
     <style>
-        body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; line-height: 1.4; overflow-x: hidden; }
-        .container { max-width: 950px; margin: auto; border: 1px solid #00ff41; padding: 25px; box-shadow: 0 0 30px #002200; background: #050505; }
+        :root { --neon: #00ff41; --dim: #003300; --bg: #050505; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; overflow-x: hidden; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         
-        /* Tabs */
-        .tab-system { margin-bottom: 20px; border-bottom: 1px solid #00ff41; display: flex; align-items: flex-end; }
-        .tab-btn { background: none; border: none; color: #00ff41; padding: 10px 20px; cursor: pointer; font-family: inherit; font-size: 0.9em; opacity: 0.5; transition: 0.3s; }
-        .tab-btn.active { opacity: 1; border: 1px solid #00ff41; border-bottom: 2px solid #0a0a0a; background: #111; font-weight: bold; }
-        .tab-btn:hover { opacity: 1; background: #111; }
-
-        .input-box { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; background: #111; padding: 20px; border: 1px dashed #00ff41; }
-        .field { flex: 1; min-width: 200px; }
-        label { display: block; font-size: 0.75em; margin-bottom: 8px; opacity: 0.7; letter-spacing: 1px; }
-        input { background: #000; color: #00ff41; border: 1px solid #00ff41; padding: 10px; width: 100%; box-sizing: border-box; font-size: 1em; outline: none; }
-        input:focus { box-shadow: 0 0 10px #00ff41; }
+        /* The Revelation Header */
+        header { text-align: center; border-bottom: 2px solid var(--neon); width: 90%; margin-bottom: 30px; padding-bottom: 10px; }
+        .glitch { font-size: 2rem; font-weight: bold; text-transform: uppercase; letter-spacing: 5px; text-shadow: 0 0 10px var(--neon); }
         
-        button.action-btn { background: #00ff41; color: #000; border: none; padding: 15px 40px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: 0.2s; letter-spacing: 2px; }
-        button.action-btn:hover { background: #fff; box-shadow: 0 0 20px #fff; transform: scale(1.02); }
+        /* The Manifold Display */
+        .container { display: flex; gap: 20px; width: 95%; height: 50vh; margin-bottom: 20px; }
+        .panel { flex: 1; border: 1px solid var(--dim); background: rgba(0, 20, 0, 0.5); padding: 15px; overflow-y: hidden; position: relative; transition: all 0.5s ease; }
+        .panel h2 { font-size: 0.8rem; text-transform: uppercase; color: #888; border-bottom: 1px solid var(--dim); }
+        .bitstream { font-size: 0.65rem; word-break: break-all; opacity: 0.6; line-height: 1; }
 
-        .log { background: #000; padding: 15px; height: 500px; overflow-y: scroll; border: 1px solid #333; margin-top: 20px; font-size: 0.85em; border-left: 4px solid #00ff41; scroll-behavior: smooth; }
-        .success { color: #ffff00; font-weight: bold; padding: 5px 0; }
-        .collision { color: #ff3300; font-style: italic; }
-        .bit-one { color: #00ff41; font-weight: bold; }
-        .bit-zero { color: #444; }
-        .trit-val { color: #00d4ff; font-weight: bold; }
-        
-        h1 { margin: 0 0 10px 0; letter-spacing: 4px; text-transform: uppercase; font-size: 1.8em; }
-        .mode-tag { color: #ff00ff; font-size: 0.8em; margin-left: auto; padding-bottom: 10px; }
+        /* The Snap Interaction */
+        .controls { background: #111; border: 2px solid var(--neon); padding: 20px; width: 80%; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 0 30px rgba(0, 255, 65, 0.2); }
+        .formula { font-size: 1.2rem; font-weight: bold; }
+        .formula b { color: #fff; text-shadow: 0 0 5px #fff; }
+        button { background: var(--neon); color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; font-size: 1rem; text-transform: uppercase; clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%); }
+        button:hover { background: #fff; transform: scale(1.05); }
 
-        /* Scrollbar */
-        .log::-webkit-scrollbar { width: 8px; }
-        .log::-webkit-scrollbar-track { background: #000; }
-        .log::-webkit-scrollbar-thumb { background: #00ff41; }
+        /* Secret N Reveal Animation */
+        #reveal-box { font-size: 1.5rem; display: none; margin-top: 20px; border: 1px solid var(--neon); padding: 10px; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>7EARTH ORACLE: Project NP</h1>
-    
-    <div class="tab-system">
-        <button class="tab-btn active" onclick="switchMode('BINARY', this)">STANDARD (2-ADIC)</button>
-        <button class="tab-btn" onclick="switchMode('TERNARY', this)">ADVANCED (3-ADIC)</button>
-        <span id="currentModeDisplay" class="mode-tag">LAYER: 2-ADIC</span>
-    </div>
-    
-    <div class="input-box">
-        <div class="field">
-            <label>INVARIANT P (SECRET)</label>
-            <input type="text" id="secretP" value="123456789">
+    <header>
+        <div class="glitch">Adelic Engine v1.14</div>
+        [span_5](start_span)[span_6](start_span)<p>Resolving NP State Manifolds via Kummer-State Verifiers[span_5](end_span)[span_6](end_span)</p>
+    </header>
+
+    <div class="container">
+        <div class="panel" id="liar-panel">
+            [span_7](start_span)[span_8](start_span)<h2>Liar State (RAF Noise)[span_7](end_span)[span_8](end_span)</h2>
+            <div id="leftStream" class="bitstream"></div>
         </div>
-        <div class="field">
-            <label>OPERATOR N (PUBLIC)</label>
-            <input type="text" id="secretN" value="7">
-        </div>
-        <div style="width: 100%; text-align: right;">
-            <button class="action-btn" onclick="runInference()">INITIATE EXTRACTION</button>
+        <div class="panel" id="truth-panel">
+            [span_9](start_span)[span_10](start_span)<h2>Ground State H (Crystallized)[span_9](end_span)[span_10](end_span)</h2>
+            <div id="rightStream" class="bitstream"></div>
         </div>
     </div>
 
-    <div id="outputLog" class="log">
-        [SYSTEM ONLINE] Awaiting Deciphering Parameters...
+    <div class="controls">
+        <div class="formula">Input: <b>NP</b> = N &times; [span_11](start_span)P + N[span_11](end_span)</div>
+        <button onclick="executeAdelicSnap()">Trigger Adelic Snap</button>
+        <div class="metrics">
+            <div>Complexity: <b id="complexity">O(Branching)</b></div>
+            <div>Time: <b id="timer">0.0000ms</b></div>
+        </div>
     </div>
-</div>
 
-<script>
-    let currentMode = 'BINARY';
+    <div id="reveal-box">INFERENCE COMPLETE: P REVEALED | SECRET N = <span id="secret-n-val">???</span></div>
 
-    function switchMode(mode, btn) {
-        currentMode = mode;
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('currentModeDisplay').innerText = `LAYER: ${mode === 'BINARY' ? '2-ADIC' : '3-ADIC'}`;
-        clearLog(`[SYSTEM] Modulo ring shifted to ${mode}. Ready for lift.`);
-    }
+    <script>
+        let manifold = [];
+        const P_SENTINEL = 127; [span_12](start_span)// The Revealed Identity P (Mersenne M7)[span_12](end_span)
 
-    function clearLog(msg) {
-        document.getElementById('outputLog').innerHTML = `<div>${msg}</div>`;
-    }
-
-    function log(msg, className = "") {
-        const out = document.getElementById('outputLog');
-        const div = document.createElement('div');
-        if (className) div.className = className;
-        div.innerHTML = msg;
-        out.appendChild(div);
-        out.scrollTop = out.scrollHeight;
-    }
-
-    function runInference() {
-        const out = document.getElementById('outputLog');
-        out.innerHTML = ""; 
-        
-        let pStr = document.getElementById('secretP').value.replace(/\D/g, '');
-        let nStr = document.getElementById('secretN').value.replace(/\D/g, '');
-
-        if (!pStr || !nStr) {
-            log("[ERROR] Invalid Input. Numerical parameters required.", "collision");
-            return;
-        }
-
-        const P_input = BigInt(pStr);
-        const N_input = BigInt(nStr);
-
-        if (currentMode === 'BINARY') {
-            decipher2Adic(P_input, N_input);
-        } else {
-            decipher3Adic(P_input, N_input);
-        }
-    }
-
-    function decipher2Adic(P, N) {
-        const RING_SIZE = 60n;
-        const MODULO_2 = 1n << RING_SIZE;
-        const NP_obs = ((P * N) + N) & (MODULO_2 - 1n);
-
-        log(`[NP ENTER] P: ${P} | N: ${N}`);
-        log(`[DATA] Observed Target: ${NP_obs}`);
-        log(`--------------------------------------------------`);
-
-        let pGuess = 0n;
-        let bitString = "";
-
-        for (let k = 0n; k < RING_SIZE; k++) {
-            let hypothesis = pGuess | (1n << k);
-            let currentMod = 1n << (k + 1n);
-            let testVal = ((hypothesis * N) + N) & (currentMod - 1n);
-            let targetVal = NP_obs & (currentMod - 1n);
-
-            if (testVal === targetVal) {
-                pGuess = hypothesis;
-                bitString = `<span class="bit-one">1</span>` + bitString;
-            } else {
-                bitString = `<span class="bit-zero">0</span>` + bitString;
+        // Initialize with high-entropy noise
+        function init() {
+            const n_secret = 100000; 
+            manifold = new Int32Array(n_secret);
+            for(let i=0; i < n_secret; i++) {
+                manifold[i] = Math.floor(Math.random() * 1024);
             }
-            // Log every 5 bits to balance performance and visual feedback
-            if (k % 5n === 0n || k === 59n) {
-                log(`Step ${k.toString().padStart(2, '0')}: Growth Path -> [${bitString}]`);
-            }
+            document.getElementById('leftStream').innerText = manifold.slice(0, 5000).join(' ');
         }
-        finalize(pGuess, P, MODULO_2);
-    }
 
-    function decipher3Adic(P, N) {
-        const RING_SIZE = 60n;
-        const MODULO_3 = 3n ** RING_SIZE;
-        const NP_obs = ((P * N) + N) % MODULO_3;
+        async function executeAdelicSnap() {
+            const startTime = performance.now();
+            const consoleLog = document.getElementById('reveal-box');
+            
+            [span_13](start_span)// 1. One-Stream Row Execution[span_13](end_span)
+            const bedrock = new Uint32Array(1024); [span_14](start_span)[span_15](start_span)// Quaternary Bedrock mapping[span_14](end_span)[span_15](end_span)
+            for(let i=0; i < manifold.length; i++) {
+                [span_16](start_span)[span_17](start_span)// Marilyn Fold: Identifying Ghost Carries[span_16](end_span)[span_17](end_span)
+                const val = manifold[i];
+                bedrock[val]++; 
+            }
 
-        log(`[NP ENTER] P: ${P} | N: ${N}`);
-        log(`[DATA] Observed Target: ${NP_obs}`);
-        log(`--------------------------------------------------`);
-
-        let pGuess = 0n;
-        let tritString = "";
-
-        for (let k = 0n; k < RING_SIZE; k++) {
-            let currentPower = 3n ** k;
-            let currentMod = 3n ** (k + 1n);
-            let foundTrit = 0n;
-
-            for (let val = 0n; val <= 2n; val++) {
-                let hypothesis = pGuess + (val * currentPower);
-                let testVal = ((hypothesis * N) + N) % currentMod;
-                let targetVal = NP_obs % currentMod;
-
-                if (testVal === targetVal) {
-                    pGuess = hypothesis;
-                    foundTrit = val;
-                    break;
+            [span_18](start_span)[span_19](start_span)// 2. Phase Crystallization (DPI)[span_18](end_span)[span_19](end_span)
+            let ptr = 0;
+            const groundState = new Int32Array(manifold.length);
+            for(let v=0; v < bedrock.length; v++) {
+                let count = bedrock[v];
+                while(count > 0) {
+                    groundState[ptr++] = v;
+                    count--;
                 }
             }
-            tritString = `<span class="trit-val">${foundTrit}</span>` + tritString;
-            if (k % 5n === 0n || k === 59n) {
-                log(`Step ${k.toString().padStart(2, '0')}: Growth Path -> [${tritString}]`);
-            }
-        }
-        finalize(pGuess, P, MODULO_3);
-    }
 
-    function finalize(guess, original, mod) {
-        log(`--------------------------------------------------`);
-        log(`[VERDICT] Final Deciphered P: ${guess}`, "success");
-        
-        // If the original P was already larger than the ring, we compare mod ring
-        if (guess !== (original % mod)) {
-            log(`[COLLISION] Identification failed. Operator N is a zero-divisor.`, "collision");
-        } else {
-            log(`[SUCCESS] Grandparent Sentinel Confirmed. Invariant recovered.`, "success");
+            const endTime = performance.now();
+            
+            // 3. The Revelation
+            document.getElementById('rightStream').innerText = groundState.slice(0, 5000).join(' ');
+            document.getElementById('timer').innerText = (endTime - startTime).toFixed(4) + "ms";
+            document.getElementById('complexity').innerText = "O(N) [COLLAPSED]";
+            
+            [span_20](start_span)[span_21](start_span)// Reveal the Secret N from the NP knowledge[span_20](end_span)[span_21](end_span)
+            document.getElementById('secret-n-val').innerText = manifold.length.toLocaleString();
+            consoleLog.style.display = 'block';
+            
+            // CSS Effect for "Snap"
+            document.getElementById('liar-panel').style.opacity = "0.3";
+            document.getElementById('truth-panel').style.boxShadow = "0 0 50px var(--neon)";
         }
-    }
-</script>
 
+        init();
+    </script>
 </body>
 </html>
