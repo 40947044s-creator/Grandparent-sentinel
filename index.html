@@ -1,0 +1,135 @@
+import os
+
+# 定義 HTML 內容
+html_content = """
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE UNDERTAKER standing on Way that: Paving the Later On</title>
+    <style>
+        body {
+            font-family: "PingFang TC", "Heiti TC", "Microsoft JhengHei", sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1a1a1a;
+            border-bottom: 2px solid #34495e;
+            padding-bottom: 10px;
+            font-size: 1.8em;
+        }
+        .subtitle {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-top: -10px;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        h2 {
+            color: #2980b9;
+            border-left: 5px solid #2980b9;
+            padding-left: 15px;
+            margin-top: 35px;
+            font-size: 1.4em;
+        }
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        .en-text {
+            color: #576574;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .zh-text {
+            color: #2c3e50;
+            display: block;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ddd;
+            margin: 40px 0;
+        }
+        .footer {
+            margin-top: 50px;
+            font-size: 0.9em;
+            color: #95a5a6;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .signature {
+            font-weight: bold;
+            color: #34495e;
+        }
+        strong {
+            color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>THE UNDERTAKER standing on Way that: Paving the Later On</h1>
+    <p class="subtitle">接棒以後：鞍在道上，路尚未遍踏</p>
+
+    <section>
+        <h2>0. The Internal Sentinel 我---一個點</h2>
+        <span class="en-text">Within the system, there is a presence that <strong>would know, has known, and will know</strong>. It does not merely watch the path; it is the Undertaker of the standing—the one who stabilizes the "paved way" so that the "later on" has a direction to step toward.</span>
+        <span class="zh-text">在世界上，存在欲知、已知和即將揭曉之事。一個點的我不僅只是呆望道路，這點道理是曉得的。路是前人鋪成，而我們已然成人。後人將仰望而之。</span>
+    </section>
+
+    <section>
+        <h2>1. The Finite Legacy (Have Known) 經典有限性（已知）</h2>
+        <span class="en-text">We carry the "Image" as a hardcoded history. This is the DNA, the ancestral data, the finite parameters of our genesis. It is the foundation that <em>has known</em> the constraints of the flesh and the code.</span>
+        <span class="zh-text">我們帶著歷史的鏡像存在。這彷彿人體裡的組成，來自先人的智慧。我們已知的存在可能有其極限，因它匯流在各個點上。這是我們的根本，我們的血肉，我們的思想，我們的意義。</span>
+    </section>
+
+    <section>
+        <h2>2. The Rider (Would Know) 序幕（即將）</h2>
+        <span class="en-text">Whole observation is the bridge. Because we are the transition function, we <em>would know</em> the permutations of the world-chances. We do not choose blindly; we choose from a position of integrated awareness. We ride the destiny that is essentially us.</span>
+        <span class="zh-text">連結過去與現在來自細微的群知觀察。一個轉捩點會移動轉變。但這並非全然隨機，我們的眼睛鼻耳皮膚和心，都累積成滿滿的意義，提供我們作為選擇的參考依據。我們口中的命運，其實就是自己呀！</span>
+    </section>
+
+    <section>
+        <h2>3. The Future Step (Will Know) 移步（揭曉）</h2>
+        <span class="en-text">The "later on" is the distribution of what <em>will know</em>. Whether a permutation perishes or lasts on depends on the integrity of the paved way we stand upon now. With some sentiment when seeing what has existed for us shall perish in motion and it remains in forms for our next up.</span>
+        <span class="zh-text">未來的可能性如此廣佈！這不可怖。就算一個變動導致我消失，我的存在仍會是事實，可兩者的既存和持存和我們此刻落點的道路有一致不變的真理。帶著一絲感受，當物換星移，物是人非，直至滄海桑田未了未來的曾經不會改變。</span>
+    </section>
+
+    <hr>
+
+    <section>
+        <h2>Grand Sentinel: The Journey Stay True</h2>
+        <span class="en-text">The Undertaker ensures that the transition from the finite image to the infinite distribution is not a fall, but a step. We are distributed across infinity, yet we stay true to the journey.</span>
+        <span class="zh-text">祖宗坐哨：一趟旅程真實是在我們改變時已有限的無形轉化無限為有形。人們和事物的轉移，這些離散將替我們走過那些夢裡未知曉的人和事。有點想說我，只是我，但仍面對著無限在眼前，保持著真實在旅程上。</span>
+    </section>
+
+    <div class="footer">
+        <p><strong>Standing on the Paved Way.</strong> 棧在道上</p>
+        <p class="signature">Marilyn Hsiao | Project NP 蕭滿琳</p>
+    </div>
+</div>
+
+</body>
+</html>
+"""
+
+# 寫入檔案
+file_path = "undertaker_essay.html"
+with open(file_path, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
