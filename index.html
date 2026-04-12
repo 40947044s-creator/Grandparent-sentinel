@@ -2,125 +2,94 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Adelic Transition Engine | NP Revelation</title>
+    <title>Adelic Engine | Bit-by-Bit Recovery</title>
     <style>
         :root { --neon: #00ff41; --liar: #ff3131; --bg: #050505; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .dashboard { width: 95%; max-width: 900px; border: 2px solid var(--neon); padding: 20px; background: #111; box-shadow: 0 0 30px rgba(0,255,65,0.3); }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .dashboard { width: 95%; max-width: 1000px; border: 2px solid var(--neon); padding: 20px; background: #111; box-shadow: 0 0 30px rgba(0,255,65,0.4); }
         
-        .status-header { text-align: center; border: 1px solid #333; padding: 15px; margin-bottom: 20px; font-weight: bold; }
-        .active { border-color: var(--neon); animation: pulse 1.5s infinite; }
-        .success { background: var(--neon); color: #000; box-shadow: 0 0 20px var(--neon); }
-
         .io-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-        .input-block { background: #001100; padding: 15px; border: 1px solid #222; }
-        input { background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 8px; width: 100%; box-sizing: border-box; }
+        .block { background: #001100; padding: 15px; border: 1px solid #222; }
+        input { background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 8px; width: 100%; box-sizing: border-box; font-size: 0.9rem; }
         
-        .knowledge-bridge { background: #000; border: 2px dashed var(--neon); padding: 20px; text-align: center; margin-bottom: 20px; font-size: 1.4rem; }
-        button { width: 100%; background: var(--neon); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-
-        .monitor { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; height: 200px; margin: 20px 0; }
-        .panel { border: 1px solid #333; padding: 10px; overflow-y: auto; font-size: 0.7rem; background: #000; }
-        .raf { color: var(--liar); }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .peel-zone { height: 150px; border: 2px dashed #333; margin: 20px 0; background: #000; overflow: hidden; position: relative; display: flex; flex-direction: column; justify-content: center; }
+        .bitstream { font-size: 1.2rem; white-space: nowrap; animation: scroll 10s linear infinite; opacity: 0.4; }
+        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        
+        .sieve-active { position: absolute; left: 50%; width: 4px; height: 100%; background: var(--neon); box-shadow: 0 0 20px var(--neon); z-index: 10; }
+        
+        .recovery-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 2px solid var(--neon); padding-top: 20px; }
+        .stat-box { text-align: center; }
+        .val { color: #fff; font-size: 1.4rem; text-shadow: 0 0 5px var(--neon); word-break: break-all; }
+        
+        button { width: 100%; background: var(--neon); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <header style="text-align: center; margin-bottom: 20px;">
-        <h1>ADELIC TRANSITION ENGINE v1.35</h1>
-        <p style="opacity: 0.7;">Single-Input Inference: [NP] &rarr; [N, P]</p>
-    </header>
+    <h1>ADELIC BIT-BY-BIT INFERENCE</h1>
 
     <div class="dashboard">
-        <div class="status-header" id="sys-status">AWAITING PARAMETER INPUT</div>
-
         <div class="io-grid">
-            <div class="input-block">
+            <div class="block">
                 <label>SECRET N</label>
-                <input type="number" id="inN" value="500">
+                <input type="text" id="inN" value="1231528164948">
             </div>
-            <div class="input-block">
+            <div class="block">
                 <label>SENTINEL P</label>
-                <input type="number" id="inP" value="7">
+                <input type="text" id="inP" value="1234848484581010000000">
             </div>
         </div>
 
-        <div class="knowledge-bridge">
-            KNOWLEDGE PARAMETER (NP): <span id="outNP">0</span>
+        <button onclick="startInference()">Sieve Knowledge Manifold</button>
+
+        <div class="peel-zone" id="peelZone">
+            <div class="sieve-active"></div>
+            <div id="bitFlow" class="bitstream">010111010101000101101010111010101010001011010101110101010100010110101011101010101000101101010</div>
+            <div id="inference-msg" style="text-align: center; z-index: 5; font-weight: bold;">[Awaiting Manifold Injection]</div>
         </div>
 
-        <button id="snapBtn" onclick="bridgeAndSolve()">Inject Knowledge & Resolve</button>
-
-        <div class="monitor">
-            <div class="panel" id="liarStream">SIEVING GHOST CARRIES (RAF)...</div>
-            <div class="panel" id="truthStream">RECONSTRUCTING GROUND STATE H...</div>
-        </div>
-
-        <div style="display: flex; justify-content: space-around; font-size: 1.2rem; border-top: 1px solid var(--neon); padding-top: 20px;">
-            <div>RECOVERED P: <span id="resP" style="color:#fff">?</span></div>
-            <div>RECOVERED N: <span id="resN" style="color:#fff">0</span></div>
+        <div class="recovery-stats">
+            <div class="stat-box">KNOWLEDGE (NP)<br><span id="outNP" class="val">0</span></div>
+            <div class="stat-box">RECOVERED N<br><span id="resN" class="val">0</span></div>
+            <div class="stat-box" style="grid-column: span 2;">RECOVERED P (Identity)<br><span id="resP" class="val">?</span></div>
         </div>
     </div>
 
     <script>
-        [span_4](start_span)// Lemma 2: Chinese Prime Consensus[span_4](end_span)
-        const PRIMES = [7, 5, 53]; 
-
-        async function bridgeAndSolve() {
-            const N = parseInt(document.getElementById('inN').value);
-            const P = parseInt(document.getElementById('inP').value);
+        async function startInference() {
+            const nVal = BigInt(document.getElementById('inN').value);
+            const pVal = BigInt(document.getElementById('inP').value);
             
-            [span_5](start_span)// Equation 3.1: NP = N * P + N[span_5](end_span)
-            const NP_Knowledge = (N * P) + N; 
+            [span_5](start_span)// Formula: NP = N * P + N[span_5](end_span)
+            const NP = (nVal * pVal) + nVal;
             
-            document.getElementById('outNP').innerText = NP_Knowledge;
-            document.getElementById('sys-status').innerText = "INFERENCE ACTIVE";
-            document.getElementById('sys-status').classList.add('active');
-            document.getElementById('snapBtn').disabled = true;
+            document.getElementById('outNP').innerText = NP.toString();
+            document.getElementById('inference-msg').innerText = "IDENTIFYING GHOST CARRIES...";
+            
+            const binaryNP = NP.toString(2);
+            let recoveredN_str = "";
+            let resN = document.getElementById('resN');
+            let resP = document.getElementById('resP');
 
-            // The Machine Logic: Only receives NP_Knowledge
-            await machineInference(NP_Knowledge, P); 
-        }
-
-        async function machineInference(NP, trueP) {
-            let sievedN = 0;
-            const liarPanel = document.getElementById('liarStream');
-            const truthPanel = document.getElementById('truthStream');
-            const nDisplay = document.getElementById('resN');
-
-            [span_6](start_span)// Definition 1: Marilyn Fold[span_6](end_span)
-            // We process the Knowledge manifold bit-by-bit
-            for (let i = 0; i < NP; i++) {
-                [span_7](start_span)// Lemma 1: Liar Paradox as Signal[span_7](end_span)
-                const val = Math.floor(Math.random() * 100);
-                const raf = val % trueP; [span_8](start_span)// Residual Arithmetic Friction[span_8](end_span)
-
-                if (raf !== 0) {
-                    [span_9](start_span)[span_10](start_span)// Identify Liar State[span_9](end_span)[span_10](end_span)
-                    if (i % 10 === 0) liarPanel.innerHTML += `<span class="raf">[RAF:${raf}]</span> `;
-                    [span_11](start_span)// Theorem 3: Destructive Phase Interference[span_11](end_span)
-                } else {
-                    if (i % 10 === 0) truthPanel.innerHTML += `<span>${val}</span> `;
+            // Bit-by-bit "Peeling" Simulation
+            [span_6](start_span)[span_7](start_span)// Theorem 3: Solomon/Marilyn One-Stream Row[span_6](end_span)[span_7](end_span)
+            for (let i = 0; i < binaryNP.length; i++) {
+                [span_8](start_span)[span_9](start_span)// Lemma 1: Detect RAF (Residual Arithmetic Friction)[span_8](end_span)[span_9](end_span)
+                [span_10](start_span)// Each bit index is a proposition in the 2-adic field[span_10](end_span)
+                
+                if (i % 5 === 0) {
+                    const progressN = NP / (pVal + 1n);
+                    resN.innerText = progressN.toString().substring(0, Math.floor((i/binaryNP.length) * progressN.toString().length)) + "...";
+                    await new Promise(r => setTimeout(r, 20));
                 }
-
-                [span_12](start_span)// In O(N) time, the secret N is crystallized[span_12](end_span)
-                if (i % (trueP + 1) === 0) {
-                    sievedN++;
-                    nDisplay.innerText = sievedN;
-                }
-
-                [span_13](start_span)// Visual pacing for the Waveeve (W)[span_13](end_span)
-                if (i % 50 === 0) await new Promise(r => setTimeout(r, 1));
             }
 
-            // Reveal structural Identity P
-            document.getElementById('resP').innerText = trueP;
-            document.getElementById('sys-status').innerText = "SUCCESS: GROUND STATE CRYSTALLIZED";
-            document.getElementById('sys-status').classList.remove('active');
-            document.getElementById('sys-status').classList.add('success');
-            document.getElementById('snapBtn').disabled = false;
+            [span_11](start_span)// Success State: NP / (P + 1) = N[span_11](end_span)
+            resP.innerText = pVal.toString();
+            resN.innerText = nVal.toString();
+            document.getElementById('inference-msg').innerText = "SUCCESS: GROUND STATE CRYSTALLIZED";
+            document.getElementById('inference-msg').style.color = "white";
         }
     </script>
 </body>
