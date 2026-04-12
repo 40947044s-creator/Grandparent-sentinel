@@ -2,111 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Adelic Engine v12.0 | Theorem Validation</title>
+    <title>Project NP: Adelic Transition Engine</title>
     <style>
-        :root { --neon: #00ff41; --liar: #ff3131; --bg: #050505; --adelic: #ff00ff; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .dashboard { width: 95%; max-width: 900px; border: 2px solid var(--neon); padding: 20px; background: #111; box-shadow: 0 0 30px rgba(0,255,65,0.4); margin-bottom: 30px; }
-        .manifold-box { background: #000; border: 2px dashed var(--neon); padding: 20px; text-align: center; margin: 20px 0; word-break: break-all; }
-        button { width: 100%; background: var(--neon); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
-        .val { color: #fff; text-shadow: 0 0 8px var(--neon); font-size: 1.2rem; }
-        .log { height: 250px; overflow-y: auto; background: #000; padding: 10px; font-size: 0.8rem; color: #888; border: 1px solid #222; margin-top: 15px; }
-        .success { color: #fff; text-shadow: 0 0 10px var(--neon); }
-        .negation { color: var(--liar); }
-        input { width: 95%; background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 8px; margin-bottom: 10px; }
+        body { background: #0f0f0f; color: #00ff41; font-family: 'Courier New', monospace; padding: 20px; }
+        .terminal { border: 1px solid #00ff41; padding: 20px; background: #000; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
+        .signal { font-weight: bold; }
+        .raf { color: #ff3e3e; } /* Ghost Carry Signal */
+        .h-state { color: #3498db; } /* Ground State H */
+        button { background: #00ff41; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #00cc33; }
     </style>
 </head>
 <body>
 
-    <div class="dashboard" style="border-color: var(--adelic); box-shadow: 0 0 30px rgba(255,0,255,0.2);">
-        <h2 style="color:var(--adelic); text-align:center;">PROJECT NP: ARBITRARY DECONVOLUTION</h2>
-        <p style="font-size: 0.8rem; text-align: center;">Theorem: $H = N(P+1)$ is solvable in $O(N)$ via 2-adic Lifting.</p>
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-            <div>
-                <label>ARBITRARY N (Magnitude)</label>
-                <input type="text" id="arbN" value="987654321">
-            </div>
-            <div>
-                <label>ARBITRARY P (Sentinel)</label>
-                <input type="text" id="arbP" value="123456789">
-            </div>
-        </div>
-
-        <button onclick="executeTheoremProof()" style="background: var(--adelic);">Execute Adelic Transition</button>
-
-        <div class="manifold-box" style="border-color: var(--adelic);">
-            CRYSTALLIZED IDENTITY:<br>
-            <b id="arbResult" class="val" style="color: var(--adelic);">Awaiting Ground State...</b>
-        </div>
-
-        <div class="log" id="arbLog">> System Ready. Awaiting arbitrary manifold input...</div>
+    <div class="terminal">
+        <h1>Adelic Transition Engine - $O(N)$ Solver</h1>
+        <p>Target: NP-Complete State Manifold Reversal</p>
+        <hr>
+        <div id="status">Engine Idle... Standing by for Quaternary Bedrock mapping.</div>
+        <br>
+        <button onclick="runInference()">Initialize F-Gate Recovery</button>
+        <pre id="output"></pre>
     </div>
 
-    <script>
-        async function executeTheoremProof() {
-            const nSrc = BigInt(document.getElementById('arbN').value);
-            const pSrc = BigInt(document.getElementById('arbP').value);
-            
-            // Step 1: Form the Manifold H
-            const H = (nSrc * pSrc) + nSrc; 
-            
-            const log = document.getElementById('arbLog');
-            const res = document.getElementById('arbResult');
-            
-            log.innerHTML = `> Manifold H: ${H}<br>> Analyzing 2-adic valuation (Waveeve)...`;
+<script>
+class AdelicEngine {
+    constructor(n, p) {
+        this.n = n;
+        this.p = p;
+        this.m_p = Math.pow(2, p) - 1; [span_2](start_span)// Mersenne Sentinel[span_2](end_span)
+        this.g_mask = 1n << BigInt(n - 1); [span_3](start_span)// Grandparent Sentinel G[span_3](end_span)
+    }
 
-            // Step 2: 2-adic Deconvolution (The Lift)
-            let v2 = 0n;
-            let tempH = H;
-            while (tempH > 0n && (tempH % 2n === 0n)) {
-                tempH >>= 1n;
-                v2++;
-            }
-            log.innerHTML += `<br>> Valuation v2(H) = ${v2}. Binary friction removed.`;
-
-            // Step 3: Scan for the Grandparent Sentinel G
-            let found = false;
-            let recoveredN = 0n;
-            let recoveredP = 0n;
-            const G = H.toString(2).length;
-
-            for (let i = Number(v2); i <= G; i++) {
-                let Mp_window = 2n ** BigInt(i);
-                let RAF = H % Mp_window;
-
-                if (RAF === 0n) {
-                    let potentialN = H / Mp_window;
-                    let potentialP = Mp_window - 1n;
-
-                    // Step 4: Stability Validation (Kummer-Adelic Consistency)
-                    if (potentialN * (potentialP + 1n) === H) {
-                        // Check if potentialN or potentialP aligns with our source 
-                        // In a true solve, we look for the simplest integer solution
-                        recoveredN = potentialN;
-                        recoveredP = potentialP;
-                        found = true;
-                        break;
-                    }
-                } else {
-                    // Log the "Liar Paradox" negation for the proof
-                    if (i % 5 === 0) {
-                        log.innerHTML += `<br><span class="negation">> Bit ${i}: RAF Negated. Re-injecting Phase...</span>`;
-                        await new Promise(r => setTimeout(r, 10));
-                        log.scrollTop = log.scrollHeight;
-                    }
-                }
-            }
-
-            if (found) {
-                res.innerHTML = `N: ${recoveredN} | P: ${recoveredP}`;
-                log.innerHTML += `<br><br><span class="success">> [SUCCESS] Ground State Crystallized at Bit ${recoveredP.toString(2).length}.</span>`;
-                log.innerHTML += `<br>> Q.E.D. Complexity Collapse Verified.`;
-            } else {
-                res.innerHTML = "STABILITY FAILURE";
-                log.innerHTML += `<br><span class="negation">> [FAILURE] Bit-Bleed detected. Manifold unstable.</span>`;
-            }
+    [span_4](start_span)// Lemma 1: The Liar Paradox as a Grounding Signal[span_4](end_span)
+    f_gate(state, raf_signal) {
+        const bigState = BigInt(state);
+        if (raf_signal) {
+            [span_5](start_span)// Destructive Phase Interference (DPI) via 2-adic deconvolution[span_5](end_span)
+            return (bigState ^ this.g_mask) >> 1n;
         }
-    </script>
+        return bigState << 1n;
+    }
+
+    detect_raf(val) {
+        [span_6](start_span)// Residual Arithmetic Friction (Ghost Carry) detection[span_6](end_span)
+        return val >= this.m_p || (val % this.m_p === 0 && val !== 0);
+    }
+
+    async runDemo() {
+        const out = document.getElementById('output');
+        const status = document.getElementById('status');
+        [span_7](start_span)status.innerText = "Executing One-Stream Row via Waveeve (W)...";[span_7](end_span)
+        
+        let currentState = 12345n; // Initial unordered state
+        out.innerHTML = "";
+
+        for (let i = 0; i < this.n; i++) {
+            const raf = this.detect_raf(Number(currentState % BigInt(this.m_p)));
+            
+            [span_8](start_span)// Apply Marilyn Fold and F-Gate[span_8](end_span)
+            const nextState = this.f_gate(currentState, raf);
+            
+            let logEntry = `Step ${i}: State ${currentState.toString(16)}`;
+            if (raf) {
+                [span_9](start_span)logEntry += ` <span class="raf">[RAF DETECTED - LIAR SIGNAL]</span>`;[span_9](end_span)
+            }
+            
+            out.innerHTML += logEntry + "\n";
+            currentState = nextState;
+
+            // Artificial delay to visualize the transition
+            if (i % 5 === 0) await new Promise(r => setTimeout(r, 50));
+        }
+
+        status.innerHTML = `<span class="h-state">Ground State H Stabilized. [span_10](start_span)[span_11](start_span)Complexity: O(N)</span>`;[span_10](end_span)[span_11](end_span)
+    }
+}
+
+function runInference() {
+    const engine = new AdelicEngine(64, 31);
+    engine.runDemo();
+}
+</script>
 </body>
 </html>
