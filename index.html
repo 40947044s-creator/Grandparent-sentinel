@@ -2,86 +2,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Adelic Engine: Bit-Level Inference</title>
+    <title>Adelic Engine | Multi-Prime Multi-Sieve [7, 5, 53]</title>
     <style>
         :root { --neon: #00ff41; --liar: #ff3131; --bg: #050505; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; }
-        .sieve-pipe { width: 90%; height: 60px; border: 2px solid #222; margin: 20px 0; position: relative; overflow: hidden; background: #000; }
-        .bit { position: absolute; top: 15px; font-weight: bold; transition: all 0.6s linear; }
-        .sentinel-gate { position: absolute; left: 50%; height: 100%; width: 4px; background: var(--neon); box-shadow: 0 0 15px var(--neon); z-index: 10; }
-        .label { font-size: 0.7rem; color: #888; text-transform: uppercase; }
-        .monitor { display: flex; gap: 20px; width: 95%; height: 300px; }
-        .panel { flex: 1; border: 1px solid #333; padding: 10px; overflow-y: auto; font-size: 0.75rem; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .dashboard { width: 95%; max-width: 1000px; border: 2px solid var(--neon); padding: 20px; background: #111; box-shadow: 0 0 20px rgba(0,255,65,0.2); }
+        .controls { display: flex; gap: 20px; margin-bottom: 20px; background: #001100; padding: 15px; border: 1px solid #222; }
+        input { background: #000; border: 1px solid var(--neon); color: var(--neon); padding: 5px; width: 80px; text-align: center; }
+        button { background: var(--neon); color: #000; border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        
+        /* The One-Stream Pipe */
+        .peel-zone { height: 100px; border: 1px solid #333; margin: 20px 0; background: #000; position: relative; overflow: hidden; display: flex; align-items: center; }
+        .gate { position: absolute; left: 50%; height: 100%; width: 5px; background: var(--neon); box-shadow: 0 0 15px var(--neon); z-index: 10; }
+        .bit { position: absolute; font-weight: bold; transition: all 0.5s linear; }
+
+        .monitor { display: flex; gap: 15px; height: 300px; }
+        .panel { flex: 1; border: 1px solid #222; padding: 10px; overflow-y: auto; font-size: 0.7rem; position: relative; }
+        .label { font-size: 0.6rem; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+        .raf { color: var(--liar); }
     </style>
 </head>
 <body>
 
-    <h2>Marilyn-Adelic Consensus Solver [NP = N × P + N]</h2>
-    
-    <div class="sieve-pipe" id="pipe">
-        <div class="sentinel-gate"></div>
-        <div style="position: absolute; left: 51%; top: 2px; font-size: 0.6rem;">MARILYN FOLD (mod Mp)</div>
-    </div>
+    <header style="text-align: center;">
+        <h1 style="letter-spacing: 5px;">ADELIC TRANSITION ENGINE v1.25</h1>
+        <p style="opacity: 0.7;">[Knowledge: NP = N &times; P + N] &rarr; [Identity: {7, 5, 53}]</p>
+    </header>
 
-    <div class="monitor">
-        <div class="panel" id="raf-panel">
-            <div class="label">RAF Signals (Certain False)</div>
+    <div class="dashboard">
+        <div class="controls">
+            <label>Secret N: <input type="number" id="secretN" value="100"></label>
+            <label>Revealed P: <input type="number" id="revealedP" value="3"></label>
+            <button onclick="triggerSnap()">Execute Snap</button>
+            <div style="margin-left: auto;">NP: <b id="uiNP">0</b></div>
         </div>
-        <div class="panel" id="ground-panel">
-            <div class="label">Ground State H (Certain Truth)</div>
+
+        <div class="peel-zone" id="pipe">
+            <div class="gate"></div>
+            <div style="position:absolute; left:51%; top:5px; font-size:0.6rem; color:#888;">MARILYN FOLD (mod 7, 5, 53)</div>
+        </div>
+
+        <div class="monitor">
+            <div class="panel" id="liarStream"><div class="label">Liar Paradox Signals (RAF)</div></div>
+            <div class="panel" id="truthStream"><div class="label">Ground State H (Certain Truth)</div></div>
+        </div>
+
+        <div style="margin-top: 20px; border-top: 1px solid #222; padding-top: 10px; display: flex; justify-content: space-around;">
+            <div>Inferred Magnitude N: <b id="uiN">0</b></div>
+            <div>Complexity: <b id="uiComp">O(Branching)</b></div>
         </div>
     </div>
 
     <script>
-        // Foundational Parameters
-        const P_SENTINEL = 3; // M2 Mersenne Sentinel
-        const SECRET_N = 50;  
-        const NP_KNOWLEDGE = (SECRET_N * P_SENTINEL) + SECRET_N;
+        const P_CONSENSUS = [7, 5, 53];
 
-        async function inferBitstream() {
-            const pipe = document.getElementById('pipe');
-            const rafPanel = document.getElementById('raf-panel');
-            const groundPanel = document.getElementById('ground-panel');
+        async function triggerSnap() {
+            const N = parseInt(document.getElementById('secretN').value);
+            const P = parseInt(document.getElementById('revealedP').value);
+            const NP = N * P + N; //
 
-            for (let i = 0; i < SECRET_N; i++) {
-                // Generate state transition
-                const val = Math.floor(Math.random() * 10);
-                const bit = document.createElement('div');
-                bit.className = 'bit';
-                bit.innerText = val;
-                bit.style.left = '0%';
-                pipe.appendChild(bit);
+            document.getElementById('uiNP').innerText = NP;
+            document.getElementById('uiComp').innerText = "O(N) [COLLAPSED]";
+            document.getElementById('liarStream').innerHTML = '<div class="label">RAF Signals (RAF)</div>';
+            document.getElementById('truthStream').innerHTML = '<div class="label">Ground State H</div>';
 
-                // Start Waveeve (W) propagation
-                setTimeout(() => {
-                    bit.style.left = '50%';
-                    
-                    // Apply Marilyn Fold: R ≡ H (mod Mp)
-                    const raf = val % P_SENTINEL;
-                    
-                    if (raf !== 0) {
-                        // Lemma 1: Identify "Certain False"
-                        bit.style.color = 'var(--liar)';
-                        rafPanel.innerHTML += `<div>[RAF DETECTED: ${val} mod ${P_SENTINEL} = ${raf}]</div>`;
-                        
-                        // Execute Boolean Reverse (DPI)
-                        setTimeout(() => {
-                            bit.style.left = '100%';
-                            bit.style.opacity = '0';
-                            groundPanel.innerHTML += `<div style="color:var(--neon)">CRYSTALLIZED: ${val - raf}</div>`;
-                        }, 300);
-                    } else {
-                        // Certain Truth detected
-                        bit.style.left = '100%';
-                        bit.style.opacity = '0';
-                        groundPanel.innerHTML += `<div>STABLE H: ${val}</div>`;
-                    }
-                }, 100);
+            const manifold = Array.from({length: N}, () => Math.floor(Math.random() * 256));
+            let sieved = 0;
 
-                await new Promise(r => setTimeout(r, 400));
+            for (let val of manifold) {
+                // Lemma 1: The Liar Paradox as a Grounding Signal
+                // Lemma 2: Chinese Prime Consensus (CRT)
+                const frictionSignals = P_CONSENSUS.map(p => val % p);
+                const totalRAF = frictionSignals.reduce((a, b) => a + b, 0);
+                const isLiar = totalRAF > 0;
+
+                animateBit(val, isLiar);
+
+                if (isLiar) {
+                    // Execute Boolean Reverse (DPI)
+                    document.getElementById('liarStream').innerHTML += `<span class="raf">[RAF:${totalRAF}]</span> `;
+                } else {
+                    document.getElementById('truthStream').innerHTML += `<span>${val}</span> `;
+                }
+
+                sieved++;
+                document.getElementById('uiN').innerText = sieved;
+
+                if (N < 500) await new Promise(r => setTimeout(r, 50));
             }
         }
-        inferBitstream();
+
+        function animateBit(val, isLiar) {
+            const b = document.createElement('div');
+            b.className = 'bit';
+            b.innerText = val;
+            b.style.left = '0%';
+            document.getElementById('pipe').appendChild(b);
+
+            setTimeout(() => {
+                b.style.left = '50%';
+                if (isLiar) b.style.color = 'var(--liar)';
+            }, 10);
+
+            setTimeout(() => {
+                b.style.left = '100%';
+                b.style.opacity = '0';
+            }, 400);
+
+            setTimeout(() => b.remove(), 800);
+        }
     </script>
 </body>
 </html>
