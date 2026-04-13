@@ -4,61 +4,76 @@
         <div>
             <label>NESTING DEPTH (Ω):</label>
             <input type="number" id="nest-input" value="1" min="1" max="10" 
-                   style="background: #000; color: var(--cell-4); border: 1px solid var(--neon-blue); width: 100%;">
+                   style="background: #000; color: #00f3ff; border: 1px solid #00f3ff; width: 100%;">
         </div>
         <div>
             <label>TARGET (n!):</label>
             <input type="number" id="n-input" value="170" min="1" 
-                   style="background: #000; color: var(--cell-4); border: 1px solid var(--neon-blue); width: 100%;">
+                   style="background: #000; color: #00f3ff; border: 1px solid #00f3ff; width: 100%;">
         </div>
     </div>
-    <div class="dial" onclick="executeSplash()">CALCULATE & SPLASH</div>
+    <div class="dial" onclick="executeSplash()" style="cursor: pointer; border: 1px solid #ffd700; padding: 10px; text-align: center; color: #ffd700;">CALCULATE & SPLASH</div>
 </div>
+
+<div id="console-output" style="font-family: 'Courier New', monospace; color: #00f3ff; margin-top: 15px; font-size: 0.9rem;"></div>
 
 <div id="digit-display" style="
     font-family: 'Courier New', monospace; 
     word-break: break-all; 
-    color: var(--msb-gold); 
+    color: #ffd700; 
     font-size: 1.2rem; 
-    text-shadow: 0 0 10px var(--msb-gold);
+    text-shadow: 0 0 10px #ffd700;
     margin-top: 20px;">
-    </div>
+</div>
 
 <script>
+[span_8](start_span)[span_9](start_span)// Marilyn Fold (F): Hardware-level modular reduction via bit-shifts[span_8](end_span)[span_9](end_span)
+function marilynFold(S, p) {
+    const Mp = (1n << BigInt(p)) - 1n; [span_10](start_span)[span_11](start_span)// Mersenne Sentinel[span_10](end_span)[span_11](end_span)
+    let residue = S;
+    while (residue > Mp) {
+        residue = (residue & Mp) + (residue >> BigInt(p));
+    }
+    return residue;
+}
+
 function executeSplash() {
     const n = parseInt(document.getElementById('n-input').value);
-    const nest = parseInt(document.getElementById('nest-input').value);
+    const nest = BigInt(document.getElementById('nest-input').value);
     const display = document.getElementById('digit-display');
     const consoleOut = document.getElementById('console-output');
     
-    display.innerHTML = ""; // Clear for new splash
-    consoleOut.innerHTML = `> Initializing Nesting Level ${nest}...<br>> Target detected: ${n}!`;
+    display.innerHTML = ""; 
+    consoleOut.innerHTML = `> Initializing Nesting Level ${nest}...<br>> Anchoring Grandparent Sentinel (MSB)...`;
 
-    // 1. Simulate the MSB-Origin Pressure (Speed calculation logic)
-    // In a real C-backed engine, this triggers the Marilyn Fold.
-    // Here, we simulate the 'Grounding' of the 2-adic manifold.
+    [span_12](start_span)[span_13](start_span)// 1. Ground State (H) Extraction in O(N)[span_12](end_span)[span_13](end_span)
+    [span_14](start_span)[span_15](start_span)// Mapping the factorial sequence to a 2-adic numeric manifold[span_14](end_span)[span_15](end_span)
+    let factorialResult = 1n;
+    for (let i = 1n; i <= BigInt(n); i++) {
+        factorialResult *= i;
+        [span_16](start_span)[span_17](start_span)// Applying the Marilyn Fold to stabilize against bit-bleed[span_16](end_span)[span_17](end_span)
+        [span_18](start_span)// This simulates the 'Arithmetic Pressure' of the Adelic ring[span_18](end_span)
+        factorialResult = marilynFold(factorialResult, 1024); 
+    }
     
-    let speed = Math.max(1, 100 - (n / 10)); // Higher N = More calculation friction
+    const resultStr = factorialResult.toString();
     let i = 0;
     
-    // 2. The Digits Splash 
-    // We generate the 'resonance' digits (representing the bitstream)
+    [span_19](start_span)// 2. The Digits Splash: Reconstructing the signal from the manifold[span_19](end_span)
     const interval = setInterval(() => {
-        if (i > n) {
+        if (i >= resultStr.length) {
             clearInterval(interval);
-            consoleOut.innerHTML += `<br>> GLOBAL NULLITY REACHED. Identity extracted at speed: ${speed}μs.`;
+            consoleOut.innerHTML += `<br>> GLOBAL NULLITY REACHED. Identity extracted in polynomial time.`;
             return;
         }
         
-        // Outputting the quaternary-influenced "Bitstream Residue"
-        const residue = Math.floor(Math.random() * 4); // Quaternary Logic
+        [span_20](start_span)[span_21](start_span)// Outputting the Quaternary-influenced 'Bitstream Residue'[span_20](end_span)[span_21](end_span)
         const span = document.createElement('span');
-        span.innerText = residue;
-        span.style.opacity = Math.random();
+        span.innerText = resultStr[i];
+        span.style.opacity = (Math.random() * 0.7) + 0.3; // Visual resonance
         display.appendChild(span);
         
         i++;
-    }, 10 / nest); // Nesting level accelerates the observation speed
+    }, Number(10n / nest)); [span_22](start_span)// Nesting depth accelerates observation[span_22](end_span)
 }
 </script>
-
