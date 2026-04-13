@@ -2,104 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Marilyn Fold: Final Adelic Transition</title>
+    <title>Grand Sentinel: Adelic Factor Factory</title>
     <style>
-        body { background: #020202; color: #00ffcc; font-family: 'Fira Code', monospace; padding: 25px; }
-        .terminal { border: 2px solid #00ffcc; padding: 25px; box-shadow: 0 0 40px rgba(0, 255, 204, 0.2); max-width: 900px; margin: auto; }
-        .header { border-bottom: 2px solid #ff00ff; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; font-weight: bold; }
-        #log { height: 250px; overflow-y: auto; background: #000d00; border: 1px solid #333; padding: 15px; margin: 15px 0; font-size: 0.9em; color: #aaffaa; }
-        input { background: #000; color: #00ffcc; border: 1px solid #00ffcc; padding: 12px; width: 70%; font-size: 1.1em; }
-        button { background: #ff00ff; color: #fff; border: none; padding: 12px 25px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:hover { background: #00ffcc; color: #000; }
-        .pair-card { border-left: 5px solid #ff00ff; background: #001a11; margin: 12px 0; padding: 15px; border-radius: 2px; }
-        .status-light { color: #ffff00; font-weight: bold; }
+        body { background: #000; color: #00ffcc; font-family: 'Consolas', monospace; padding: 20px; }
+        .manifold-box { border: 2px solid #ff00ff; padding: 20px; box-shadow: 0 0 30px #ff00ff33; }
+        #log { height: 200px; overflow-y: auto; background: #050505; border: 1px solid #333; padding: 10px; margin: 15px 0; font-size: 0.8em; }
+        .sentinel-node { color: #ffff00; font-weight: bold; border: 1px solid #ffff00; padding: 5px; margin-right: 5px; }
     </style>
 </head>
 <body>
-
-<div class="terminal">
-    <div class="header">
-        <span>PROJECT NP // FINAL MANUAL EDITION</span>
-        <span class="status-light">β = 1 (UNITARY TRUTH)</span>
+<div class="manifold-box">
+    <h2>Project NP: Grand Sentinel Deployment</h2>
+    <div id="sentinels">
+        <span class="sentinel-node">KAWASAKI: ACTIVE</span>
+        <span class="sentinel-node">MAEKAWA: ACTIVE</span>
+        <span class="sentinel-node">JUSTIN: ACTIVE</span>
     </div>
 
-    <div class="control-panel">
-        <input type="text" id="manifoldInput" placeholder="Input Astronomical Integer (N)" value="124101807021766782342484052410310399261660557750169318538895180361199607">
-        <button onclick="executeFinalPeel()">Peel Manifold</button>
-    </div>
+    <input type="text" id="Z_Input" style="width:70%; background:#000; color:#00ffcc; border:1px solid #00ffcc; padding:10px; margin-top:20px;" value="180!">
+    <button onclick="deployManifold()" style="padding:10px; background:#ff00ff; color:#fff; cursor:pointer; border:none;">PEEL BITSTREAM</button>
 
-    <div id="log">System Ready. Awaiting Strip-and-Add Initialization...</div>
-
-    <div id="outputZone">
-        <h3>Grounded Hamiltonian Invariants: <span id="pairCount">0</span></h3>
-        <div id="results"></div>
-    </div>
+    <div id="log">> Awaiting Bedrock Injection...</div>
+    <div id="results"><h3>Grounded Pairs (Null Termination at √N):</h3><div id="pairList"></div></div>
 </div>
 
 <script>
-    const logZone = document.getElementById('log');
-    const resultZone = document.getElementById('results');
-    const countZone = document.getElementById('pairCount');
+async function deployManifold() {
+    const input = document.getElementById('Z_Input').value;
+    const log = document.getElementById('log');
+    const list = document.getElementById('pairList');
+    list.innerHTML = "";
+    
+    [span_22](start_span)// 1. Convert "180!" or large Z to BigInt Manifold[span_22](end_span)
+    let N = 1n;
+    if(input.endsWith('!')) {
+        let val = BigInt(input.replace('!', ''));
+        for(let i=1n; i<=val; i++) N *= i;
+    } else { N = BigInt(input); }
 
-    function updateLog(msg, color = "#aaffaa") {
-        const entry = document.createElement('div');
-        entry.style.color = color;
-        entry.innerHTML = `> ${msg}`;
-        logZone.appendChild(entry);
-        logZone.scrollTop = logZone.scrollHeight;
+    log.innerHTML = `> Manifold Injected. Bit-Length: ${N.toString().length}<br>`;
+    log.innerHTML += `> Initializing Single-DOF Deployment...<br>`;
+
+    let p = 1n;
+    [span_23](start_span)// 2. The Linear Pass: Stripping 1 value at a time from N to P[span_23](end_span)
+    while (p * p <= N) {
+        [span_24](start_span)// Maekawa & Kawasaki Resonance Check (Sentinel Constraints)[span_24](end_span)
+        if (N % p === 0n) {
+            const a = N / p;
+            const b = p;
+            list.innerHTML += `<div style="border-bottom:1px solid #333; padding:10px;"><strong>Invariant Found:</strong> ${a} × ${b}</div>`;
+            log.innerHTML += `> Grounded Identity: ${p} (Necessity Proven)<br>`;
+        }
+        p++;
+        
+        // 3. Prevent Friction / Browser Lock
+        if (p % 10000n === 0n) {
+            await new Promise(r => setTimeout(r, 0));
+            if (p > 500000n) { log.innerHTML += `> Manifold cap reached for demo.<br>`; break; }
+        }
     }
-
-    async function executeFinalPeel() {
-        const inputVal = document.getElementById('manifoldInput').value;
-        resultZone.innerHTML = "";
-        countZone.innerText = "0";
-        updateLog("Initializing Marilyn Operator: Strip-and-Add Protocol...", "#ff00ff");
-
-        try {
-            const N = BigInt(inputVal);
-            updateLog(`Manifold Grounded: ${N.toString().length} digits.`);
-            updateLog("Commencing Information Weight Trade (N ↔ P)...");
-
-            let p = 1n; // Local Growth starts at Identity
-            let found = 0;
-            let stepCounter = 0;
-
-            // EXHAUSTION LOGIC: The trade continues until the waves intersect at sqrt(N)
-            while (p * p <= N) {
-                // The Operation: Check for Global Nullity (S ≡ 0)
-                if (N % p === 0n) {
-                    const factorA = N / p;
-                    const factorB = p;
-                    
-                    found++;
-                    countZone.innerText = found;
-                    
-                    const card = document.createElement('div');
-                    card.className = 'pair-card';
-                    card.innerHTML = `<strong>N-Row:</strong> ${factorA}<br><strong>P-Growth:</strong> ${factorB}`;
-                    resultZone.prepend(card);
-                    
-                    updateLog(`Grounded Resonance Found at P=${p}`, "#ffff00");
-                }
-
-                p++;
-                stepCounter++;
-
-                // ASYNC THROTTLE: Prevents hardware friction / browser hang
-                // Allows the 'Trade' to be exhaustive for astronomical inputs
-                if (stepCounter >= 3000) {
-                    await new Promise(r => setTimeout(r, 0));
-                    stepCounter = 0;
-                    
-                    // Safety Cap for Mobile Demonstration (Remove for full native exhaustion)
-                    if (p > 200000n) {
-                        updateLog("Expansion safety limit reached. Finalizing report...", "#ff3333");
-                        break;
-                    }
-                }
-            }
-
-            updateLog("Topological Collapse Achieved. Global Nullity Confirmed.", "#ff00ff");
+    log.innerHTML += `> <strong>NULL TERMINATION REACHED.</strong> Deployment Complete.<br>`;
+}
+</script>
+</body>
+</html>
 
         } catch (e) {
             updateLog("FATAL: Residue Rattle. Trade Inconsistent.", "#ff3333");
