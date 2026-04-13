@@ -1,0 +1,64 @@
+<div class="manifold-viz">
+    <h2>Control Interface: Adelic Input</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div>
+            <label>NESTING DEPTH (Ω):</label>
+            <input type="number" id="nest-input" value="1" min="1" max="10" 
+                   style="background: #000; color: var(--cell-4); border: 1px solid var(--neon-blue); width: 100%;">
+        </div>
+        <div>
+            <label>TARGET (n!):</label>
+            <input type="number" id="n-input" value="170" min="1" 
+                   style="background: #000; color: var(--cell-4); border: 1px solid var(--neon-blue); width: 100%;">
+        </div>
+    </div>
+    <div class="dial" onclick="executeSplash()">CALCULATE & SPLASH</div>
+</div>
+
+<div id="digit-display" style="
+    font-family: 'Courier New', monospace; 
+    word-break: break-all; 
+    color: var(--msb-gold); 
+    font-size: 1.2rem; 
+    text-shadow: 0 0 10px var(--msb-gold);
+    margin-top: 20px;">
+    </div>
+
+<script>
+function executeSplash() {
+    const n = parseInt(document.getElementById('n-input').value);
+    const nest = parseInt(document.getElementById('nest-input').value);
+    const display = document.getElementById('digit-display');
+    const consoleOut = document.getElementById('console-output');
+    
+    display.innerHTML = ""; // Clear for new splash
+    consoleOut.innerHTML = `> Initializing Nesting Level ${nest}...<br>> Target detected: ${n}!`;
+
+    // 1. Simulate the MSB-Origin Pressure (Speed calculation logic)
+    // In a real C-backed engine, this triggers the Marilyn Fold.
+    // Here, we simulate the 'Grounding' of the 2-adic manifold.
+    
+    let speed = Math.max(1, 100 - (n / 10)); // Higher N = More calculation friction
+    let i = 0;
+    
+    // 2. The Digits Splash 
+    // We generate the 'resonance' digits (representing the bitstream)
+    const interval = setInterval(() => {
+        if (i > n) {
+            clearInterval(interval);
+            consoleOut.innerHTML += `<br>> GLOBAL NULLITY REACHED. Identity extracted at speed: ${speed}μs.`;
+            return;
+        }
+        
+        // Outputting the quaternary-influenced "Bitstream Residue"
+        const residue = Math.floor(Math.random() * 4); // Quaternary Logic
+        const span = document.createElement('span');
+        span.innerText = residue;
+        span.style.opacity = Math.random();
+        display.appendChild(span);
+        
+        i++;
+    }, 10 / nest); // Nesting level accelerates the observation speed
+}
+</script>
+
