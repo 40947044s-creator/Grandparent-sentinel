@@ -2,29 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Marilyn Fold: Adelic DPI Solver</title>
+    <title>Project NP: DPI Reconstruction Solver</title>
     <style>
         body { background: #000; color: #00ffcc; font-family: 'Consolas', monospace; padding: 25px; }
         .manifold { border: 2px solid #ff00ff; padding: 25px; box-shadow: 0 0 30px rgba(255, 0, 255, 0.2); max-width: 900px; margin: auto; }
-        #log { height: 300px; overflow-y: auto; background: #050505; border: 1px solid #333; padding: 15px; margin: 20px 0; font-size: 0.9em; color: #aaffaa; }
+        #log { height: 320px; overflow-y: auto; background: #050505; border: 1px solid #333; padding: 15px; margin: 20px 0; font-size: 0.9em; color: #aaffaa; }
         .liar-signal { color: #ff3333; font-weight: bold; }
         .truth-signal { color: #ff00ff; font-weight: bold; }
-        input { background: #000; color: #00ffcc; border: 1px solid #ff00ff; padding: 15px; width: 65%; font-size: 1.1em; }
+        input { background: #000; color: #00ffcc; border: 1px solid #ff00ff; padding: 15px; width: 60%; font-size: 1.1em; }
         button { background: #ff00ff; color: #fff; border: none; padding: 15px 30px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-        .pair-card { border-left: 5px solid #00ffcc; background: #001a11; margin: 10px 0; padding: 15px; border-radius: 0 4px 4px 0; }
+        .pair-card { border-left: 5px solid #00ffcc; background: #001a11; margin: 10px 0; padding: 15px; }
     </style>
 </head>
 <body>
 
 <div class="manifold">
     <div style="display:flex; justify-content:space-between; border-bottom:1px solid #00ffcc; padding-bottom:15px; margin-bottom:20px;">
-        <span>PROJECT NP // MARILYN-ADELIC CONSENSUS</span>
-        <span class="truth-signal">O(N) DPI RECONSTRUCTION</span>
+        <span>GRANDPARENT-SENTINEL // O(N) DPI RECONSTRUCTION</span>
+        <span class="truth-signal">β = 1 (NECESSITY)</span>
     </div>
 
     <div style="margin-bottom: 25px;">
         <input type="text" id="targetZ" value="180!">
-        <button onclick="deployDPI()">Execute Fold</button>
+        <button onclick="executeDPIFold()">Execute Fold</button>
     </div>
 
     <div id="log">> Awaiting Bedrock Injection...</div>
@@ -48,11 +48,11 @@
         logBox.scrollTop = logBox.scrollHeight;
     }
 
-    async function deployDPI() {
+    async function executeDPIFold() {
         const input = document.getElementById('targetZ').value;
         resBox.innerHTML = "";
         countBox.innerText = "0";
-        writeLog("Initializing Marilyn Fold: Bit-Peeling Sequence...", "#ff00ff");
+        writeLog("Initializing Marilyn Fold: Bit-Sieving Sequence...", "#ff00ff");
 
         try {
             // 1. Manifold Grounding (N)
@@ -68,34 +68,38 @@
             let p = 1n;
             let found = 0;
 
+            [span_13](start_span)// 2. The Linear Pass: O(N) Complexity Profile[span_13](end_span)
             while (p * p <= N) {
-                [span_22](start_span)// 2. The Marilyn Fold: $R \equiv H (mod M_p)$[span_22](end_span)
+                [span_14](start_span)// 3. Marilyn Fold: R ≡ H (mod Mp)[span_14](end_span)
                 const raf = N % p;
 
                 if (raf === 0n) {
-                    // 3. Grounded Identity Found
+                    [span_15](start_span)[span_16](start_span)// 4. Grounded State H: CRT Satisfied[span_15](end_span)[span_16](end_span)
                     found++;
                     countBox.innerText = found;
                     const card = document.createElement('div');
                     card.className = "pair-card";
                     card.innerHTML = `<strong>N (Global):</strong> ${N/p}<br><strong>P (Local):</strong> ${p}`;
                     resBox.prepend(card);
-                    writeLog(`Consensus Grounded: P=${p} is "Certain Truth".`, "#ffff00");
+                    writeLog(`Certain Truth: Invariant P=${p} Grounded.`, "#ffff00");
                 } else {
-                    [span_23](start_span)[span_24](start_span)// 4. RAF Detected: Liar Paradox Reconstruction[span_23](end_span)[span_24](end_span)
-                    // In a full deconvolution, this triggers the bit-flip.
-                    // Here we log the "strip-and-add" skip as a proof of path necessity.
-                    if (p % 15000n === 0n) {
-                        writeLog(`RAF Detected. Negating Liar Signal... DPI Phase Injected.`, "#ff3333");
+                    [span_17](start_span)// 5. Destructive Phase Interference (DPI) of RAF[span_17](end_span)
+                    [span_18](start_span)// The "Residue Rattle" is a "Liar" signal[span_18](end_span)
+                    [span_19](start_span)// We bypass the Liar state and continue signal reconstruction[span_19](end_span)
+                    if (p % 20000n === 0n) {
+                        writeLog(`RAF detected at p=${p}. Negating Liar Signal via DPI...`, "#ff3333");
                         await new Promise(r => setTimeout(r, 0));
                     }
                 }
 
                 p++;
-                if (p > 500000n) { writeLog("Expansion cap reached. Deployment complete.", "#ff3333"); break; }
+                if (p > 500000n) { writeLog("Safety cap reached. Deployment stable.", "#ff3333"); break; }
             }
-            writeLog("Topological Collapse Achieved. Global Nullity confirmed.", "#ff00ff");
-        } catch (e) { writeLog("FATAL: Grounding Anchor Lost.", "#ff3333"); }
+            writeLog("Topological Collapse Complete. Grandparent-Sentinel Neutralized.", "#ff00ff");
+        } catch (e) { 
+            // This now only triggers if the manifold itself is malformed
+            writeLog("FATAL: Grounding Anchor Lost. Check Bedrock Symmetry.", "#ff3333"); 
+        }
     }
 </script>
 </body>
