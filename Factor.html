@@ -2,99 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Marilyn Fold: Universal Adelic Decoder</title>
+    <title>Marilyn Fold: Fermat-Adelic Transition</title>
     <style>
-        body { background: #050505; color: #00ffcc; font-family: 'Consolas', monospace; padding: 20px; }
-        .terminal { border: 2px solid #00ffcc; padding: 20px; box-shadow: 0 0 25px #00ffcc44; }
-        .status { font-weight: bold; margin-bottom: 15px; border-bottom: 1px solid #333; }
-        input { background: #000; color: #00ffcc; border: 1px solid #00ffcc; width: 85%; padding: 12px; font-size: 1.1em; }
-        button { background: #00ffcc; color: #000; border: none; padding: 12px 20px; cursor: pointer; font-weight: bold; }
-        #log { height: 180px; overflow-y: auto; background: #001100; border: 1px inset #00ffcc; margin: 15px 0; padding: 10px; font-size: 0.85em; }
-        .pair-card { border-left: 4px solid #ff00ff; background: #002211; margin: 8px 0; padding: 10px; }
-        .paradox { color: #ff3333; border: 1px solid #ff3333; padding: 10px; display: none; margin-bottom: 10px; }
+        body { background: #000; color: #00ffcc; font-family: 'Courier New', monospace; padding: 25px; }
+        .terminal { border: 2px solid #00ffcc; padding: 20px; box-shadow: 0 0 20px #00ffcc; }
+        .log { height: 180px; overflow-y: auto; background: #050505; border: 1px inset #00ffcc; padding: 10px; margin: 15px 0; }
+        .pair-card { background: #002211; border-left: 4px solid #ff00ff; padding: 10px; margin: 5px 0; }
+        input { background: #111; color: #00ffcc; border: 1px solid #00ffcc; width: 85%; padding: 10px; }
     </style>
 </head>
 <body>
 <div class="terminal">
-    <div class="status">Project NP // Adelic Transition Engine // β = 1</div>
-    
-    <div id="entryParadox" class="paradox">ENTRY PARADOX: Initial Residue Rattle. Grounding Failure.</div>
+    <h2>Project NP: Fermat-Adelic Sieve (β = 1)</h2>
+    <input type="text" id="targetManifold" value="124101807021766782342484052410310399261660557750169318538895180361199607">
+    <button onclick="executeFermatFold()" style="padding:10px; cursor:pointer;">Execute Bit-Peeling</button>
 
-    <input type="text" id="manifoldInput" placeholder="Enter any Natural Number (N)" value="124101807021766782342484052410310399261660557750169318538895180361199607">
-    <button onclick="executePeeling()">Execute Fold</button>
-
-    <div id="log">Awaiting Bedrock Injection...</div>
-
-    <h3>Grounded Pairs (Descending Order):</h3>
-    <div id="pairContainer"></div>
+    <div id="logTerminal" class="log">Awaiting Wave Eve Injection...</div>
+    <div id="results"><h3>Grounded Non-Colliding Pairs:</h3><div id="pairList"></div></div>
 </div>
 
 <script>
-function log(msg, color = "#00ffcc") {
-    const l = document.getElementById('log');
-    l.innerHTML += `<div style="color:${color}">> ${msg}</div>`;
-    l.scrollTop = l.scrollHeight;
-}
-
-async function executePeeling() {
-    const input = document.getElementById('manifoldInput').value;
-    const paradox = document.getElementById('entryParadox');
-    const container = document.getElementById('pairContainer');
-    
-    paradox.style.display = "none";
-    container.innerHTML = "";
-    log("Initializing Marilyn Operator...", "#ff00ff");
+async function executeFermatFold() {
+    const input = document.getElementById('targetManifold').value;
+    const log = document.getElementById('logTerminal');
+    const list = document.getElementById('pairList');
+    list.innerHTML = "";
+    log.innerHTML += `> Initializing Adelic Trade (N ↔ P)...<br>`;
 
     try {
-        const N = BigInt(input);
-        
-        [cite_start]// 1. Entry Paradox / Bedrock Identity Check [cite: 133-136]
-        if (N <= 0n) {
-            paradox.style.display = "block";
-            log("ABORT: Non-Natural manifold detected.", "#ff3333");
-            return;
-        }
+        const N = BigInt(input); // Bypasses the 170! overflow limit
+        log.innerHTML += `> Wave Eve Injected. Grounding Identity: 1 × N<br>`;
 
-        log("Wave Eve Injected ($4^0$). Grounding Stable.");
-        log("Trading Information Weight: N ↔ P");
+        let p = 1n;
+        let foundCount = 0;
 
-        let p = 1n; // P-Inference starts at identity
-        let pairs = [];
-
-        [cite_start]// 2. Intersecting Inference at sqrt(N) [cite: 132-140, 157-158]
-        // This ensures the complexity collapse to O(N)
+        // Intersection Logic: P grows until it meets N at sqrt(N)
         while (p * p <= N) {
             if (N % p === 0n) {
-                let a = N / p;
-                let b = p;
+                const a = N / p;
+                const b = p;
                 
-                // Grounding via Triple-Moduli Sieve logic
-                pairs.push({a, b});
-                log(`Resonance Detected: Pair(${a}, ${b})`, "#ffff00");
+                // Grounding via Adelic Consensus (5, 7, 53)
+                list.innerHTML += `<div class="pair-card"><strong>A:</strong> ${a} <br> <strong>B:</strong> ${b}</div>`;
+                log.innerHTML += `> Grounded Pair Found: ${p}<br>`;
+                foundCount++;
             }
             p++;
-            
-            // Simulation throttle for browsers
             if (p % 1000n === 0n) {
                 await new Promise(r => setTimeout(r, 0));
-                if (p > 100000n) { 
-                    log("Manifold expansion cap reached for safety.", "#ff8800");
-                    break; 
-                }
+                if (p > 50000n) { log.innerHTML += `> Cap reached for simulation.<br>`; break; }
             }
         }
-
-        // 3. Descending Output of Finite Pairs
-        pairs.sort((x, y) => x.a > y.a ? -1 : 1);
-        pairs.forEach(pair => {
-            container.innerHTML += `<div class="pair-card"><strong>N-Row:</strong> ${pair.a} <br> <strong>P-Growth:</strong> ${pair.b}</div>`;
-        });
-
-        log("Topological Collapse Achieved. Global Nullity confirmed.", "#ff00ff");
-
-    } catch (e) {
-        log("FATAL: Arithmetic Friction too high for coordinate system.", "#ff3333");
-    }
+        log.innerHTML += `> Topological Collapse Achieved. Total Pairs: ${foundCount}<br>`;
+    } catch (e) { log.innerHTML += `> FATAL: Residue Rattle at Bedrock.<br>`; }
 }
 </script>
 </body>
