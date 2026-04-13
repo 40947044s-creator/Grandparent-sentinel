@@ -1,105 +1,167 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Project NP: Identity Grounding (NP=NP)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Manual: Adelic Singularity Resolver & Hamiltonian Extraction</title>
     <style>
-        :root { --neon: #00ff41; --bg: #050505; --blue: #3498db; }
-        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .oracle-shell { border: 2px solid var(--neon); background: #000; width: 95%; max-width: 850px; padding: 30px; box-shadow: 0 0 50px rgba(0,255,65,0.2); }
-        .header { text-align: center; border-bottom: 1px solid #222; margin-bottom: 20px; padding-bottom: 10px; }
-        
-        .io-panel { display: flex; flex-direction: column; gap: 10px; }
-        input { background: #111; color: var(--neon); border: 1px solid var(--neon); padding: 15px; font-size: 1.2em; text-align: center; outline: none; }
-        
-        .manifold-view { height: 150px; border: 1px solid #222; margin: 20px 0; overflow: hidden; position: relative; display: flex; align-items: flex-end; gap: 1px; padding: 5px; }
-        .bar { background: var(--blue); width: 4px; transition: height 0.5s ease; }
-
-        button { background: var(--neon); color: #000; border: none; padding: 20px; cursor: pointer; font-weight: bold; letter-spacing: 3px; font-size: 1.1em; }
-        button:hover { background: #fff; box-shadow: 0 0 30px var(--neon); }
-
-        .console { margin-top: 20px; font-size: 0.85em; color: #888; border-left: 3px solid var(--blue); padding-left: 15px; min-height: 100px; }
-        .truth-signal { color: var(--neon); font-weight: bold; font-size: 1.2em; margin-top: 10px; display: none; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.6;
+            color: #232323;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background-color: #fdfdfd;
+        }
+        header {
+            border-bottom: 2px solid #000;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+        h1 { font-size: 2.2em; margin-bottom: 5px; }
+        h2 { font-size: 1.5em; border-left: 4px solid #333; padding-left: 15px; margin-top: 40px; }
+        h3 { font-size: 1.2em; color: #444; }
+        .metadata { font-style: italic; color: #666; margin-bottom: 20px; }
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.4;
+        }
+        .concept-box {
+            background-color: #eef7ff;
+            border: 1px solid #d0e7ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th { background-color: #f8f8f8; }
+        .citation {
+            font-size: 0.8em;
+            vertical-align: super;
+            color: #0056b3;
+            text-decoration: none;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div class="oracle-shell">
-    <div class="header">
-        <h2 style="margin:0;">GRANDPARENT SENTINEL</h2>
-        <div style="color: var(--blue); font-size: 0.8em; letter-spacing: 4px;">SYSTEM OPERATOR: IDENTITY GROUNDING</div>
+<header>
+    <h1>Adelic Singularity Resolver</h1>
+    <div class="metadata">Framework: Project NP & Grandparent Sentinel / Marilyn Fold Operator</div>
+</header>
+
+<section>
+    <h2>1. Executive Summary: The Complexity Collapse</h2>
+    <p>
+        [span_0](start_span)Traditional computational complexity theory views NP-complete problems through a topological lens, leading to exponential search times[span_0](end_span). [span_1](start_span)The <strong>Grandparent Sentinel</strong> framework shifts this representation to an <strong>Adelic bitstream</strong>, mapping graph structures to 2-adic numeric manifolds[span_1](end_span). [span_2](start_span)This shift replaces non-deterministic branching with <strong>Deterministic Residue Inference</strong>, where the solution is extracted through linear arithmetic resolutions[span_2](end_span).
+    </p>
+</section>
+
+<section>
+    <h2>2. Architectural Foundations</h2>
+    <h3>Coordinate Mapping & Node Autonomy</h3>
+    <ul>
+        [span_3](start_span)<li><strong>Quaternary Radix ($Z_a=4$):</strong> Each vertex is assigned a 2-bit cell to represent Hamiltonian degrees (0, 1, or 2), preventing "Inter-Node Bit-Bleed"[span_3](end_span).</li>
+        [span_4](start_span)<li><strong>Wave Eve Bit:</strong> The system is "primed" via a bedrock identity $S \equiv 4^0 \pmod{\Lambda}$ to establish the base frequency of the inference ripple[span_4](end_span).</li>
+        [span_5](start_span)[span_6](start_span)<li><strong>Marilyn Fold ($\mathcal{F}$):</strong> A hardware-level replacement for Euclidean division that utilizes bit-rotations and additions to extract residues in $O(1)$ time[span_5](end_span)[span_6](end_span).</li>
+    </ul>
+
+    <div class="concept-box">
+        <strong>Case Study: $170!$ Bitstream Inference</strong><br>
+        [span_7](start_span)Processing a colossal integer like $170!$ involves treating it as a high-pressure 2-adic integer[span_7](end_span). [span_8](start_span)Rather than magnitude, the algorithm focuses on the <strong>$v_2$ valuation</strong> and the distribution of carry bits, identified as "Arithmetic Friction" in the manifold[span_8](end_span).
     </div>
+</section>
 
-    <div class="io-panel">
-        <label>INPUT ADELIC BITSTREAM (S)</label>
-        <input type="text" id="inputS" value="170!" placeholder="Enter potential NP state...">
-        <button onclick="startGrounding()">向下塌縮至 NP = NP</button>
-    </div>
+<section>
+    <h2>3. The Triple-Moduli Sieve</h2>
+    [span_9](start_span)[span_10](start_span)<p>The sieve identifies "Ghost" paths—invalid sub-tours—as foreign bodies and prunes them from the computational field via Arithmetic Pressure[span_9](end_span)[span_10](end_span).</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Modular Filter</th>
+                <th>Mathematical Role</th>
+                <th>Complexity Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                [span_11](start_span)<td>Modulo 5[span_11](end_span)</td>
+                [span_12](start_span)<td>Bipartite Symmetry[span_12](end_span)</td>
+                [span_13](start_span)<td>Prunes parity violations[span_13](end_span)</td>
+            </tr>
+            <tr>
+                [span_14](start_span)<td>Modulo 7[span_14](end_span)</td>
+                [span_15](start_span)<td>Cyclic Lock ($ord_7(4)=3$)[span_15](end_span)</td>
+                [span_16](start_span)<td>Prevents 3-node cyclic ghosts[span_16](end_span)</td>
+            </tr>
+            <tr>
+                [span_17](start_span)<td>Modulo 53[span_17](end_span)</td>
+                [span_18](start_span)<td>Path Continuity[span_18](end_span)</td>
+                [span_19](start_span)<td>Annihilates sub-tours $L < 26$[span_19](end_span)</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
 
-    <div id="manifold" class="manifold-view"></div>
+<section>
+    <h2>4. Hardware Implementation (Pseudo-ASM Logic)</h2>
+    [span_20](start_span)[span_21](start_span)[span_22](start_span)<p>To achieve polynomial-time execution, the algorithm utilizes ARM64 SIMD instructions and XOR resonance to maintain an involutive ripple[span_20](end_span)[span_21](end_span)[span_22](end_span).</p>
+    
+<pre><code>// Vectorized Adelic Grounding via SIMD
+function Adelic_Sieve_Step(State_S, Target_T):
+    [span_23](start_span)// 1. Marilyn Fold O(1) residue extraction[span_23](end_span)
+    R_vec = Marilyn_Fold_SIMD(State_S, [5, 7, 53]) 
 
-    <div class="console" id="log">
-        > 系統等待指令...<br>
-        > 初始邊界條件 \(\mathcal{C}_0\) 已就緒。
-    </div>
+    [span_24](start_span)[span_25](start_span)// 2. XOR Resonance Check[span_24](end_span)[span_25](end_span)
+    Resonance = R_vec ^ Target_T 
 
-    <div id="signal" class="truth-signal">
-        IDENTITY REACHED: NP ≡ NP [GROUND STATE]
-    </div>
-</div>
+    [span_26](start_span)[span_27](start_span)// 3. Deterministic Extraction[span_26](end_span)[span_27](end_span)
+    if (Resonance == 0):
+        return "Grounded: Transition Accepted"
+    else:
+        return "Residue Rattle: Path Annihilated"
+</code></pre>
+</section>
 
-<script>
-    function log(msg, color = "#888") {
-        const l = document.getElementById('log');
-        l.innerHTML += `<div style="color:${color}">> ${msg}</div>`;
-        l.scrollTop = l.scrollHeight;
-    }
+<section>
+    <h2>5. Conclusion: Identity Grounding</h2>
+    <p>
+        [span_28](start_span)The final proof of $P=NP$ in this manual rests on the resolution of the sub-tour paradox and the attainment of global nullity[span_28](end_span). [span_29](start_span)[span_30](start_span)When the Adelic residual matches the target grounding, the Hamiltonian invariant is not "discovered"—it is the only signal that survives the arithmetic pressure of the Sentinels[span_29](end_span)[span_30](end_span).
+    </p>
+</section>
 
-    async function startGrounding() {
-        const input = document.getElementById('inputS').value;
-        const manifold = document.getElementById('manifold');
-        const signal = document.getElementById('signal');
-        const logPanel = document.getElementById('log');
-        
-        logPanel.innerHTML = "";
-        signal.style.display = "none";
-        manifold.innerHTML = "";
-        
-        log("啟動 Marilyn Fold 算子 \(\mathcal{F}\)...", "#3498db");
-        
-        // 模擬向下塌縮過程 (Bit-Peeling)
-        for (let i = 0; i < 20; i++) {
-            await new Promise(r => setTimeout(r, 100));
-            const h = Math.random() * 100;
-            const bar = document.createElement('div');
-            bar.className = 'bar';
-            bar.style.height = `${h}%`;
-            manifold.appendChild(bar);
-            if(i % 5 === 0) log(`正在消除算術摩擦... 2-adic valuation 層級: ${i*8}`);
-        }
-
-        log("套用三重模數篩選 (5, 7, 53)...", "#00ff41");
-        await new Promise(r => setTimeout(r, 500));
-        
-        log("檢測到全域虛無 (Global Nullity)。", "#00ff41");
-        log("座標系統塌縮完成：發現必然行路徑。", "#00ff41");
-        
-        signal.style.display = "block";
-        document.querySelector('.oracle-shell').style.borderColor = "#fff";
-    }
-</script>
-
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<footer>
+    <hr>
+    <p style="font-size: 0.8em; text-align: center; color: #777;">
+        &copy; 2026 Adelic Research Division | Project NP 祖宗坐哨 Grand Sentinel Framework
+    </p>
+</footer>
 
 </body>
 </html>
-        output.style.display = "block";
-
-        let options = [];
-        let tempR = R;
-        let powerOfTwo = 1n;
-        let bitDepth = 0;
 
         // Marilyn Fold: 位元剝離與 2-adic 賦值演繹
         while (tempR > 0n && tempR % 2n === 0n) {
