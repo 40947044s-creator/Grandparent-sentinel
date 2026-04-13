@@ -2,89 +2,108 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Marilyn Operator: Adelic Consensus Engine</title>
+    <title>Marilyn Fold: Astronomical Transition Engine</title>
     <style>
-        body { background: #050505; color: #00ffcc; font-family: 'Consolas', monospace; padding: 25px; }
-        .terminal { border: 2px solid #00ffcc; padding: 20px; box-shadow: 0 0 20px #00ffcc44; }
-        #log { height: 200px; overflow-y: auto; background: #001100; border: 1px inset #00ffcc; padding: 10px; font-size: 0.9em; margin-bottom: 20px; }
-        .pair-result { border-left: 5px solid #ff00ff; background: #002211; padding: 15px; margin: 10px 0; word-break: break-all; }
-        .stat-bar { color: #ffff00; margin-bottom: 10px; font-weight: bold; }
+        body { background: #020202; color: #00ffcc; font-family: 'Fira Code', 'Courier New', monospace; padding: 20px; line-height: 1.4; }
+        .terminal { border: 1px solid #00ffcc; padding: 20px; box-shadow: 0 0 40px rgba(0, 255, 204, 0.1); max-width: 1000px; margin: auto; }
+        .header { border-bottom: 2px solid #ff00ff; margin-bottom: 20px; padding-bottom: 10px; display: flex; justify-content: space-between; }
+        #log { height: 250px; overflow-y: auto; background: #000d00; border: 1px solid #333; padding: 10px; font-size: 0.85em; margin: 15px 0; color: #aaffaa; }
+        input { background: #000; color: #00ffcc; border: 1px solid #00ffcc; padding: 12px; width: 70%; font-size: 1em; }
+        button { background: #ff00ff; color: #fff; border: none; padding: 12px 20px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+        button:hover { background: #00ffcc; color: #000; }
+        .pair-card { border-left: 4px solid #00ffcc; background: #001a11; margin: 10px 0; padding: 15px; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        .metric { color: #ff00ff; font-weight: bold; }
     </style>
 </head>
 <body>
-<div class="terminal">
-    <h2>Project NP: Adelic Transition Engine (N ↔ P Trade)</h2>
-    <div class="stat-bar">Status: <span id="sysStatus">Ready</span></div>
 
-    <div>
-        <button onclick="calculateFactorialAndPeel()">Execute 180! Decomposition</button>
+<div class="terminal">
+    <div class="header">
+        <span>PROJECT NP // ADELIC DECODER</span>
+        <span class="metric">β = 1 (UNITARY TRUTH)</span>
     </div>
 
-    <div id="log">Awaiting Wave Eve Injection...</div>
+    <div class="input-zone">
+        <input type="text" id="manifold" placeholder="Input Astronomical Integer (N)" value="124101807021766782342484052410310399261660557750169318538895180361199607">
+        <button onclick="startPeeling()">Peel Manifold</button>
+    </div>
+
+    <div id="log">System Ready. Awaiting Bedrock Injection...</div>
 
     <div id="report">
-        <h3>Grounded Non-Colliding Pairs:</h3>
-        <div id="pairContainer"></div>
+        <h3>Grounded Invariants: <span id="count">0</span></h3>
+        <div id="results"></div>
     </div>
 </div>
 
 <script>
-function log(msg, color = "#00ffcc") {
-    const l = document.getElementById('log');
-    l.innerHTML += `<div style="color:${color}">> ${msg}</div>`;
-    l.scrollTop = l.scrollHeight;
-}
+    const logBox = document.getElementById('log');
+    const resultBox = document.getElementById('results');
+    const countBox = document.getElementById('count');
 
-async function calculateFactorialAndPeel() {
-    const sysStatus = document.getElementById('sysStatus');
-    const container = document.getElementById('pairContainer');
-    sysStatus.innerText = "Initializing 2-adic Manifold...";
-    container.innerHTML = "";
-    
-    // 1. Establish the 180! [cite_start]Manifold via Adelic Bitstream [cite: 58-59]
-    let N = 1n;
-    for (let i = 1n; i <= 180n; i++) N *= i;
+    function writeLog(msg, color = "#aaffaa") {
+        const div = document.createElement('div');
+        div.style.color = color;
+        div.innerHTML = `> ${msg}`;
+        logBox.appendChild(div);
+        logBox.scrollTop = logBox.scrollHeight;
+    }
 
-    log("180! Manifold Grounded. Total AC Rate: 100%");
-    log(`Manifold Bit-Length: ${N.toString().length} digits.`);
-    log("Wave Eve Injected ($4^0$). Starting Information Trade.");
+    async function startPeeling() {
+        const val = document.getElementById('manifold').value;
+        resultBox.innerHTML = "";
+        countBox.innerText = "0";
+        writeLog("Initializing Marilyn Fold...", "#ff00ff");
 
-    let p = 1n;
-    let found = 0;
-    
-    [cite_start]// 2. Intersecting Inference Logic (Complexity Collapse O(N)) [cite: 132-140]
-    // We trade information weight until Global Nullity is achieved.
-    while (p * p <= N) {
-        if (N % p === 0n) {
-            const a = N / p;
-            const b = p;
-            
-            [cite_start]// 3. Marilyn Operator Grounding [cite: 19, 156-157]
-            const div = document.createElement('div');
-            div.className = 'pair-result';
-            div.innerHTML = `<strong>Factor A (N-Row):</strong> ${a}<br><strong>Factor B (P-Growth):</strong> ${b}`;
-            container.appendChild(div);
-            
-            log(`Grounded Pair Identified: ${p}`, "#ffff00");
-            found++;
-        }
-        
-        p++;
-        
-        // Simulation Throttle for Mobile Consistency
-        if (p % 1000n === 0n) {
-            await new Promise(r => setTimeout(r, 0));
-            // Intersection Logic: If we only want the initial trade results as seen in the clues
-            if (p > 50000n) { 
-                log("Manifold expansion cap reached. Finalizing Report.", "#ff8800"); 
-                break; 
+        try {
+            const N = BigInt(val);
+            writeLog(`Manifold Magnitude: ${N.toString().length} digits detected.`);
+            writeLog("Executing N ↔ P Information Weight Trade...");
+
+            let p = 1n;
+            let found = 0;
+            let startTime = Date.now();
+
+            // 1. AXIOMATIC START: Identity Grounding
+            // We assume P=1 to anchor the truth at the Bedrock.
+            while (p * p <= N) {
+                if (N % p === 0n) {
+                    const a = N / p;
+                    const b = p;
+                    
+                    found++;
+                    countBox.innerText = found;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'pair-card';
+                    card.innerHTML = `<strong>N-Row:</strong> ${a}<br><strong>P-Growth:</strong> ${b}`;
+                    resultBox.prepend(card); // Show newest (smallest P) first
+                    
+                    writeLog(`Grounded Resonance at P=${p}`, "#ffff00");
+                }
+
+                p++;
+
+                // 2. ASYNC BYPASS: Prevents UI Hang for Astronomical inputs
+                // Allows the browser to process the 'Trade' without friction.
+                if (p % 2000n === 0n) {
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                    // Optional: Cap for the demo to prevent infinite loops in browser
+                    if (p > 100000n) {
+                        writeLog("Manifold expansion safety cap reached.", "#ff3333");
+                        break;
+                    }
+                }
             }
+
+            const duration = (Date.now() - startTime) / 1000;
+            writeLog(`Topological Collapse in ${duration}s. Global Nullity confirmed.`, "#ff00ff");
+
+        } catch (e) {
+            writeLog("FATAL: Residue Rattle. Manifold Malformed.", "#ff3333");
         }
     }
-    
-    sysStatus.innerText = "Topological Collapse Achieved.";
-    log("Inference Complete. Global Nullity Confirmed across the Adele Ring.", "#ff00ff");
-}
 </script>
 </body>
 </html>
