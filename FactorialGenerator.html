@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NP-Engine | Adelic Inference Terminal</title>
+    <style>
+        :root {
+            --cell-4: #00ff41; /* Quaternary Green */
+            --msb-gold: #ffcc00;
+            --void-bg: #050505;
+            --panel-border: #1a1a1a;
+            --neon-blue: #58a6ff;
+        }
+
+        body {
+            background-color: var(--void-bg);
+            color: var(--cell-4);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: auto 1fr auto;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Quaternary Header --- */
+        header {
+            grid-column: 1 / span 2;
+            border-bottom: 2px solid var(--panel-border);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, #0a0a0a 0%, #111 100%);
+        }
+
+        .engine-status {
+            font-size: 0.8rem;
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- Side Panel: Register State --- */
+        aside {
+            border-right: 1px solid var(--panel-border);
+            padding: 20px;
+            background: #080808;
+            font-size: 0.85rem;
+        }
+
+        .bit-cell {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin: 2px;
+            border: 1px solid #222;
+        }
+
+        .bit-active { background-color: var(--cell-4); box-shadow: 0 0 5px var(--cell-4); }
+        .bit-msb { border: 1px solid var(--msb-gold); }
+
+        /* --- Main Engine Viewport --- */
+        main {
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .manifold-viz {
+            border: 1px solid var(--panel-border);
+            padding: 20px;
+            background: rgba(0, 255, 65, 0.02);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        .code-block {
+            background: #000;
+            border: 1px solid #1a1a1a;
+            padding: 15px;
+            color: #d1d1d1;
+            position: relative;
+            font-size: 0.9rem;
+        }
+
+        .code-block::before {
+            content: "EXECUTION_LAYER::ARM64_NEON";
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--void-bg);
+            padding: 0 5px;
+            font-size: 0.7rem;
+            color: var(--neon-blue);
+        }
+
+        /* --- The Marilyn Fold Control --- */
+        .fold-interface {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .dial {
+            border: 1px solid var(--cell-4);
+            padding: 10px 20px;
+            cursor: crosshair;
+            transition: all 0.2s;
+        }
+
+        .dial:hover {
+            background: var(--cell-4);
+            color: #000;
+        }
+
+        h2 { color: var(--msb-gold); font-size: 1.2rem; text-transform: uppercase; }
+
+        footer {
+            grid-column: 1 / span 2;
+            border-top: 1px solid var(--panel-border);
+            padding: 5px 20px;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="engine-status">Identity: Project NP // Adelic Inference Generator</div>
+        <div>RADIX: 4 (Quaternary Cell)</div>
+    </header>
+
+    <aside>
+        <h2>Register S[64]</h2>
+        <p>MSB-Origin State:</p>
+        <div id="bit-grid">
+            </div>
+        <hr style="border: 0; border-top: 1px solid #222; margin: 20px 0;">
+        <div class="metadata">
+            VALUATION: 2-adic<br>
+            MODULI: [5, 7, 53]<br>
+            SENTINEL: M_61
+        </div>
+    </aside>
+
+    <main>
+        <div class="manifold-viz">
+            <h2>Marilyn Fold (F)</h2>
+            <p>Pressure propagation originating from MSB. Bit-peeling in $O(1)$ hardware latency.</p>
+            <div class="fold-interface">
+                <div class="dial" onclick="simulateFold()">INJECT BITSTREAM</div>
+                <div class="dial" onclick="resetState()">RESET MANIFOLD</div>
+            </div>
+        </div>
+
+        <div class="code-block">
+            <pre>
+<span style="color:#888">// 2-adic Deconvolution Logic</span>
+<span style="color:var(--neon-blue)">while</span> (State_S > Mersenne_Window) {
+    State_S = (State_S & Mersenne_Window) + (State_S >> 61);
+}
+<span style="color:#888">// Hardware Identity: NP ≡ N!</span></pre>
+        </div>
+
+        <div id="console-output" style="margin-top: 30px; color: #8b949e; font-size: 0.8rem;">
+            > Waiting for Injection...
+        </div>
+    </main>
+
+    <footer>
+        <span>Architecture: Isolated Quaternary Engine</span>
+        <span>Marilyn Hsiao | open-experiments.org</span>
+    </footer>
+
+    <script>
+        // UI Logic mimicking the C Adelic Generator
+        const grid = document.getElementById('bit-grid');
+        const consoleOut = document.getElementById('console-output');
+
+        function initGrid() {
+            grid.innerHTML = '';
+            for(let i=0; i<64; i++) {
+                const bit = document.createElement('div');
+                bit.className = 'bit-cell';
+                if(i === 0) bit.classList.add('bit-msb'); // MSB Focus
+                grid.appendChild(bit);
+            }
+        }
+
+        function simulateFold() {
+            const bits = document.querySelectorAll('.bit-cell');
+            consoleOut.innerHTML = "> Injecting Wave Eve Bit...<br>> Folding MSB Manifold...";
+            
+            bits.forEach((bit, idx) => {
+                setTimeout(() => {
+                    if(Math.random() > 0.7) bit.classList.add('bit-active');
+                }, idx * 10);
+            });
+
+            setTimeout(() => {
+                consoleOut.innerHTML += "<br>> Sieve Result: Mod(5,7,53) Grounded.<br>> IDENTITY_EXTRACTED.";
+            }, 1000);
+        }
+
+        function resetState() {
+            initGrid();
+            consoleOut.innerHTML = "> System Nullified.";
+        }
+
+        initGrid();
+    </script>
+</body>
+</html>
+
