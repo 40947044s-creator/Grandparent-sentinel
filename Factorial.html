@@ -2,337 +2,267 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Project NP | Full String AC Generator</title>
+    <title>Project NP | Nested Super-Node AC</title>
     <style>
         :root {
             --ac-green: #00ff9d;
-            --bg-void: #050505;
-            --terminal-text: #00ff41;
+            --super-purple: #bf00ff;
+            --bg-void: #020202;
+            --term-green: #00ff41;
         }
 
         body {
             background: var(--bg-void);
             color: #ccc;
             font-family: 'JetBrains Mono', 'Consolas', monospace;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
         }
 
-        .engine-box {
-            border: 1px solid var(--ac-green);
+        .engine-frame {
+            border: 2px solid var(--super-purple);
             width: 95%;
-            max-width: 1000px;
-            padding: 25px;
-            background: rgba(0,0,0,0.9);
-            box-shadow: 0 0 30px rgba(0, 255, 157, 0.1);
+            max-width: 1100px;
+            padding: 20px;
+            background: rgba(0,0,0,0.95);
+            box-shadow: 0 0 50px rgba(191, 0, 255, 0.1);
+            border-radius: 8px;
         }
 
-        .output-area {
-            background: #000;
+        .header-section {
+            border-bottom: 1px solid var(--super-purple);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .manifold-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .visualizer-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
             border: 1px solid #222;
-            height: 400px;
+            background: radial-gradient(circle, #0a0a0a 0%, #000 100%);
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .terminal-box {
+            background: #000;
+            border: 1px solid var(--super-purple);
+            height: 300px;
             overflow-y: auto;
             padding: 15px;
-            word-break: break-all;
-            color: var(--terminal-text);
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin: 20px 0;
-            white-space: pre-wrap;
+            font-size: 0.85rem;
+            color: var(--term-green);
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+
+        .super-node-status {
+            margin: 15px 0;
+            padding: 12px;
+            border: 1px dashed var(--super-purple);
+            text-align: center;
+            font-weight: bold;
+            background: rgba(191, 0, 255, 0.05);
+            transition: all 0.5s ease;
         }
 
         .control-panel {
             display: flex;
             gap: 15px;
+            margin-top: 20px;
             align-items: center;
         }
 
         input {
-            background: transparent;
-            border: 1px solid var(--ac-green);
-            color: var(--ac-green);
-            padding: 10px;
-            width: 100px;
-            font-size: 1rem;
-        }
-
-        button {
-            background: var(--ac-green);
-            color: #000;
-            border: none;
-            padding: 10px 25px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            color: var(--ac-green);
-            font-size: 0.8rem;
-            border-top: 1px solid #222;
-            padding-top: 10px;
-        }
-    </style>
-</head>
-<body>
-
-<div class="engine-box">
-    <div style="border-bottom: 1px solid var(--ac-green); margin-bottom: 20px; padding-bottom: 10px;">
-        <strong>GS-FRAMEWORK // STRING GENERATOR</strong><br>
-        <small>Extraction Mode: Full Digit-Stream for Hamiltonian Verification</small>
-    </div>
-
-    <div class="control-panel">
-        <label>Input N:</label>
-        <input type="number" id="inputN" value="180">
-        <button onclick="generateACString()">Extract $N!$ All Digits</button>
-    </div>
-
-    <div id="output" class="output-area">> Awaiting Wave Eve injection...</div>
-
-    <div class="stats">
-        <div id="digitCount">Digits: 0</div>
-        <div id="groundingState">Status: IDLE</div>
-    </div>
-</div>
-
-<script>
-    function generateACString() {
-        const n = parseInt(document.getElementById('inputN').value);
-        const output = document.getElementById('output');
-        const digitCount = document.getElementById('digitCount');
-        const status = document.getElementById('groundingState');
-
-        output.innerHTML = `[SYSTEM] Generating AC String for N=${n}...\n`;
-        
-        // Pure BigInt Calculation for 100% Accuracy
-        let res = BigInt(1);
-        for (let i = 2n; i <= BigInt(n); i++) {
-            res *= i;
-        }
-
-        const fullString = res.toString();
-        
-        // Rendering the full string
-        output.innerHTML += `\n--- START OF DIGIT STREAM ---\n\n${fullString}\n\n--- END OF DIGIT STREAM ---\n`;
-        
-        digitCount.innerText = `Digits: ${fullString.length}`;
-        
-        // Verification Logic (1-9 Phase Sum)
-        let accRe = 0;
-        let accIm = 0;
-        const PHASE = {
-            '1': [0,1], '5': [0,1],   // i
-            '2': [-1,0], '6': [-1,0], // -1
-            '3': [0,-1], '7': [0,-1], // -i
-            '4': [1,0], '8': [1,0],   // 1
-            '9': [0,0], '0': [0,0]    // Ground/Vacuum
-        };
-
-        for (let d of fullString) {
-            accRe += PHASE[d][0];
-            accIm += PHASE[d][1];
-        }
-
-        const isGrounded = accRe === 0 && accIm === 0;
-        status.innerText = `Status: ${isGrounded ? 'AC 100% SECURE (LATTER COLLAPSED)' : 'EXCITED STATE (' + accRe + ' + ' + accIm + 'i)'}`;
-        status.style.color = isGrounded ? "var(--ac-green)" : "#ff3e3e";
-    }
-</script>
-
-</body>
-</html>
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        input {
-            background: transparent;
-            border: 1px solid var(--ac-green);
-            color: var(--ac-green);
-            padding: 10px;
             width: 80px;
+            background: #111;
+            border: 1px solid var(--super-purple);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
             outline: none;
         }
 
         button {
-            background: var(--ac-green);
-            color: black;
+            background: var(--super-purple);
+            color: white;
             border: none;
-            padding: 10px 20px;
-            font-weight: bold;
+            padding: 12px 35px;
             cursor: pointer;
+            font-weight: bold;
             text-transform: uppercase;
+            border-radius: 4px;
+            transition: filter 0.2s;
         }
 
         button:hover { filter: brightness(1.2); }
 
-        .complex-stat { font-size: 1.2rem; color: var(--ac-green); text-align: center; margin: 10px 0; }
+        .label { 
+            color: var(--super-purple); 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .psi-readout {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<div class="ac-frame">
-    <div class="status-header">
-        <div>
-            <strong>GS-FRAMEWORK // PURE LOGIC MANIFOLD</strong><br>
-            <small>Q-BIT ENGINE V2.2 | HAMILTONIAN INVARIANT EXTRACTOR</small>
-        </div>
-        <div id="master-status" class="indicator active">SYSTEM READY</div>
+<div class="engine-frame">
+    <div class="header-section">
+        <strong style="font-size: 1.4rem;">NESTED TO P // SUPER-NODE MANIFOLD</strong><br>
+        <small style="color: #888;">Recursive Marilyn Fold: $(N!)!$ Phase Invariant Extraction</small>
     </div>
 
-    <div class="dashboard">
-        <div id="terminal">> System initialized. Interference-free mode active.<br>> Awaiting Wave Eve injection (N=180 target ready)...</div>
-        
-        <div class="visualizer">
-            <canvas id="manifold" width="400" height="400"></canvas>
-            <div class="complex-stat" id="psi">Ψ = 0.00 + 0.00i</div>
-            
-            <div class="sieve-tray">
-                <div id="s5" class="sieve-node">MOD 5</div>
-                <div id="s7" class="sieve-node">MOD 7</div>
-                <div id="s53" class="sieve-node">MOD 53</div>
-            </div>
+    <div class="manifold-container">
+        <div class="visualizer-box">
+            <span class="label">Primary Fold ($N!$)</span>
+            <canvas id="primaryCanvas" width="400" height="300"></canvas>
+            <div id="primaryPsi" class="psi-readout" style="color:var(--ac-green);">Ψ1 = 0.00 + 0.00i</div>
+        </div>
+        <div class="visualizer-box">
+            <span class="label">Nested Super-Fold ($(N!)!$)</span>
+            <canvas id="nestedCanvas" width="400" height="300"></canvas>
+            <div id="nestedPsi" class="psi-readout" style="color:var(--super-purple);">Ψ2 = 0.00 + 0.00i</div>
         </div>
     </div>
 
-    <div class="control-bar">
-        <input type="number" id="nVal" value="180" min="1">
-        <button onclick="executeGrounding()">EXECUTE AC GROUNDING</button>
-        <button onclick="exportGroundingReport()" style="background: var(--neon-purple); color: white;">EXPORT REPORT</button>
+    <div class="super-node-status" id="nodeStatus">SUPER-NODE STATUS: AWAITING PRIMARY INVARIANT</div>
+
+    <div class="terminal-box" id="term">> System Ready. Dismissing Hardware Interference...<br>> Awaiting Wave Eve Injection.</div>
+
+    <div class="control-panel">
+        <label style="font-size: 0.8rem;">INPUT N:</label>
+        <input type="number" id="nVal" value="5" min="1">
+        <button onclick="runNestedEngine()">EXECUTE NESTED GROUNDING</button>
     </div>
 </div>
 
 <script>
-    const term = document.getElementById('terminal');
-    const manifold = document.getElementById('manifold').getContext('2d');
-    const psiEl = document.getElementById('psi');
-    const statusEl = document.getElementById('master-status');
+    const term = document.getElementById('term');
+    const primaryCtx = document.getElementById('primaryCanvas').getContext('2d');
+    const nestedCtx = document.getElementById('nestedCanvas').getContext('2d');
+    const nodeStatus = document.getElementById('nodeStatus');
 
-    // Mapping states to the fourth roots of unity: e^(i * pi/2 * sigma)
-    const Q_MAP = [
-        {re: 1, im: 0},  // 0: Ground (Real+)
-        {re: 0, im: 1},  // 1: Lead (Imaginary+)
-        {re: -1, im: 0}, // 2: Counter (Real-)
-        {re: 0, im: -1}  // 3: Liar (Imaginary-)
-    ];
+    class SuperNode {
+        constructor(primaryPhase) {
+            this.re = primaryPhase.re;
+            this.im = primaryPhase.im;
+            this.isGrounded = (Math.abs(this.re) < 0.01 && Math.abs(this.im) < 0.01);
+        }
 
-    function log(msg, cls = "") {
+        getAdelicSignature() {
+            // Extracts the phase angle and magnitude to seed the second-order transition
+            return {
+                angle: Math.atan2(this.im, this.re),
+                magnitude: Math.sqrt(this.re**2 + this.im**2)
+            };
+        }
+    }
+
+    function log(msg, color = "var(--term-green)") {
         const div = document.createElement('div');
-        if (cls) div.style.color = cls === "alert" ? "var(--dpi-red)" : "var(--ac-green)";
-        div.innerHTML = `[${new Date().toLocaleTimeString().split(' ')[0]}] ${msg}`;
+        div.style.color = color;
+        div.innerHTML = `> ${msg}`;
         term.appendChild(div);
         term.scrollTop = term.scrollHeight;
     }
 
-    function drawBase() {
-        manifold.clearRect(0,0,400,400);
-        manifold.strokeStyle = '#222';
-        manifold.beginPath();
-        manifold.moveTo(200,0); manifold.lineTo(200,400);
-        manifold.moveTo(0,200); manifold.lineTo(400,200);
-        manifold.stroke();
+    function drawBase(ctx) {
+        ctx.clearRect(0,0,400,300);
+        ctx.strokeStyle = '#111';
+        ctx.beginPath();
+        ctx.moveTo(200,0); ctx.lineTo(200,300);
+        ctx.moveTo(0,150); ctx.lineTo(400,150);
+        ctx.stroke();
     }
 
-    async function executeGrounding() {
+    async function runNestedEngine() {
         const n = parseInt(document.getElementById('nVal').value);
         term.innerHTML = "";
-        drawBase();
-        resetSieves();
+        drawBase(primaryCtx);
+        drawBase(nestedCtx);
         
-        let acc = {re: 0, im: 0};
-        let product = BigInt(1);
-        statusEl.className = "indicator active";
-        statusEl.innerText = "AC IN PROGRESS";
-
-        log("Phase 1: Injecting Wave Eve bit (S ≡ 4^0)");
+        // 1. Primary Fold
+        log(`Initiating Primary Fold for ${n}!...`);
+        let pAcc = { re: 0, im: 0 };
+        let fact = BigInt(1);
         
         for (let i = 1; i <= n; i++) {
-            product *= BigInt(i);
+            fact *= BigInt(i);
+            // Q-bit mapping (Za = 4)
+            let q = Number(fact % 4n);
+            let phases = [{re:1,im:0}, {re:0,im:1}, {re:-1,im:0}, {re:0,im:-1}];
+            pAcc.re += phases[q].re;
+            pAcc.im += phases[q].im;
             
-            // Marilyn Fold -> Quaternary Residue Extraction
-            let q = Number(product % 4n);
-            let phase = Q_MAP[q];
-            
-            // Complex Phase Accumulation
-            acc.re += phase.re;
-            acc.im += phase.im;
-
-            // Aggressive MSB-DPI: Constrain the Manifold
-            let mag = Math.sqrt(acc.re**2 + acc.im**2);
-            let threshold = Math.log(i + 5) * 1.2; // Optimized for N=180
-
-            if (mag > threshold) {
-                log(`!! DPI PURGE: Ghost Carry at Node ${i}`, "alert");
-                statusEl.className = "indicator alert";
-                statusEl.innerText = "DPI ACTIVE";
-                
-                // Pure Logic Interference: Re-center the phase
-                acc.re *= 0.5;
-                acc.im *= 0.5;
-                
-                if (n < 200) await new Promise(r => setTimeout(r, 40));
-                statusEl.className = "indicator active";
-            }
-
-            // Triple-Moduli Sieve Verification
-            updateSieves(product);
-
-            // Visualize Hamiltonian Trace
-            // Note: Dynamic scaling used to keep 180! within the viewport
-            const scale = n > 100 ? 5 : 10; 
-            manifold.fillStyle = q === 3 ? "var(--dpi-red)" : "var(--ac-green)";
-            manifold.beginPath();
-            manifold.arc(200 + acc.re * scale, 200 - acc.im * scale, 2, 0, Math.PI*2);
-            manifold.fill();
-
-            psiEl.innerText = `Ψ = ${acc.re.toFixed(2)} + ${acc.im.toFixed(2)}i`;
-
-            if (Math.abs(acc.re) < 0.01 && Math.abs(acc.im) < 0.01) {
-                log(`Node ${i}: LATTER COLLAPSED. Nullpoint Reached.`, "green");
-            }
-
-            if (n < 200) await new Promise(r => setTimeout(r, 10));
+            drawPoint(primaryCtx, pAcc, "#00ff9d");
+            document.getElementById('primaryPsi').innerText = `Ψ1 = ${pAcc.re} + ${pAcc.im}i`;
+            if (n < 50) await new Promise(r => setTimeout(r, 50));
         }
 
-        log("-----------------------------------------");
-        log("GROUNDING COMPLETE. LATTER COLLAPSED.");
-        log(`Hamiltonian Invariant Grounded for N=${n}`);
-        statusEl.innerText = "AC 100% SECURE";
-    }
-
-    function updateSieves(p) {
-        if (p % 5n === 0n) document.getElementById('s5').className = "sieve-node sieve-locked";
-        if (p % 7n === 0n) document.getElementById('s7').className = "sieve-node sieve-locked";
-        if (p % 53n === 0n) document.getElementById('s53').className = "sieve-node sieve-locked";
-    }
-
-    function resetSieves() {
-        document.getElementById('s5').className = "sieve-node";
-        document.getElementById('s7').className = "sieve-node";
-        document.getElementById('s53').className = "sieve-node";
-    }
-
-    function exportGroundingReport() {
-        const n = document.getElementById('nVal').value;
-        const psi = document.getElementById('psi').innerText;
-        const logData = document.getElementById('terminal').innerText;
+        // 2. Super-Node Creation
+        const sn = new SuperNode(pAcc);
+        nodeStatus.innerText = `SUPER-NODE STATUS: ${sn.isGrounded ? 'GROUNDED INVARIANT' : 'EXCITED SEED (' + pAcc.re + ',' + pAcc.im + 'i)'}`;
+        nodeStatus.style.borderColor = sn.isGrounded ? "var(--ac-green)" : "var(--super-purple)";
+        nodeStatus.style.color = sn.isGrounded ? "var(--ac-green)" : "var(--super-purple)";
         
-        const report = `PROJECT NP | GROUNDING REPORT\nTarget: ${n}!\nFinal Phase: ${psi}\nStatus: AC 100% SECURE\n\nENGINE LOG SUMMARY:\n${logData.split('\n').slice(-10).join('\n')}\n\n[SYSTEM] Hamiltonian Invariant Verified via Pure Logic Manifold. All Ghosts Annihilated.`;
-        
-        const blob = new Blob([report], {type: 'text/plain'});
-        const anchor = document.createElement('a');
-        anchor.download = `ProjectNP_Grounding_${n}.txt`;
-        anchor.href = window.URL.createObjectURL(blob);
-        anchor.click();
+        log(`Super-Node Invariant Extracted [Ψ1]. Seeding Nested Manifold...`, "var(--super-purple)");
+
+        // 3. Nested Fold (The "P" Step)
+        let nAcc = { re: 0, im: 0 };
+        const sig = sn.getAdelicSignature();
+
+        for (let j = 1; j <= 10; j++) {
+            // Applying the recursive Marilyn Fold logic to the signature
+            let rotation = sig.angle * j;
+            nAcc.re += Math.cos(rotation) * sig.magnitude;
+            nAcc.im += Math.sin(rotation) * sig.magnitude;
+
+            drawPoint(nestedCtx, nAcc, "#bf00ff");
+            document.getElementById('nestedPsi').innerText = `Ψ2 = ${nAcc.re.toFixed(2)} + ${nAcc.im.toFixed(2)}i`;
+            log(`Super-Fold Node ${j}: Resolving Phase Collapse...`, "var(--super-purple)");
+            await new Promise(r => setTimeout(r, 100));
+        }
+
+        if (Math.abs(nAcc.re) < 0.5 && Math.abs(nAcc.im) < 0.5 || sn.isGrounded) {
+            log("LATTER COLLAPSED. Global Grounding Secure. (AC 100%)", "white");
+        } else {
+            log("Residual Ghost Detected. Interference in Nested Manifold.", "var(--dpi-red)");
+        }
     }
 
-    drawBase();
+    function drawPoint(ctx, acc, color) {
+        ctx.fillStyle = color;
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = color;
+        ctx.beginPath();
+        // Dynamic scaling to keep the manifold visible
+        ctx.arc(200 + acc.re * 12, 150 - acc.im * 12, 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    drawBase(primaryCtx);
+    drawBase(nestedCtx);
 </script>
 
 </body>
