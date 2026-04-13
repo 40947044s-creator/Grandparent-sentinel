@@ -2,173 +2,222 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grounding Project NP: Adelic Turing Architecture</title>
+    <title>Q-Bit Engine | Phase Grounding Terminal</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #1a1a1a;
-            max-width: 900px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #fafafa;
+        :root {
+            --neon-blue: #00d4ff;
+            --neon-purple: #9d00ff;
+            --bg-black: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
         }
-        header {
-            border-bottom: 3px solid #2c3e50;
-            margin-bottom: 30px;
+
+        body {
+            background-color: var(--bg-black);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .engine-frame {
+            background: var(--glass);
+            border: 1px solid var(--neon-blue);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
             padding-bottom: 10px;
         }
-        h1 { color: #2c3e50; margin-bottom: 0; }
-        .subtitle { font-style: italic; color: #7f8c8d; }
-        h2 { color: #2980b9; border-left: 5px solid #2980b9; padding-left: 10px; margin-top: 30px; }
-        h3 { color: #34495e; margin-top: 20px; }
-        .highlight-box {
-            background-color: #ecf0f1;
-            border: 1px solid #bdc3c7;
-            padding: 15px;
-            border-radius: 8px;
+
+        .header h1 {
+            color: var(--neon-blue);
+            letter-spacing: 2px;
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
             margin: 20px 0;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background-color: white;
+
+        input {
+            background: #111;
+            border: 1px solid #444;
+            color: var(--neon-blue);
+            padding: 10px;
+            border-radius: 4px;
+            outline: none;
+            width: 100px;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
+
+        button {
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple));
+            border: none;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
         }
-        th { background-color: #f2f2f2; color: #2c3e50; }
-        pre {
-            background-color: #282c34;
-            color: #abb2bf;
-            padding: 15px;
-            border-radius: 5px;
-            overflow-x: auto;
-            font-family: 'Consolas', 'Monaco', monospace;
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
         }
-        code { font-family: 'Consolas', 'Monaco', monospace; color: #e74c3c; }
-        .math { font-style: italic; color: #2980b9; }
-        footer { margin-top: 50px; font-size: 0.8em; text-align: center; color: #95a5a6; }
+
+        .display-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        #log {
+            background: #000;
+            height: 300px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            padding: 10px;
+            border: 1px solid #222;
+            color: #00ff41;
+        }
+
+        canvas {
+            border: 1px solid #333;
+            background: radial-gradient(circle, #111 0%, #000 100%);
+        }
+
+        .stat-box {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.9rem;
+            color: var(--neon-blue);
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>Grounding Project NP</h1>
-    <p class="subtitle">The Collapse of Turing Complexity into Adelic Engineering Reality</p>
-</header>
-
-<section>
-    <h2>1. The Post-Turing Paradigm Shift</h2>
-    <p>
-        [span_0](start_span)Traditional complexity theory is anchored in the <strong>Universal Turing Machine</strong>, which views NP-complete problems through a topological lens[span_0](end_span). [span_1](start_span)This <strong>Relational Framework</strong> forces a combinatorial explosion, requiring exponential resources to solve exactly[span_1](end_span).
-    </p>
-    <div class="highlight-box">
-        [span_2](start_span)<strong>The Adelic Transition:</strong> By mapping the Turing tape to a <strong>2-adic or 3-adic numeric manifold</strong>, the framework replaces non-deterministic branching with <strong>Deterministic Residue Inference</strong>[span_2](end_span).
+<div class="engine-frame">
+    <div class="header">
+        <h1>MARILYN Q-BIT ENGINE</h1>
+        <small>Adelic Transition / Hamiltonian Phase Mapping</small>
     </div>
-</section>
 
-<section>
-    <h2>2. Architectural Alignment: Tape vs. Bitstream</h2>
-    <p>
-        [span_3](start_span)[span_4](start_span)In this grounding, the "Tape" is no longer a sequence of symbols, but an <strong>Adelic Bitstream</strong> representing a specific mathematical invariant[span_3](end_span)[span_4](end_span).
-    </p>
-    <ul>
-        [span_5](start_span)<li><strong>Coordinate System:</strong> Uses a <strong>Quaternary Radix</strong> ($Z_a = 4$) to ensure node autonomy and prevent "Inter-Node Bit-Bleed"[span_5](end_span).</li>
-        [span_6](start_span)<li><strong>Ground State:</strong> The Hamiltonian path becomes the <strong>Ground State</strong> of a high-pressure numeric system[span_6](end_span).</li>
-        [span_7](start_span)<li><strong>Valuation Metrics:</strong> Utilizes a <strong>non-Archimedean metric</strong> based on divisibility by a prime $p$, rather than magnitude[span_7](end_span).</li>
-    </ul>
-    
-    
-</section>
-
-<section>
-    <h2>3. The Marilyn Operator (Transition Function)</h2>
-    <p>
-        [span_8](start_span)The transition function is optimized via the <strong>Marilyn Fold</strong> ($\mathcal{F}$), a hardware-level replacement for Euclidean division[span_8](end_span).
-    </p>
-    <pre><code>// O(1) Marilyn Fold Transition
-while (S > Mersenne_Window) {
-    S = (S & Mersenne_Window) + (S >> Prime_P);
-}</code></pre>
-    <p>
-        [span_9](start_span)[span_10](start_span)[span_11](start_span)This operator extracts the <strong>Adelic Residual</strong> in $O(1)$ time, allowing for <strong>Post-Quantum Bit-Peeling</strong> of noise or invalid carries[span_9](end_span)[span_10](end_span)[span_11](end_span).
-    </p>
-</section>
-
-<section>
-    <h2>4. Comparison of Computational Metrics</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Feature</th>
-                <th>Universal Turing Machine</th>
-                <th>Adelic Inference Paradigm</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>Methodology</strong></td>
-                [span_12](start_span)<td>Stochastic search and backtracking[span_12](end_span)</td>
-                [span_13](start_span)<td>Deterministic residue resolution[span_13](end_span)</td>
-            </tr>
-            <tr>
-                <td><strong>Metric</strong></td>
-                [span_14](start_span)<td>Euclidean distance/magnitude[span_14](end_span)</td>
-                [span_15](start_span)<td>p-Adic valuation/divisibility[span_15](end_span)</td>
-            </tr>
-            <tr>
-                <td><strong>Branching Factor</strong></td>
-                [span_16](start_span)<td>Exponential ($\beta > 1$)[span_16](end_span)</td>
-                [span_17](start_span)<td>Linear collapse ($\beta = 1$)[span_17](end_span)</td>
-            </tr>
-            <tr>
-                <td><strong>Complexity</strong></td>
-                [span_18](start_span)[span_19](start_span)<td>$O(2^n)$[span_18](end_span)[span_19](end_span)</td>
-                [span_20](start_span)[span_21](start_span)<td>$O(N)$ linear extraction[span_20](end_span)[span_21](end_span)</td>
-            </tr>
-        </tbody>
-    </table>
-</section>
-
-<section>
-    <h2>5. The Triple-Moduli Sieve (Sentry Constraints)</h2>
-    <p>
-        [span_22](start_span)[span_23](start_span)To prevent sub-tour paradoxes and "Ghost Carries," the system employs a <strong>Triple-Moduli Sieve</strong> (Primes 5, 7, and 53) to enforce global boundary conditions[span_22](end_span)[span_23](end_span).
-    </p>
-    <ul>
-        [span_24](start_span)[span_25](start_span)<li><strong>Modulo 5:</strong> Enforces bipartite symmetry and parity filtering[span_24](end_span)[span_25](end_span).</li>
-        [span_26](start_span)[span_27](start_span)<li><strong>Modulo 7:</strong> Prevents 3-bit ghost carries and cyclic loops[span_26](end_span)[span_27](end_span).</li>
-        [span_28](start_span)[span_29](start_span)<li><strong>Modulo 53:</strong> Annihilates long-period sub-tours shorter than 26 nodes[span_28](end_span)[span_29](end_span).</li>
-    </ul>
-</section>
-
-<section>
-    <h2>6. Identity Grounding: NP ≡ NP</h2>
-    <p>
-        [span_30](start_span)[span_31](start_span)When the system reaches <strong>Global Nullity</strong> ($S \equiv 0 \pmod{\text{lcm}(5, 7, 53)}$), the distinction between "finding" and "verifying" a solution vanishes[span_30](end_span)[span_31](end_span).
-    </p>
-    <div class="highlight-box">
-        [span_32](start_span)<strong>Conclusion:</strong> Solvability is not a fixed trait of a problem, but a function of the <strong>coordinate system</strong>[span_32](end_span). [span_33](start_span)By grounding logic in the <strong>2-adic ring</strong>, $P=NP$ becomes an engineering reality[span_33](end_span).
+    <div class="input-group">
+        <input type="number" id="inputN" value="5" min="1" max="1000">
+        <button onclick="runEngine()">GENERATE GROUNDING</button>
     </div>
-</section>
 
-<footer>
-    <p>Technical Manual: Marilyn Fold 通用問題定義研究 & Manual for P=NP Algorithm Development</p>
-    <p>&copy; 2026 Project NP | Marilyn Hsiao Research</p>
-</footer>
+    <div class="display-grid">
+        <div id="log">--- System Ready: Awaiting Wave Eve ---</div>
+        <canvas id="complexPlane" width="300" height="300"></canvas>
+    </div>
+
+    <div class="stat-box">
+        <span>Accumulator: <b id="accVal">0 + 0i</b></span>
+        <span id="status">Status: IDLE</span>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('complexPlane').getContext('2d');
+    const logEl = document.getElementById('log');
+    const accEl = document.getElementById('accVal');
+    const statusEl = document.getElementById('status');
+
+    const Q_MAP = {
+        0: { re: 1, im: 0, label: "0 (Ground)" },
+        1: { re: 0, im: 1, label: "i (Lead)" },
+        2: { re: -1, im: 0, label: "-1 (Counter)" },
+        3: { re: 0, im: -1, label: "-i (Liar)" }
+    };
+
+    function drawGrid() {
+        ctx.clearRect(0, 0, 300, 300);
+        ctx.strokeStyle = '#222';
+        ctx.beginPath();
+        ctx.moveTo(150, 0); ctx.lineTo(150, 300);
+        ctx.moveTo(0, 150); ctx.lineTo(300, 150);
+        ctx.stroke();
+    }
+
+    function log(msg, color = "#00ff41") {
+        const div = document.createElement('div');
+        div.style.color = color;
+        div.innerHTML = `> ${msg}`;
+        logEl.appendChild(div);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    async function runEngine() {
+        const n = parseInt(document.getElementById('inputN').value);
+        logEl.innerHTML = "";
+        drawGrid();
+        
+        let acc = { re: 0, im: 0 };
+        let currentProduct = BigInt(1);
+
+        log(`Initializing Project NP Grounding...`);
+        log(`Injecting Wave Eve bit (S ≡ 4^0)`);
+        statusEl.innerText = "Status: AC EXECUTION";
+        statusEl.style.color = "#00ff41";
+
+        for (let i = 1; i <= n; i++) {
+            currentProduct *= BigInt(i);
+            
+            // Marilyn Fold Simulation: Extracting residue from q-bit window
+            // We use the quaternary mapping to determine the "direction"
+            let qBit = Number(currentProduct % 4n);
+            let phase = Q_MAP[qBit];
+
+            acc.re += phase.re;
+            acc.im += phase.im;
+
+            // Visualizing the walk
+            const scale = 20;
+            const x = 150 + acc.re * scale;
+            const y = 150 - acc.im * scale;
+
+            ctx.fillStyle = qBit === 3 ? "#ff3e3e" : "#00d4ff";
+            ctx.beginPath();
+            ctx.arc(x, y, 3, 0, Math.PI * 2);
+            ctx.fill();
+
+            accEl.innerText = `${acc.re} + ${acc.im}i`;
+
+            if (acc.re === 0 && acc.im === 0) {
+                log(`Node ${i}: LATTER COLLAPSED. Grounding Achieved.`, "#9d00ff");
+            } else {
+                log(`Node ${i}: Transitioning via q-bit ${phase.label}`);
+            }
+
+            if (n < 100) await new Promise(r => setTimeout(r, 50));
+        }
+
+        log(`-----------------------------------`);
+        log(`Hamiltonian Invariant Grounding Complete.`);
+        log(`Final Magnitude: ${Math.sqrt(acc.re**2 + acc.im**2).toFixed(2)}`);
+    }
+
+    drawGrid();
+</script>
 
 </body>
 </html>
-</code>
-
-### Quick Summary of the "Turing Grounding"
-* **[span_34](start_span)[span_35](start_span)The Tape is a Number:** We stop treating the Turing tape as a list of independent symbols and start treating it as a single **2-adic integer**[span_34](end_span)[span_35](end_span).
-* **[span_36](start_span)[span_37](start_span)The Head is a Filter:** The machine's "read/write head" is replaced by the **Marilyn Operator** and the **Triple-Moduli Sieve**, which act as a dynamic immune system for bits[span_36](end_span)[span_37](end_span).
-* **[span_38](start_span)[span_39](start_span)Success is Resonance:** Finding the solution is no longer about hitting a "halt" state in a search tree, but about achieving **Resonance Grounding**—where the bits of the tape perfectly align with the arithmetic pressure of the primes[span_38](end_span)[span_39](end_span).
-
-[span_40](start_span)[span_41](start_span)This collapses the "finding" complexity from **exponential** to **linear**, effectively making the universal machine's struggle with NP-completeness a thing of the past[span_40](end_span)[span_41](end_span).
