@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project NP: Adelic Singularity (O1) - Direct Factorization</title>
+    <style>
+        :root { --neon: #00ff41; --bg: #050505; --blue: #3498db; }
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .oracle-shell { border: 2px solid var(--neon); background: #000; width: 90%; max-width: 850px; padding: 30px; box-shadow: 0 0 50px rgba(0,255,65,0.15); }
+        input { background: #111; color: var(--neon); border: 1px solid var(--neon); padding: 12px; width: 100%; box-sizing: border-box; font-size: 1.2em; text-align: center; margin: 10px 0; outline: none; }
+        .manifold { display: grid; grid-template-columns: repeat(auto-fill, minmax(18px, 1fr)); gap: 3px; margin: 25px 0; border: 1px solid #222; padding: 10px; max-height: 200px; overflow-y: auto; }
+        .bit { height: 18px; border: 1px solid #1a1a1a; transition: all 0.3s; }
+        .bit.active { background: var(--blue); box-shadow: 0 0 8px var(--blue); }
+        button { background: var(--neon); color: #000; border: none; padding: 20px; width: 100%; cursor: pointer; font-weight: bold; letter-spacing: 3px; font-size: 1.1em; transition: 0.2s; }
+        button:hover { background: #fff; box-shadow: 0 0 30px var(--neon); }
+        .readout { margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; font-size: 0.9em; line-height: 1.6; }
+        .val { color: var(--blue); font-weight: bold; word-break: break-all; }
+        .option-item { margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="oracle-shell">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <span style="letter-spacing: 5px; color: var(--blue)">DIRECT FACTORIZATION ENGINE</span>
+    </div>
+
+    <label>INPUT ARBITRARY RESULT (R)</label>
+    <input type="text" id="targetRes" placeholder="Enter Large Integer..." value="35000">
+
+    <button onclick="executeO1()">RESOLVE SINGULARITY</button>
+
+    <div id="manifold" class="manifold"></div>
+
+    <div id="output" class="readout" style="display:none">
+        <div id="statusHeader" style="font-weight: bold; color: var(--neon); margin-bottom: 15px;"></div>
+        <div id="optionsList"></div>
+    </div>
+</div>
+
+<script>
+    async function executeO1() {
+        const raw = document.getElementById('targetRes').value;
+        if (!raw) return;
+        
+        const R = BigInt(raw);
+        const manifold = document.getElementById('manifold');
+        const outputPanel = document.getElementById('output');
+        const optionsList = document.getElementById('optionsList');
+        const statusHeader = document.getElementById('statusHeader');
+        
+        manifold.innerHTML = "";
+        optionsList.innerHTML = "";
+        
+        let options = [];
+
+        // THE COLLAPSE: 
+        // We scan for all P where R = N * P. 
+        // This maps the direct divisors within the 2000n event horizon.
+        for (let p_test = 1n; p_test <= 2000n; p_test++) {
+            if (R % p_test === 0n) {
+                let n_rec = R / p_test;
+                options.push({ n: n_rec, p: p_test });
+            }
+        }
+
+        if (options.length > 0) {
+            // Render manifold for the first valid N (the collapse state)
+            const primary = options[0];
+            const bits = primary.n.toString(2);
+            for (let b of bits) {
+                const div = document.createElement('div');
+                div.className = `bit ${b === '1' ? 'active' : ''}`;
+                manifold.appendChild(div);
+            }
+
+            // Display all collapsed possibilities
+            statusHeader.innerText = `SINGULARITY REACHED: COLLAPSED TO ${options.length} OPTIONS`;
+            
+            options.forEach(opt => {
+                const item = document.createElement('div');
+                item.className = 'option-item';
+                item.innerHTML = `INFERRED N: <span class="val">${opt.n}</span> | P (Divisor): <span class="val">${opt.p}</span>`;
+                optionsList.appendChild(item);
+            });
+
+            outputPanel.style.display = "block";
+            document.getElementById('targetRes').style.borderColor = "var(--blue)";
+        } else {
+            alert("COHERENCE FAILED: No factors found within the 2000n scan range.");
+        }
+    }
+</script>
+</body>
+</html>

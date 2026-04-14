@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project NP: Adelic Singularity (O3) - Astronomical Synthesis</title>
+    <style>
+        :root { --neon: #ffaa00; --bg: #050505; --blue: #3498db; --green: #00ff41;}
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .oracle-shell { border: 2px solid var(--neon); background: #000; width: 95%; max-width: 900px; padding: 30px; box-shadow: 0 0 50px rgba(255,170,0,0.15); }
+        .control-panel { display: flex; gap: 10px; margin: 15px 0; background: #111; padding: 15px; border: 1px solid #333; }
+        .control-group { display: flex; flex-direction: column; flex: 1; }
+        label { font-size: 0.8em; margin-bottom: 5px; color: #888; letter-spacing: 1px; }
+        input { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px; box-sizing: border-box; font-size: 1.1em; text-align: center; outline: none; }
+        textarea { background: #000; color: var(--green); border: 1px solid #333; padding: 10px; width: 100%; height: 80px; font-family: monospace; font-size: 0.9em; resize: vertical; margin-bottom: 15px; outline: none; word-break: break-all; }
+        .manifold { display: flex; flex-wrap: wrap; gap: 1px; margin: 10px 0; border: 1px solid #222; padding: 5px; max-height: 300px; overflow-y: auto; background: #0a0a0a; }
+        .bit { width: 8px; height: 8px; background: #111; }
+        .bit.active { background: var(--blue); box-shadow: 0 0 3px var(--blue); }
+        button { background: var(--neon); color: #000; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; letter-spacing: 2px; font-size: 1.1em; transition: 0.2s; margin-top: 10px;}
+        button:hover { background: #fff; box-shadow: 0 0 30px var(--neon); }
+        .readout { margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; font-size: 0.9em; line-height: 1.6; }
+        .val { color: var(--blue); font-weight: bold; }
+        .perf { color: var(--green); font-size: 0.85em; }
+    </style>
+</head>
+<body>
+
+<div class="oracle-shell">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <span style="letter-spacing: 5px; color: var(--neon)">ASTRONOMICAL SYNTHESIS ENGINE</span>
+    </div>
+
+    <div class="control-panel">
+        <div class="control-group">
+            <label>N COMPLEXITY (Bit Length)</label>
+            <input type="number" id="bitLength" value="4096" step="512"> 
+        </div>
+        <div class="control-group">
+            <label>HIDDEN P (Transition Operator)</label>
+            <input type="number" id="hiddenP" value="137" max="2000"> 
+        </div>
+    </div>
+
+    <button onclick="synthesizeAndResolve()">SYNTHESIZE R & RESOLVE</button>
+
+    <div class="readout">
+        <label>SYNTHESIZED R (Decimal Output)</label>
+        <textarea id="targetRes" readonly placeholder="Awaiting synthesis..."></textarea>
+    </div>
+
+    <div id="manifold" class="manifold"></div>
+
+    <div id="output" class="readout" style="display:none">
+        <div id="statusHeader" style="font-weight: bold; color: var(--neon); margin-bottom: 10px;"></div>
+        <div id="perfMetrics" class="perf"></div>
+    </div>
+</div>
+
+<script>
+    // Generates a massive random BigInt of a specific bit length
+    function generateMassiveState(bits) {
+        let hexString = '1'; // Ensure highest bit is set to maintain requested length
+        const hexChars = "0123456789ABCDEF";
+        const numHexDigits = Math.floor((bits - 1) / 4);
+        
+        for (let i = 0; i < numHexDigits; i++) {
+            hexString += hexChars[Math.floor(Math.random() * 16)];
+        }
+        return BigInt("0x" + hexString);
+    }
+
+    async function synthesizeAndResolve() {
+        const bitLen = parseInt(document.getElementById('bitLength').value);
+        const hiddenP = BigInt(document.getElementById('hiddenP').value);
+        
+        if (hiddenP > 2000n) {
+            alert("Hidden P must be within your 2000n scan limit to successfully resolve.");
+            return;
+        }
+
+        const manifold = document.getElementById('manifold');
+        const outputPanel = document.getElementById('output');
+        const statusHeader = document.getElementById('statusHeader');
+        const perfMetrics = document.getElementById('perfMetrics');
+        const textArea = document.getElementById('targetRes');
+
+        manifold.innerHTML = "";
+        outputPanel.style.display = "none";
+        textArea.value = "Generating astronomical state...";
+
+        // Yield to let UI update
+        await new Promise(r => setTimeout(r, 50));
+
+        // 1. SYNTHESIS PHASE
+        const t0_synth = performance.now();
+        const N_state = generateMassiveState(bitLen);
+        const R = N_state * hiddenP; // The Astronomical Target
+        const t1_synth = performance.now();
+
+        textArea.value = R.toString();
+
+        // 2. RESOLUTION PHASE (The Stress Test)
+        const t0_resolve = performance.now();
+        let valid_n = null;
+        let valid_p = null;
+
+        for (let p_test = 1n; p_test <= 2000n; p_test++) {
+            if (R % p_test === 0n) {
+                valid_n = R / p_test;
+                valid_p = p_test;
+                break; // Stop at first coherence for UI survival
+            }
+        }
+        const t1_resolve = performance.now();
+
+        // 3. RENDER PHASE (The DOM Stress Test)
+        if (valid_n !== null) {
+            const t0_render = performance.now();
+            
+            // To prevent total browser crash, we render directly to a string and use innerHTML
+            // appending thousands of nodes individually is too slow.
+            const bits = valid_n.toString(2);
+            let htmlBuffer = "";
+            for (let i = 0; i < bits.length; i++) {
+                htmlBuffer += `<div class="bit ${bits[i] === '1' ? 'active' : ''}"></div>`;
+            }
+            manifold.innerHTML = htmlBuffer;
+            
+            const t1_render = performance.now();
+
+            statusHeader.innerText = `SINGULARITY RESOLVED: P = ${valid_p}`;
+            perfMetrics.innerHTML = `
+                Synthesis Time: ${(t1_synth - t0_synth).toFixed(2)} ms<br>
+                Math Resolution Time: ${(t1_resolve - t0_resolve).toFixed(2)} ms<br>
+                Manifold Render Time (${bits.length} bits): ${(t1_render - t0_render).toFixed(2)} ms
+            `;
+            outputPanel.style.display = "block";
+            
+        } else {
+            statusHeader.innerText = "COHERENCE FAILED";
+            outputPanel.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>
