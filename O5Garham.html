@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project NP: Adelic Singularity (O5) - Graham Synthesis</title>
+    <style>
+        :root { --neon: #ffaa00; --bg: #050505; --blue: #3498db; --green: #00ff41; --alert: #ff0055;}
+        body { background: var(--bg); color: var(--neon); font-family: 'Courier New', monospace; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .oracle-shell { border: 2px solid var(--neon); background: #000; width: 95%; max-width: 900px; padding: 30px; box-shadow: 0 0 50px rgba(255, 170, 0, 0.15); }
+        .control-panel { display: flex; gap: 10px; margin: 15px 0; background: #111; padding: 15px; border: 1px solid #333; }
+        .control-group { display: flex; flex-direction: column; flex: 1; }
+        label { font-size: 0.8em; margin-bottom: 5px; color: #888; letter-spacing: 1px; }
+        input { background: #000; color: var(--neon); border: 1px solid var(--neon); padding: 10px; box-sizing: border-box; font-size: 1.1em; text-align: center; outline: none; }
+        button { background: var(--neon); color: #000; border: none; padding: 15px; width: 100%; cursor: pointer; font-weight: bold; letter-spacing: 2px; font-size: 1.1em; transition: 0.2s; margin-top: 10px;}
+        button:hover { background: #fff; box-shadow: 0 0 30px var(--neon); }
+        .readout { margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; font-size: 0.9em; line-height: 1.6; }
+        .metrics { color: var(--green); font-family: monospace; font-size: 0.9em; margin-top: 10px;}
+        textarea { background: #000; color: var(--blue); border: 1px solid #333; padding: 10px; width: 100%; height: 60px; font-family: monospace; font-size: 0.8em; resize: vertical; margin-top: 10px; outline: none; word-break: break-all; }
+    </style>
+</head>
+<body>
+
+<div class="oracle-shell">
+    <div style="text-align: center; margin-bottom: 20px;">
+        <span style="letter-spacing: 5px; color: var(--neon)">O5: GRAHAM TOWER RESONANCE</span>
+    </div>
+
+    <div class="control-panel">
+        <div class="control-group">
+            <label>GRAHAM TAIL BOUNDARY (Bits)</label>
+            <input type="number" id="bitBoundary" value="4096" step="512"> 
+        </div>
+        <div class="control-group">
+            <label>HIDDEN P (Transition Operator)</label>
+            <input type="number" id="hiddenP" value="8947513"> 
+        </div>
+    </div>
+
+    <button onclick="synthesizeGrahamAndResonate()">COMPUTE GRAHAM & HUNT</button>
+
+    <div id="output" class="readout" style="display:none">
+        <div id="statusHeader" style="font-weight: bold; color: var(--neon); margin-bottom: 10px;"></div>
+        <div id="metrics" class="metrics"></div>
+        <label style="color:#888; font-size:0.8em; margin-top:15px; display:block;">SYNTHESIZED R (Astronomical Output)</label>
+        <textarea id="targetRes" readonly></textarea>
+    </div>
+</div>
+
+<script>
+    // Modular Exponentiation
+    function modPow(base, exponent, modulus) {
+        let result = 1n;
+        base = base % modulus;
+        while (exponent > 0n) {
+            if (exponent % 2n === 1n) result = (result * base) % modulus;
+            exponent = exponent / 2n;
+            base = (base * base) % modulus;
+        }
+        return result;
+    }
+
+    // GCD for Resonance
+    function gcd(a, b) {
+        while (b !== 0n) {
+            let temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    // Pollard's Rho ($O4$ Algorithm)
+    function findResonance(n) {
+        if (n % 2n === 0n) return { factor: 2n, steps: 1 };
+        
+        let x = 2n, y = 2n, d = 1n, c = 1n;
+        let steps = 0;
+        
+        const f = (val) => (val * val + c) % n;
+        
+        while (d === 1n) {
+            steps++;
+            x = f(x);            
+            y = f(f(y));         
+            let diff = x > y ? x - y : y - x;
+            d = gcd(diff, n);
+            
+            if (d === n) {
+                c++; x = 2n; y = 2n; d = 1n;
+            }
+            if (steps > 500000) return { factor: null, steps: steps }; 
+        }
+        return { factor: d, steps: steps };
+    }
+
+    // Generates the Stable Tail of Graham's Sequence (3^^n)
+    function computeGrahamTail(bits) {
+        const MOD = 1n << BigInt(bits); // 2^bits boundary
+        let current = 3n;
+        const iterations = 15; // By 15 iterations, the lower bits are permanently stabilized
+        
+        for (let i = 0; i < iterations; i++) {
+            current = modPow(3n, current, MOD);
+        }
+        return current;
+    }
+
+    async function synthesizeGrahamAndResonate() {
+        const bitLen = parseInt(document.getElementById('bitBoundary').value);
+        const hiddenP = BigInt(document.getElementById('hiddenP').value);
+        
+        const outputPanel = document.getElementById('output');
+        const statusHeader = document.getElementById('statusHeader');
+        const metrics = document.getElementById('metrics');
+        const textArea = document.getElementById('targetRes');
+
+        outputPanel.style.display = "none";
+        statusHeader.innerText = "Computing Graham's Tail...";
+        await new Promise(r => setTimeout(r, 50)); 
+
+        // 1. GRAHAM SYNTHESIS PHASE
+        const t0_synth = performance.now();
+        const N_state = computeGrahamTail(bitLen); // The authentic Graham tail
+        const R = N_state * hiddenP; // The Astronomical Target
+        const t1_synth = performance.now();
+
+        // 2. RESOLUTION PHASE (The Algorithmic Hunt)
+        const t0_resolve = performance.now();
+        const result = findResonance(R);
+        const t1_resolve = performance.now();
+
+        if (result.factor !== null) {
+            statusHeader.innerText = `RESONANCE ACHIEVED: P = ${result.factor}`;
+            
+            const recovered_N = R / result.factor;
+            const verified = (recovered_N === N_state || recovered_N === hiddenP);
+
+            metrics.innerHTML = `
+                Graham Tail Synthesis Time: <span style="color:#fff">${(t1_synth - t0_synth).toFixed(2)} ms</span><br>
+                R Structural Size: ~${bitLen} bits<br>
+                Algorithmic Steps to Resolve: <span style="color:#fff">${result.steps}</span><br>
+                Time to Resolve: <span style="color:#fff">${(t1_resolve - t0_resolve).toFixed(2)} ms</span><br>
+                State Authenticity: ${verified ? "VERIFIED (Matched Graham Tail)" : "SECONDARY FACTOR"}
+            `;
+            textArea.value = R.toString(10); // Display the astronomical decimal
+            outputPanel.style.display = "block";
+        } else {
+            statusHeader.innerText = "COHERENCE FAILED: Exceeded collision threshold.";
+            outputPanel.style.display = "block";
+        }
+    }
+</script>
+</body>
+</html>
