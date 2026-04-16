@@ -75,43 +75,43 @@ async function runGroundLawAudit() {
         const csvText = await response.text();
         const rows = csvText.split('\n').slice(1); // Strip the header
 
+        let batchHtml = ""; // Memory buffer for the build
+
         for (let row of rows) {
             if (!isRunning) return;
             const cols = row.split(',');
             if (cols.length < 3) continue;
 
-            // THE GROUND LAW SURGERY
-            const t = parseFloat(cols[0]); // Time (BJD)
-            const F = parseFloat(cols[7]); // Raw Flux (Brightness)
-
+            const t = parseFloat(cols[0]); 
+            const F = parseFloat(cols[7]); 
             if (isNaN(t) || isNaN(F)) continue;
 
-            // The Marilyn Fold (O1 Complexity)
+            // THE GROUND LAW SURGERY (O1 - Remains Cold/Fast)
             const R_phase = Math.floor(t * 1000) % MODULUS;
             const I_phase = Math.floor(t * 1000 / MODULUS);
 
-            // Dynamic Inference
             processedCount++;
             rollingFluxSum += F;
             const medianInference = rollingFluxSum / processedCount;
-            const isTransit = (F < medianInference * 0.998); // 0.2% drop threshold
+            const isTransit = (F < medianInference * 0.998);
 
-            const div = document.createElement('div');
-            div.className = "audit-entry";
-            if (isTransit) div.className += " glow-residue";
+            // Add to Batch instead of DOM
+            const glowClass = isTransit ? "glow-residue" : "";
+            batchHtml += `
+                <div class="audit-entry ${glowClass}">
+                    <strong>Photon ${globalIndex}:</strong> Phase ${R_phase}<br>
+                    <span>&gt; Flux: ${F.toFixed(2)} | AC: ${isTransit ? 'TRANSIT ✓' : 'STABLE'}</span>
+                </div>`;
 
-            div.innerHTML = `
-                <strong>Photon ${globalIndex}:</strong> Phase ${R_phase}<br>
-                <span>&gt; Flux: ${F.toFixed(2)} | AC: ${isTransit ? 'TRANSIT ✓' : 'STABLE'}</span>
-            `;
-
-            output.appendChild(div);
             globalIndex++;
-            countEl.innerText = globalIndex;
 
-            // Hardware Yield
-            if (globalIndex % 20 === 0) await new Promise(r => requestAnimationFrame(r));
-            if (output.childNodes.length > 50) output.removeChild(output.firstChild);
+            // Only update the screen every 25 bits
+            if (globalIndex % 25 === 0) {
+                output.innerHTML = batchHtml; // Total rewrite is faster than append for batch
+                countEl.innerText = globalIndex;
+                batchHtml = ""; // Clear buffer
+                await new Promise(r => requestAnimationFrame(r)); // Hardware Sync
+            }
         }
     } catch (e) {
         statusEl.innerHTML = "LATTICE SEVERED";
