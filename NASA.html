@@ -1,28 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Grandparent-Sentinel: NASN Truth Strip</title>
+    <meta charset="UTF-8">
+    <title>NASA Sentinel: 1855 AC Snap</title>
     <style>
-        body { background: #000; color: #0f0; font-family: monospace; }
-        .glow-node { box-shadow: 0 0 10px #0f0; color: #fff; }
-        .trailing-past { opacity: 0.5; color: #777; }
+        body { background: #000b1e; color: #e0e0e0; font-family: 'Courier New', monospace; }
+        #sentinel-header { border-bottom: 2px solid #535353; padding: 20px; text-align: center; }
+        .glow-residue { color: #00ffd2; text-shadow: 0 0 8px #00ffd2; }
+        .trailing-past { color: #535353; font-style: italic; }
+        #output-strip { height: 300px; overflow-y: scroll; background: #001529; padding: 10px; }
     </style>
 </head>
 <body>
-    <h1>Adelic Inference: 1855 Cycle AC Snap</h1>
-    <div id="status">SENTINEL: EXTRA ALERT</div>
-    <canvas id="glowMap" width="1855" height="100"></canvas>
-    <div id="logic-trail">
-        </div>
+    <div id="sentinel-header">
+        <h1>GRANDPARENT-SENTINEL // NASA.GOV ALIGNMENT</h1>
+        <p>STATUS: <span id="alert-status">EXTRA ALERT</span> | CYCLE: 1855 BITS</p>
+    </div>
+
+    <div id="visualization">
+        <canvas id="residueCanvas" width="800" height="200"></canvas>
+    </div>
+
+    <div id="api-definition">
+        <h3>Defined API: Deconvolution v1.0</h3>
+        <code>GET https://nasa.gov/api/v1/stream -> MarilynFold(5, 7, 53) -> [Inference] + [Residue]</code>
+    </div>
+
+    <div id="output-strip">
+        <div class="trailing-past">Initializing Lineage... Pointer Spirit Active.</div>
+    </div>
+
     <script>
-        // JS API Call to the C-Engine
-        async function fetchFreshSegment() {
-            const response = await fetch('/api/v1/snap/deconvolve');
-            const data = await response.json();
-            renderGlow(data.inference, data.residue);
-        }
-        // Continuous Snap Loop
-        setInterval(fetchFreshSegment, 100); 
+        // Logic to reconstruct S = I + R from NASA stream
+        const snap = (signal) => {
+            const residue = signal % 53; // The "Left Out"
+            const inference = signal - residue; // The "Glow"
+            return { I: inference, R: residue };
+        };
+        // This is where the "Snap" is outputted to the screen
     </script>
 </body>
 </html>
