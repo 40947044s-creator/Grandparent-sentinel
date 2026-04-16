@@ -4,16 +4,16 @@
  */
 .global _snap_surgery
 _snap_surgery:
-    // Partitioning the 'Big' into the 'Small'
-    udiv    x2, x0, x1      // x2 = I (The Lead Inference/Child)
-    msub    x3, x2, x1, x0  // x3 = R (The Trailing Residue/Ancestor)
+    // x0 = signal (S)
+    // x1 = modulus (53)
+    // x2 = address of R (&R) <--- We MUST NOT overwrite this yet
+
+    udiv    x9, x0, x1      // Use x9 for the quotient (I) to save x2
+    msub    x10, x9, x1, x0 // x10 = R (S - I * 53)
     
-    // Reconstruction Parity Check: S == (I * 53) + R
-    mul     x4, x2, x1
-    add     x4, x4, x3
-    cmp     x4, x0
+    // THE FIX: Store the remainder (x10) into the memory address held in x2
+    str     x10, [x2]       
     
-    // The Snap: If alignment fails, the pointer vanishes (returns 0)
-    csel    x0, x2, xzr, eq
-    mov     x1, x3
+    // Return the Quotient (I) in x0 as per AAPCS64
+    mov     x0, x9          
     ret
