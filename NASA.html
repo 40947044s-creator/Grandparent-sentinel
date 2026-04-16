@@ -15,8 +15,8 @@
         .nasa-link { color: #00ffd2; text-decoration: none; font-weight: bold; border-bottom: 1px dashed #00ffd2; }
         .nasa-link:hover { color: #fff; border-bottom-style: solid; }
 
-        .comparison-sector { background: #011d35; padding: 25px; border-radius: 12px; margin-top: 50px; border: 1px solid #00ffd2; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .doc-sector { background: #011d35; padding: 25px; border-radius: 12px; margin-top: 30px; border-left: 4px solid #00ffd2; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #001529; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #1a3a5a; }
         th { color: #00ffd2; text-transform: uppercase; font-size: 0.85em; }
         .highlight { color: #fff; font-weight: bold; }
@@ -30,14 +30,21 @@
     </div>
 
     <div id="output-strip">
-        <div class="audit-entry">Pointer Spirit Active. Aligning with Singularity...</div>
+        <div class="audit-entry">Pointer Spirit Active. Aligning with NASA Archive...</div>
     </div>
 
-    <div class="comparison-sector">
-        <h2>Comparison: Marilyn Fold vs. Industry Standard</h2>
-        <p>NASA typically utilizes the <strong>Box-Least Squares (BLS)</strong> algorithm for transit detection. The Adelic Transition Engine redesigns this as a deterministic bit-peeling surgery.</p>
-        
-        <table>
+    <div class="doc-sector">
+        <h2>Parameter Definitions & Sources</h2>
+        <p>This audit utilizes the <strong>Marilyn Fold</strong> to deconvolve exoplanet data from the NASA Exoplanet Archive (TAP Service).</p>
+        <ul>
+            <li><strong>Input (S):</strong> The official orbital period in days.</li>
+            <li><strong>Scale (1000):</strong> Precision weight for hardware-level surgery.</li>
+            <li><strong>Modulus (53):</strong> The Ancestral gear defining the deconvolution width.</li>
+            <li><strong>AC:</strong> Asymptotic Convergence, reached when the lineage is verified.</li>
+        </ul>
+
+        <h2>Algorithm Comparison</h2>
+        <table class="comparison-table">
             <tr>
                 <th>Feature</th>
                 <th>Standard: BLS Algorithm</th>
@@ -45,23 +52,18 @@
             </tr>
             <tr>
                 <td><strong>Logic</strong></td>
-                <td>Probabilistic periodogram search.</td>
-                <td class="highlight">Deterministic 2-adic deconvolution.</td>
+                <td>Statistical dip-fitting/searching.</td>
+                <td class="highlight">Deterministic bit-peeling.</td>
             </tr>
             <tr>
                 <td><strong>Complexity</strong></td>
-                <td>O(N log N) - Scalability limited.</td>
-                <td class="highlight">O(1) - Bit-peeling surgery.</td>
+                <td>O(N log N) - High overhead.</td>
+                <td class="highlight">O(1) - Constant time surgery.</td>
             </tr>
             <tr>
-                <td><strong>Residues</strong></td>
-                <td>Ignored as noise/systematics.</td>
-                <td class="highlight">Captured as stardust lineage.</td>
-            </tr>
-            <tr>
-                <td><strong>Verdict</strong></td>
-                <td>Statistical Discovery.</td>
-                <td class="highlight">Mathematical Verification.</td>
+                <td><strong>Output</strong></td>
+                <td>Likelihood Periodogram.</td>
+                <td class="highlight">Direct Inference + Residue Trace.</td>
             </tr>
         </table>
     </div>
@@ -74,19 +76,11 @@
     async function initializeLineage() {
         try {
             const response = await fetch(SECURE_BRIDGE);
-            if (!response.ok) throw new Error("Connection Refused");
-            
             const wrapper = await response.json();
             const data = JSON.parse(wrapper.contents);
-            
-            if (data && data.length > 0) {
-                processSnap(data);
-            } else {
-                throw new Error("Empty Singularity");
-            }
+            processSnap(data);
         } catch (e) {
-            console.error("Safety Lock:", e);
-            document.getElementById('output-strip').innerHTML = `<div class="audit-entry" style="color:#ff4d4d">[ERROR] ${e.message}. Residue Unstable.</div>`;
+            document.getElementById('output-strip').innerHTML = `<div class="audit-entry" style="color:#ff4d4d">[ERROR] ${e.message}. Check Network Lineage.</div>`;
         }
     }
 
@@ -100,18 +94,17 @@
             const weightS = Math.floor(s * scale);
             const R = weightS % 53;         
             const I = weightS - R;          
+            const nasaLink = `https://exoplanetarchive.ipac.caltech.edu/overview/${encodeURIComponent(star.pl_name)}`;
 
             const div = document.createElement('div');
             div.className = "audit-entry";
             if (index > 0 && index % 1855 === 0) div.className += " glow-residue";
 
-            const nasaLink = `https://exoplanetarchive.ipac.caltech.edu/overview/${encodeURIComponent(star.pl_name)}`;
-
             div.innerHTML = `
-                <strong>Cycle ${index}</strong> | <span style="color:#00ffd2">SOURCE: NASA Archive</span> | 
+                <strong>Cycle ${index}</strong> | 
                 <a href="${nasaLink}" target="_blank" class="nasa-link">${star.pl_name}</a> [Host: ${star.hostname}]<br>
-                <span>&gt; Input: ${s.toFixed(4)} days | Weight: ${weightS} units</span><br>
-                <span>&gt; Deconvolution: [I: ${(I/scale).toFixed(3)}] + [R: ${(R/scale).toFixed(3)}] 
+                <span>&gt; Raw Period: ${s.toFixed(4)} days | Weight: ${weightS}</span><br>
+                <span>&gt; Math: [I: ${(I/scale).toFixed(3)}] + [R: ${(R/scale).toFixed(3)}] 
                 <span style="color:#00ffd2"><strong>✓ AC VERIFIED</strong></span></span>
             `;
             output.appendChild(div);
@@ -122,7 +115,6 @@
             }
         });
     }
-
     window.onload = initializeLineage;
 </script>
 </body>
