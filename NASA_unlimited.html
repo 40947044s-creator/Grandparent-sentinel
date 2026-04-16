@@ -21,11 +21,11 @@
     <div class="status-bar">
         <span>LATTICE: <span id="alert-status" class="status-val">INITIALIZING</span></span>
         <span>BITS: <span id="bit-count" class="status-val">0</span></span>
-        <span>AC: <span id="ac-stable" class="status-val">STABLE</span></span>
+        <span>STABILITY: <span class="status-val">O(1) AC</span></span>
     </div>
     <div id="output-strip"></div>
     <div class="doc-sector">
-        <strong>$S = (I \times 53) + R$</strong> | Deconvolving Kepler-22 Photons @ O(1) Complexity
+        <strong>$S = (I \times 53) + R$</strong> | Objective Truth via 2-adic Deconvolution
     </div>
 </div>
 
@@ -40,12 +40,14 @@
         const countEl = document.getElementById('bit-count');
         const statusEl = document.getElementById('alert-status');
 
-        // FIXED LINKAGE: Using the most stable Kepler lightcurve entry point
+        // STABLE TARGET & PROXY
         const RAW_URL = "https://exoplanetarchive.ipac.caltech.edu/data/KeplerData/010/010593/010593626/lightcurve/kplr010593626-2009166043257_llc.csv";
         const PROXY = "https://api.allorigins.win/raw?url=" + encodeURIComponent(RAW_URL);
+
         try {
+            statusEl.innerText = "HANDSHAKE ATTEMPT...";
             const resp = await fetch(PROXY);
-            if (!resp.ok) throw new Error("NASA Linkage Severed");
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
 
             const reader = resp.body.getReader();
             const decoder = new TextDecoder();
@@ -63,43 +65,46 @@
                 let fragment = document.createDocumentFragment();
 
                 for (let line of lines) {
-                    if (line.startsWith('TIME') || line.startsWith('#') || line.trim() === "") continue;
+                    // Skip metadata and empty rows
+                    if (line.startsWith('TIME') || line.startsWith('#') || line.trim() === "" || line.includes('null')) continue;
                     
                     const cols = line.split(',');
-                    const t = parseFloat(cols[0]); // Time (BJD)
-                    const F = parseFloat(cols[7]); // PDCSAP Flux
+                    const t = parseFloat(cols[0]); // Time
+                    const F = parseFloat(cols[7]); // Flux
 
                     if (isNaN(t) || isNaN(F)) continue;
 
-                    // THE GROUND LAW SURGERY
-                    const scaledT = Math.round(t * 1000000); // 2-adic precision
+                    // THE MARILYN FOLD (Radix-4 Precision)
+                    const scaledT = Math.round(t * 1000000); 
                     const R_phase = (scaledT % (MODULUS * 1000)) / 1000;
                     const I_inference = Math.floor(scaledT / (MODULUS * 1000));
 
                     processed++;
                     rollingSum += F;
                     const median = rollingSum / processed;
-                    const isTransit = F < (median * 0.999); // 0.1% Threshold
+                    const isTransit = F < (median * 0.999);
 
-                    // BATCH BUILD
-                    if (globalIndex % 10 === 0) {
+                    // BATCH UI UPDATE (Every 15 bits for visual consistency)
+                    if (globalIndex % 15 === 0) {
                         const div = document.createElement('div');
                         div.className = `audit-entry ${isTransit ? 'glow-residue' : ''}`;
                         div.innerHTML = `[BIT ${globalIndex}] R:${R_phase.toFixed(3)} | I:${I_inference} | F:${F.toFixed(4)} ${isTransit ? '✓ AC' : ''}`;
                         fragment.appendChild(div);
+                        
+                        if (output.childNodes.length > 30) output.removeChild(output.lastChild);
                     }
 
                     globalIndex++;
-                    if (output.childNodes.length > 35) output.removeChild(output.lastChild);
+                    countEl.innerText = globalIndex.toLocaleString();
                 }
 
                 output.insertBefore(fragment, output.firstChild);
-                countEl.innerText = globalIndex.toLocaleString();
-                await new Promise(r => requestAnimationFrame(r)); // Sync with GPU
+                await new Promise(r => requestAnimationFrame(r)); // GPU Sync
             }
             statusEl.innerText = "LINEAGE COMPLETE";
         } catch (e) {
             statusEl.innerText = "LATTICE SEVERED: " + e.message;
+            console.error("Handshake Diagnostic:", e);
         }
     }
     window.onload = runAudit;
