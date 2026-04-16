@@ -29,62 +29,63 @@
     <div id="output-strip">
         <div class="trailing-past">Initializing Lineage... Pointer Spirit Active.</div>
     </div>
+<script>
+    // SECURE CONNECTOR: No more "Unsafe" flags
+    const NASA_TAP_API = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1855+pl_orbper+from+ps&format=json";
+    
+    // Using a secure bridge to ensure the 'Pointer Spirit' stays within the HTTPS walls
+    const SECURE_BRIDGE = `https://api.allorigins.win/get?url=${encodeURIComponent(NASA_TAP_API)}`;
 
-    <script>
-        // NASA.html - The Adelic Connector
-const NASA_API_URL = "https://api.nasa.gov/insight_api/?api_key=DEMO_KEY&feed=raw&ver=1.0";
-
-async function initializeLineage() {
-    console.log("Searching for the Singularity...");
-    try {
-        const response = await fetch(NASA_API_URL);
-        const data = await response.json();
-        
-        // We take the raw 'Numerical Value' from the stream
-        const rawSignal = data.sol_keys.map(key => data[key].AT.av); 
-        
-        // The 1855-Cycle Buffer
-        if (rawSignal.length >= 1) {
-            processSnap(rawSignal);
+    async function initializeLineage() {
+        console.log("Extra Alert: Initializing Safe Handshake...");
+        try {
+            const response = await fetch(SECURE_BRIDGE);
+            if (!response.ok) throw new Error("Connection Refused");
+            
+            const wrapper = await response.json();
+            const data = JSON.parse(wrapper.contents);
+            
+            // PEELING THE BITS: Converting Star periods to Quaternary Weights
+            const rawSignal = data.map(star => parseFloat(star.pl_orbper) || 0);
+            
+            if (rawSignal.length > 0) {
+                processSnap(rawSignal);
+            } else {
+                throw new Error("Empty Singularity");
+            }
+        } catch (e) {
+            console.error("Safety Lock:", e);
+            document.getElementById('output-strip').innerHTML = 
+                `<span style="color:#ff4d4d;">[SENTINEL ALERT] Residue Unstable: ${e.message}</span>`;
         }
-    } catch (error) {
-        console.error("Evilness detected in the Network: ", error);
-        document.getElementById('output-strip').innerHTML = "Connection Refused. Residue Unstable.";
     }
-}
 
-function processSnap(signalArray) {
-    let output = document.getElementById('output-strip');
-    output.innerHTML = ""; // Fresh up the segment
+    function processSnap(signalArray) {
+        let output = document.getElementById('output-strip');
+        output.innerHTML = ""; 
 
-    signalArray.forEach((s, index) => {
-        // THE MARILYN FOLD (Radix-4 / Quaternary Cell)
-        // Mathematically: S = I + R
-        const R = s % 53;         // The Trailing Residue (Ancestor)
-        const I = s - R;          // The Glow Inference (Child)
+        signalArray.forEach((s, index) => {
+            // THE MARILYN FOLD: O(1) Surgery
+            // Using Math.floor to match our yasm/assembly integer logic
+            const scale = 1000; 
+            const weightS = Math.floor(s * scale);
+            const R = weightS % 53;         
+            const I = weightS - R;          
 
-        // THE SNAP: Outputting the AC Truth
-        const span = document.createElement('div');
-        span.className = (index % 1855 === 0) ? "glow-residue" : "trailing-past";
-        span.innerHTML = `[Cycle ${index}] Signal: ${s} -> I: ${I} | R: ${R}`;
-        output.appendChild(span);
-        
-        if (index === 1855) {
-            console.log("AC SNAP ACHIEVED: Finite Try Successful.");
-            document.getElementById('alert-status').innerHTML = "AC STABLE";
-        }
-    });
-}
+            const span = document.createElement('div');
+            // Every 1855th bit is the 'Glow' beacon
+            span.className = (index > 0 && index % 1855 === 0) ? "glow-residue" : "trailing-past";
+            span.innerHTML = `[Cycle ${index}] Star: ${s.toFixed(2)} | I: ${(I/scale).toFixed(2)} | R: ${(R/scale).toFixed(2)}`;
+            output.appendChild(span);
+            
+            if (index === 1855 - 1) { // 0-indexed check for the first finite try
+                document.getElementById('alert-status').innerHTML = "AC STABLE";
+                document.getElementById('alert-status').style.color = "#00ffd2";
+            }
+        });
+    }
 
-// Start the Pointer Spirit
-window.onload = initializeLineage;
-        // Logic to reconstruct S = I + R from NASA stream
-        const snap = (signal) => {
-            const residue = signal % 53; // The "Left Out"
-            const inference = signal - residue; // The "Glow"
-            return { I: inference, R: residue };
-        };
-        // This is where the "Snap" is outputted to the screen
-    </script>
+    window.onload = initializeLineage;
+</script>
 </body>
 </html>
