@@ -42,8 +42,7 @@
 
         // FIXED LINKAGE: Using the most stable Kepler lightcurve entry point
         const RAW_URL = "https://exoplanetarchive.ipac.caltech.edu/data/KeplerData/010/010593/010593626/lightcurve/kplr010593626-2009166043257_llc.csv";
-        const PROXY = `https://corsproxy.io/?${encodeURIComponent(RAW_URL)}`;
-
+        const PROXY = "https://api.allorigins.win/raw?url=" + encodeURIComponent(RAW_URL);
         try {
             const resp = await fetch(PROXY);
             if (!resp.ok) throw new Error("NASA Linkage Severed");
