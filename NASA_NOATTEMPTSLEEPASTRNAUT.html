@@ -126,6 +126,15 @@
         } catch (e) {
             statusEl.innerHTML = "LINK SEVERED";
         }
+        while (isRunning) {
+    const response = await fetch(PROXY_URL);
+    const dataArray = await response.json();
+    
+    for (let star of dataArray) {
+        if (!isRunning) return; // The button 'cuts' the spirit here
+        // ... deconvolution math ...
+    }
+}
     }
 
     window.onload = runSentinelLoop;
