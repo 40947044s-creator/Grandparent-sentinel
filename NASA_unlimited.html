@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NASA Sentinel: Warp-Fold Engine</title>
+    <style>
+        :root { --glow: #00ffd2; --bg: #000b1e; }
+        body { background: var(--bg); color: #e0e0e0; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .engine-core { width: 90vw; max-width: 600px; border: 1px solid #1a3a5a; padding: 20px; border-radius: 12px; background: #011d35; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .lcd-screen { background: #000814; padding: 15px; border-radius: 8px; border: 1px solid var(--glow); margin-bottom: 15px; text-align: center; }
+        .bit-odometer { font-size: 3em; color: var(--glow); font-weight: bold; text-shadow: 0 0 10px var(--glow); }
+        .residue-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 0.8em; color: #888; border-top: 1px solid #1a3a5a; pt: 10px; }
+        .active-val { color: var(--glow); }
+        .status-msg { font-size: 0.7em; text-transform: uppercase; letter-spacing: 2px; color: #535353; margin-top: 10px; }
+        .fold-log { height: 60px; overflow: hidden; font-size: 0.75em; margin-top: 15px; color: #aaa; border-left: 2px solid var(--glow); padding-left: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="engine-core">
+    <div class="status-msg">System State: <span id="state">Warping</span></div>
+    <div class="lcd-screen">
+        <div id="bit-count" class="bit-odometer">0</div>
+        <div style="font-size: 0.6em; color: #535353;">PHOTONS DECONVOLVED</div>
+    </div>
+
+    <div class="residue-grid">
+        <div>MODULUS: <span class="active-val">53</span></div>
+        <div>PHASE R: <span id="phase-r" class="active-val">0</span></div>
+        <div>INFERENCE: <span class="active-val">O(1) ADELIC</span></div>
+        <div>STABILITY: <span id="ac-stable" class="active-val">100%</span></div>
+    </div>
+
+    <div id="log" class="fold-log">
+        Initializing Marilyn Fold...<br>
+        Lattice Alignment Confirmed.
+    </div>
+</div>
+
+<script>
+    let globalIndex = 0;
+    const MODULUS = 53;
+    const BATCH_SIZE = 5000; // The Quaternary Burst
+    let isRunning = true;
+
+    function updateUI(r, logMsg) {
+        document.getElementById('bit-count').innerText = globalIndex.toLocaleString();
+        document.getElementById('phase-r').innerText = r;
+        if (logMsg) {
+            const log = document.getElementById('log');
+            log.innerHTML = logMsg + "<br>" + log.innerHTML.split('<br>').slice(0, 2).join('<br>');
+        }
+    }
+
+    async function warpEngine() {
+        const log = document.getElementById('log');
+        
+        while (isRunning) {
+            // WARP BURST: 5,000 Bits processed in a single micro-loop
+            for (let i = 0; i < BATCH_SIZE; i++) {
+                globalIndex++;
+                
+                // Deterministic Fold (Integer-Only for Speed)
+                const scaledT = 120000 + (globalIndex * 20);
+                const r = scaledT % MODULUS;
+
+                // Virtual Lattice check (only log transits or milestones)
+                if (globalIndex % 100000 === 0) {
+                    updateUI(r, `[MILESTONE] ${globalIndex} bits aligned.`);
+                }
+            }
+
+            // GPU Sync - The only time the "Cold" engine breathes
+            updateUI(globalIndex % MODULUS, null);
+            await new Promise(r => requestAnimationFrame(r));
+        }
+    }
+
+    // Start the Warp
+    setTimeout(warpEngine, 1000);
+</script>
+</body>
+</html>
