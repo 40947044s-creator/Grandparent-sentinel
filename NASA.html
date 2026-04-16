@@ -31,6 +31,53 @@
     </div>
 
     <script>
+        // NASA.html - The Adelic Connector
+const NASA_API_URL = "https://api.nasa.gov/insight_api/?api_key=DEMO_KEY&feed=raw&ver=1.0";
+
+async function initializeLineage() {
+    console.log("Searching for the Singularity...");
+    try {
+        const response = await fetch(NASA_API_URL);
+        const data = await response.json();
+        
+        // We take the raw 'Numerical Value' from the stream
+        const rawSignal = data.sol_keys.map(key => data[key].AT.av); 
+        
+        // The 1855-Cycle Buffer
+        if (rawSignal.length >= 1) {
+            processSnap(rawSignal);
+        }
+    } catch (error) {
+        console.error("Evilness detected in the Network: ", error);
+        document.getElementById('output-strip').innerHTML = "Connection Refused. Residue Unstable.";
+    }
+}
+
+function processSnap(signalArray) {
+    let output = document.getElementById('output-strip');
+    output.innerHTML = ""; // Fresh up the segment
+
+    signalArray.forEach((s, index) => {
+        // THE MARILYN FOLD (Radix-4 / Quaternary Cell)
+        // Mathematically: S = I + R
+        const R = s % 53;         // The Trailing Residue (Ancestor)
+        const I = s - R;          // The Glow Inference (Child)
+
+        // THE SNAP: Outputting the AC Truth
+        const span = document.createElement('div');
+        span.className = (index % 1855 === 0) ? "glow-residue" : "trailing-past";
+        span.innerHTML = `[Cycle ${index}] Signal: ${s} -> I: ${I} | R: ${R}`;
+        output.appendChild(span);
+        
+        if (index === 1855) {
+            console.log("AC SNAP ACHIEVED: Finite Try Successful.");
+            document.getElementById('alert-status').innerHTML = "AC STABLE";
+        }
+    });
+}
+
+// Start the Pointer Spirit
+window.onload = initializeLineage;
         // Logic to reconstruct S = I + R from NASA stream
         const snap = (signal) => {
             const residue = signal % 53; // The "Left Out"
