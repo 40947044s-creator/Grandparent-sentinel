@@ -2,50 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>NASA Sentinel: On-Demand AC Audit</title>
+    <title>NASA Sentinel: Infinite AC Stream</title>
     <style>
         body { background: #000b1e; color: #e0e0e0; font-family: 'Courier New', monospace; margin: 0; padding: 20px; line-height: 1.6; }
         .container { max-width: 1000px; margin: auto; }
-        h1, h2 { color: #00ffd2; text-align: center; border-bottom: 1px solid #535353; padding-bottom: 10px; }
+        h1 { color: #00ffd2; text-align: center; border-bottom: 1px solid #535353; padding-bottom: 10px; }
         
         .status-bar { background: #011d35; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-around; align-items: center; border: 1px solid #1a3a5a; font-size: 0.9em; }
         .status-val { color: #00ffd2; font-weight: bold; }
 
-        /* PAUSE BUTTON */
         #toggle-btn { background: #00ffd2; color: #000b1e; border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; transition: 0.3s; }
         #toggle-btn.paused { background: #ff4d4d; color: white; }
 
-        #output-strip { height: 450px; overflow-y: scroll; background: #001529; padding: 20px; border: 2px solid #1a3a5a; border-radius: 8px; margin-bottom: 30px; display: flex; flex-direction: column-reverse; }
-        .audit-entry { margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 4px; border-left: 3px solid #535353; font-size: 0.9em; }
+        #output-strip { height: 500px; overflow-y: scroll; background: #001529; padding: 20px; border: 2px solid #1a3a5a; border-radius: 8px; margin-bottom: 30px; display: flex; flex-direction: column-reverse; }
+        .audit-entry { margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 4px; border-left: 3px solid #535353; font-size: 0.85em; }
         .glow-residue { border-left-color: #00ffd2; background: rgba(0, 255, 210, 0.05); }
-        .overhead-alert { color: #ffcc00; font-weight: bold; animation: blink 1s infinite; }
         
-        @keyframes blink { 50% { opacity: 0; } }
         .nasa-link { color: #00ffd2; text-decoration: none; border-bottom: 1px dashed #00ffd2; }
-
-        .doc-sector { background: #011d35; padding: 25px; border-radius: 12px; margin-top: 30px; border-left: 4px solid #00ffd2; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div id="sentinel-header">
-        <h1>GRANDPARENT-SENTINEL // ON-DEMAND AUDIT</h1>
-        <div class="status-bar">
-            <span>STATUS: <span id="alert-status" class="status-val">INITIALIZING...</span></span>
-            <span>BITS: <span id="bit-count" class="status-val">0</span></span>
-            <button id="toggle-btn" onclick="toggleLineage()">PAUSE ENGINE</button>
-        </div>
+    <h1>GRANDPARENT-SENTINEL // INFINITE AUDIT</h1>
+    
+    <div class="status-bar">
+        <span>STATUS: <span id="alert-status" class="status-val">READY</span></span>
+        <span>BITS: <span id="bit-count" class="status-val">0</span></span>
+        <button id="toggle-btn" onclick="toggleLineage()">PAUSE ENGINE</button>
     </div>
 
     <div id="output-strip">
-        <div class="audit-entry">Aligning with Singularity...</div>
-    </div>
-
-    <div class="doc-sector">
-        <h2>Logic: $O(1)$ No-Sleep Policy</h2>
-        <p>The Marilyn Fold executes via an <strong>Asynchronous Loop</strong>. Automatic sleep is disabled. The engine pauses only if:
-            <br>1. The User hits the Halt command.
-            <br>2. <strong>Hardware Overhead</strong> (Frame drop) exceeds safe thresholds.</p>
+        <div class="audit-entry">Pointer Spirit Active. Aligning with NASA Archive...</div>
     </div>
 </div>
 
@@ -53,91 +40,80 @@
     let isRunning = true;
     let globalIndex = 0;
     const SCALE = 1000;
-    const SURGERY_DELAY = 100; 
 
     function toggleLineage() {
         isRunning = !isRunning;
         const btn = document.getElementById('toggle-btn');
         const status = document.getElementById('alert-status');
         
-        if (isRunning) {
-            btn.innerText = "PAUSE ENGINE";
-            btn.className = "";
-            status.innerHTML = "AUDITING LIVE";
-            runSentinelLoop(); // Restart the loop
-        } else {
-            btn.innerText = "RESUME ENGINE";
-            btn.className = "paused";
-            status.innerHTML = "PAUSED (USER)";
-        }
+        btn.innerText = isRunning ? "PAUSE ENGINE" : "RESUME ENGINE";
+        btn.className = isRunning ? "" : "paused";
+        status.innerHTML = isRunning ? "AUDITING LIVE" : "PAUSED (USER)";
+        
+        if (isRunning) runUnlimitedAudit();
     }
 
-    async function runSentinelLoop() {
+    async function runUnlimitedAudit() {
         const output = document.getElementById('output-strip');
         const countEl = document.getElementById('bit-count');
         const statusEl = document.getElementById('alert-status');
 
         const SQL = "select hostname,pl_name,pl_orbper from pscomppars where pl_orbper is not null order by pl_pubdate desc";
-        const NASA_URL = `https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=${encodeURIComponent(SQL)}&format=json`;
-        const PROXY_URL = `https://corsproxy.io/?${encodeURIComponent(NASA_URL)}`;
+        const PROXY_URL = `https://corsproxy.io/?${encodeURIComponent("https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=" + encodeURIComponent(SQL) + "&format=json")}`;
 
         try {
             statusEl.innerHTML = "FETCHING LINEAGE...";
             const response = await fetch(PROXY_URL);
             const dataArray = await response.json();
-            statusEl.innerHTML = "AUDITING LIVE";
+            statusEl.innerHTML = "STREAMING LIVE";
 
-            for (let star of dataArray) {
-                if (!isRunning) return; // Exit loop if paused
+            while (isRunning) {
+                for (let star of dataArray) {
+                    if (!isRunning) return;
 
-                // OVERHEAD DETECTION (Simple time-delta check)
-                const start = performance.now();
+                    const s = parseFloat(star.pl_orbper) || 0;
+                    const weightS = Math.floor(s * SCALE);
+                    
+                    // Aligned Math: Quotient (I) and Remainder (R)
+                    const R = weightS % 53;
+                    const I = Math.floor(weightS / 53); 
 
-                const s = parseFloat(star.pl_orbper) || 0;
-                const R = Math.floor(s * SCALE) % 53;         
-                const I = Math.floor(s * SCALE) - R;          
+                    const div = document.createElement('div');
+                    div.className = "audit-entry";
+                    
+                    if (globalIndex % 1855 === 0) {
+                        div.className += " glow-residue";
+                        div.innerHTML += `<strong>[SYNC POINT: CYCLE ${globalIndex/1855}]</strong><br>`;
+                    }
 
-                const div = document.createElement('div');
-                div.className = "audit-entry";
-                if (globalIndex % 1855 === 0) div.className += " glow-residue";
+                    const nasaLink = `https://exoplanetarchive.ipac.caltech.edu/overview/${encodeURIComponent(star.pl_name)}`;
+                    div.innerHTML += `
+                        <strong>Bit ${globalIndex}:</strong> <a href="${nasaLink}" target="_blank" class="nasa-link">${star.pl_name}</a><br>
+                        <span>&gt; S: ${s.toFixed(4)} | I: ${I} | R: ${(R/SCALE).toFixed(3)} <strong>(AC ✓)</strong></span>
+                    `;
+                    
+                    output.appendChild(div);
+                    globalIndex++;
+                    countEl.innerText = globalIndex;
 
-                const nasaLink = `https://exoplanetarchive.ipac.caltech.edu/overview/${encodeURIComponent(star.pl_name)}`;
-                div.innerHTML = `<strong>Bit ${globalIndex}:</strong> <a href="${nasaLink}" target="_blank" class="nasa-link">${star.pl_name}</a><br>
-                                 &gt; [I: ${(I/SCALE).toFixed(3)}] + [R: ${(R/SCALE).toFixed(3)}] (AC ✓)`;
-                
-                output.appendChild(div);
-                globalIndex++;
-                countEl.innerText = globalIndex;
+                    // Accelerated Yield: We yield to the browser every 5 bits to keep UI smooth
+                    if (globalIndex % 5 === 0) {
+                        await new Promise(resolve => requestAnimationFrame(resolve));
+                    }
 
-                const end = performance.now();
-                
-                // AUTOMATIC OVERHEAD PAUSE: If bit-peeling takes > 200ms (browser lagging)
-                if (end - start > 200) {
-                    isRunning = false;
-                    statusEl.innerHTML = "<span class='overhead-alert'>PAUSED: OVERHEAD DETECTED</span>";
-                    document.getElementById('toggle-btn').innerText = "CLEAR & RESUME";
-                    document.getElementById('toggle-btn').className = "paused";
-                    return;
+                    // DOM Pruning: Keeps memory usage flat during the unlimited run
+                    if (output.childNodes.length > 100) {
+                        output.removeChild(output.firstChild);
+                    }
                 }
-
-                await new Promise(r => setTimeout(r, SURGERY_DELAY));
-                if (output.childNodes.length > 50) output.removeChild(output.firstChild);
+                console.log("Database audited. Restarting stream...");
             }
         } catch (e) {
-            statusEl.innerHTML = "LINK SEVERED";
+            statusEl.innerHTML = "CONNECTION SEVERED";
         }
-        while (isRunning) {
-    const response = await fetch(PROXY_URL);
-    const dataArray = await response.json();
-    
-    for (let star of dataArray) {
-        if (!isRunning) return; // The button 'cuts' the spirit here
-        // ... deconvolution math ...
-    }
-}
     }
 
-    window.onload = runSentinelLoop;
+    window.onload = runUnlimitedAudit;
 </script>
 </body>
 </html>
