@@ -4,8 +4,7 @@
 
 **Researcher:** Marilyn Hsiao  
 **Status:** 7EARTH ORACLE — VERIFIED  
-**Domain:** [open-experiments.org](https://open-experiments.org)
-
+**Domain:**(https://40947044s-creator.github.io/Grandparent-sentinel/[certain_tab.html])
 ## Overview
 Project NP explores the unique recovery of an invariant parameter $P$ within the finite ring $\mathbb{Z}_{2^{13}}$. Unlike standard heuristic approaches, this engine utilizes a **Liar Paradox Attack** to enforce the **Grandparent Sentinel** (MSB) as a boundary condition.
 
