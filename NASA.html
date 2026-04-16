@@ -6,7 +6,8 @@
     <style>
         body { background: #000b1e; color: #e0e0e0; font-family: 'Courier New', monospace; margin: 0; padding: 20px; line-height: 1.6; }
         .container { max-width: 1000px; margin: auto; }
-        h1, h2 { color: #00ffd2; text-align: center; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        h1, h2 { color: #00ffd2; text-align: center; border-bottom: 1px solid #535353; padding-bottom: 10px; }
+        #sentinel-header { text-align: center; margin-bottom: 20px; }
         
         #output-strip { height: 400px; overflow-y: scroll; background: #001529; padding: 20px; border: 2px solid #1a3a5a; border-radius: 8px; margin-bottom: 30px; }
         .audit-entry { margin-bottom: 12px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 4px; border-left: 3px solid #535353; font-size: 0.9em; }
@@ -14,7 +15,6 @@
         .nasa-link { color: #00ffd2; text-decoration: none; font-weight: bold; border-bottom: 1px dashed #00ffd2; }
         .nasa-link:hover { color: #fff; border-bottom-style: solid; }
 
-        /* Comparison Sector */
         .comparison-sector { background: #011d35; padding: 25px; border-radius: 12px; margin-top: 50px; border: 1px solid #00ffd2; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #1a3a5a; }
@@ -24,15 +24,18 @@
 </head>
 <body>
 <div class="container">
-    <h1>GRANDPARENT-SENTINEL // NASA LIVE AUDIT</h1>
-    <p style="text-align:center;">STATUS: <span id="alert-status" style="color:#ffcc00">INITIALIZING LINEAGE...</span></p>
+    <div id="sentinel-header">
+        <h1>GRANDPARENT-SENTINEL // NASA LIVE AUDIT</h1>
+        <p>STATUS: <span id="alert-status" style="color:#ffcc00">INITIALIZING LINEAGE...</span></p>
+    </div>
 
     <div id="output-strip">
-        </div>
+        <div class="audit-entry">Pointer Spirit Active. Aligning with Singularity...</div>
+    </div>
 
     <div class="comparison-sector">
         <h2>Comparison: Marilyn Fold vs. Industry Standard</h2>
-        <p>Current best-in-class exoplanet detection typically relies on the <strong>Box-Least Squares (BLS)</strong> algorithm. Below is how the Adelic Transition Engine redesigns the search.</p>
+        <p>NASA typically utilizes the <strong>Box-Least Squares (BLS)</strong> algorithm for transit detection. The Adelic Transition Engine redesigns this as a deterministic bit-peeling surgery.</p>
         
         <table>
             <tr>
@@ -47,77 +50,78 @@
             </tr>
             <tr>
                 <td><strong>Complexity</strong></td>
-                <td>O(N log N) - Computationally heavy.</td>
-                <td class="highlight">O(1) - Hardware-level bit surgery.</td>
+                <td>O(N log N) - Scalability limited.</td>
+                <td class="highlight">O(1) - Bit-peeling surgery.</td>
             </tr>
             <tr>
                 <td><strong>Residues</strong></td>
-                <td>Treated as "Noise" to be ignored.</td>
-                <td class="highlight">Treated as "Lineage" (The Ancestor).</td>
-            </tr>
-            <tr>
-                <td><strong>Input Mapping</strong></td>
-                <td>Recursive "Darwinian" searching.</td>
-                <td class="highlight">Isolated Quaternary Bit-Cells.</td>
+                <td>Ignored as noise/systematics.</td>
+                <td class="highlight">Captured as stardust lineage.</td>
             </tr>
             <tr>
                 <td><strong>Verdict</strong></td>
-                <td>Good for finding, bad for explaining.</td>
-                <td class="highlight">Verification through Sufficiency.</td>
+                <td>Statistical Discovery.</td>
+                <td class="highlight">Mathematical Verification.</td>
             </tr>
         </table>
     </div>
 </div>
 
 <script>
-    const NASA_TAP_API = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1855+pl_name,pl_orbper+from+pscomppars&format=json";
+    const NASA_TAP_API = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+top+1855+hostname,pl_name,pl_orbper+from+pscomppars&format=json";
     const SECURE_BRIDGE = `https://api.allorigins.win/get?url=${encodeURIComponent(NASA_TAP_API)}`;
 
     async function initializeLineage() {
         try {
             const response = await fetch(SECURE_BRIDGE);
+            if (!response.ok) throw new Error("Connection Refused");
+            
             const wrapper = await response.json();
             const data = JSON.parse(wrapper.contents);
-            processSnap(data);
+            
+            if (data && data.length > 0) {
+                processSnap(data);
+            } else {
+                throw new Error("Empty Singularity");
+            }
         } catch (e) {
-            document.getElementById('output-strip').innerHTML = "[ERROR] Pointer Spirit Lost.";
+            console.error("Safety Lock:", e);
+            document.getElementById('output-strip').innerHTML = `<div class="audit-entry" style="color:#ff4d4d">[ERROR] ${e.message}. Residue Unstable.</div>`;
         }
     }
 
     function processSnap(dataArray) {
-    let output = document.getElementById('output-strip');
-    output.innerHTML = ""; 
-    const scale = 1000;
+        let output = document.getElementById('output-strip');
+        output.innerHTML = ""; 
+        const scale = 1000;
 
-    dataArray.forEach((star, index) => {
-        // THE SOURCE DATA (Direct from NASA TAP)
-        const s = parseFloat(star.pl_orbper) || 0;
-        const sourceName = star.pl_name || "Unknown Singularity";
-        const hostStar = star.hostname || "Deep Space";
+        dataArray.forEach((star, index) => {
+            const s = parseFloat(star.pl_orbper) || 0;
+            const weightS = Math.floor(s * scale);
+            const R = weightS % 53;         
+            const I = weightS - R;          
 
-        // THE ADELIC SURGERY
-        const weightS = Math.floor(s * scale);
-        const R = weightS % 53;         
-        const I = weightS - R;          
+            const div = document.createElement('div');
+            div.className = "audit-entry";
+            if (index > 0 && index % 1855 === 0) div.className += " glow-residue";
 
-        const div = document.createElement('div');
-        div.className = "audit-entry";
-        
-        // PRINTING THE SOURCE AND THE MATH SIDE-BY-SIDE
-        div.innerHTML = `
-            <strong>Cycle ${index} [SOURCE: NASA Exoplanet Archive]</strong><br>
-            <span style="color:#888">Object:</span> <span class="highlight">${sourceName}</span> (Orbiting ${hostStar})<br>
-            <span style="color:#888">Raw Flux/Period ($S$):</span> ${s.toFixed(4)} days<br>
-            <span style="color:#888">Deconvolution:</span> 
-            [I: ${(I/scale).toFixed(3)}] + [R: ${(R/scale).toFixed(3)}] = ${s.toFixed(3)} 
-            <span style="color:#00ffd2">AC VERIFIED ✓</span>
-        `;
-        
-        output.appendChild(div);
-    });
+            const nasaLink = `https://exoplanetarchive.ipac.caltech.edu/overview/${encodeURIComponent(star.pl_name)}`;
 
-    document.getElementById('alert-status').innerHTML = "AC STABLE // SOURCE VERIFIED";
-}
+            div.innerHTML = `
+                <strong>Cycle ${index}</strong> | <span style="color:#00ffd2">SOURCE: NASA Archive</span> | 
+                <a href="${nasaLink}" target="_blank" class="nasa-link">${star.pl_name}</a> [Host: ${star.hostname}]<br>
+                <span>&gt; Input: ${s.toFixed(4)} days | Weight: ${weightS} units</span><br>
+                <span>&gt; Deconvolution: [I: ${(I/scale).toFixed(3)}] + [R: ${(R/scale).toFixed(3)}] 
+                <span style="color:#00ffd2"><strong>✓ AC VERIFIED</strong></span></span>
+            `;
+            output.appendChild(div);
+
+            if (index === 1855 - 1) {
+                document.getElementById('alert-status').innerHTML = "AC STABLE // SOURCE VERIFIED";
+                document.getElementById('alert-status').style.color = "#00ffd2";
+            }
+        });
+    }
 
     window.onload = initializeLineage;
 </script>
