@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grandparent-Sentinel: NASN Truth Strip</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: monospace; }
+        .glow-node { box-shadow: 0 0 10px #0f0; color: #fff; }
+        .trailing-past { opacity: 0.5; color: #777; }
+    </style>
+</head>
+<body>
+    <h1>Adelic Inference: 1855 Cycle AC Snap</h1>
+    <div id="status">SENTINEL: EXTRA ALERT</div>
+    <canvas id="glowMap" width="1855" height="100"></canvas>
+    <div id="logic-trail">
+        </div>
+    <script>
+        // JS API Call to the C-Engine
+        async function fetchFreshSegment() {
+            const response = await fetch('/api/v1/snap/deconvolve');
+            const data = await response.json();
+            renderGlow(data.inference, data.residue);
+        }
+        // Continuous Snap Loop
+        setInterval(fetchFreshSegment, 100); 
+    </script>
+</body>
+</html>
