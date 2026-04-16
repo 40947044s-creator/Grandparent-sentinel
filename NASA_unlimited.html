@@ -4,122 +4,116 @@
     <meta charset="UTF-8">
     <title>NASA Sentinel: Ground Law Audit</title>
     <style>
-        body { background: #000b1e; color: #e0e0e0; font-family: 'Courier New', monospace; margin: 0; padding: 20px; line-height: 1.6; }
-        .container { max-width: 1000px; margin: auto; }
-        h1 { color: #00ffd2; text-align: center; border-bottom: 1px solid #535353; padding-bottom: 10px; }
+        body { background: #000b1e; color: #e0e0e0; font-family: 'Courier New', monospace; margin: 0; padding: 20px; overflow: hidden; }
+        .container { max-width: 1000px; margin: auto; height: 95vh; display: flex; flex-direction: column; }
+        h1 { color: #00ffd2; text-align: center; border-bottom: 1px solid #1a3a5a; margin: 0 0 10px 0; font-size: 1.5em; }
         
-        .status-bar { background: #011d35; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-around; align-items: center; border: 1px solid #1a3a5a; font-size: 0.9em; }
+        .status-bar { background: #011d35; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-around; border: 1px solid #1a3a5a; font-size: 0.85em; }
         .status-val { color: #00ffd2; font-weight: bold; }
 
-        #toggle-btn { background: #00ffd2; color: #000b1e; border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; transition: 0.3s; }
-        #toggle-btn.paused { background: #ff4d4d; color: white; }
-
-        #output-strip { height: 500px; overflow-y: scroll; background: #001529; padding: 20px; border: 2px solid #1a3a5a; border-radius: 8px; margin-bottom: 30px; display: flex; flex-direction: column-reverse; }
-        .audit-entry { margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 4px; border-left: 3px solid #535353; font-size: 0.85em; }
-        .glow-residue { border-left-color: #00ffd2; background: rgba(0, 255, 210, 0.05); }
+        #output-strip { flex-grow: 1; overflow-y: hidden; background: #000814; padding: 15px; border: 1px solid #1a3a5a; border-radius: 8px; display: flex; flex-direction: column-reverse; box-shadow: inset 0 0 20px #000; }
+        .audit-entry { padding: 6px 10px; border-left: 3px solid #333; margin-bottom: 4px; font-size: 0.8em; animation: slideIn 0.1s ease-out; }
+        .glow-residue { border-left-color: #00ffd2; background: rgba(0, 255, 210, 0.08); color: #fff; text-shadow: 0 0 5px #00ffd2; }
         
-        .doc-sector { background: #011d35; padding: 20px; border-radius: 8px; font-size: 0.85em; border-top: 2px solid #00ffd2; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+        .doc-sector { background: #011d35; padding: 10px; border-radius: 0 0 8px 8px; font-size: 0.75em; border-top: 2px solid #00ffd2; color: #888; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>GRANDPARENT-SENTINEL // PHASE-BUILD</h1>
+    <h1>GRANDPARENT-SENTINEL // ALIGNED BUILD</h1>
     
     <div class="status-bar">
-        <span>STATUS: <span id="alert-status" class="status-val">READY</span></span>
+        <span>LATTICE: <span id="alert-status" class="status-val">SYNCING...</span></span>
         <span>BITS: <span id="bit-count" class="status-val">0</span></span>
-        <span>AC STABILITY: <span id="ac-stable" class="status-val">100%</span></span>
-        <button id="toggle-btn" onclick="toggleLineage()">PAUSE ENGINE</button>
+        <span>STABILITY: <span class="status-val">O(1) AC</span></span>
     </div>
 
-    <div id="output-strip">
-        <div class="audit-entry">Aligning with Ground Law...</div>
-    </div>
+    <div id="output-strip"></div>
 
     <div class="doc-sector">
-        <strong>Inference Engine:</strong> Applying 2-adic Modulus 53 to Photon Timestamps.<br>
-        <strong>Objective Truth:</strong> $S = (I \times 53) + R$. Every bit verified by Asymptotic Convergence.
+        <strong>Inference Engine:</strong> Modulus 53 Phase-Fold applied to Raw Kepler Photons. <br>
+        <strong>Ground Law:</strong> $S = (I \times 53) + R$. No-Search Deterministic Verification.
     </div>
 </div>
 
 <script>
     let isRunning = true;
     let globalIndex = 0;
-    const SCALE = 1000;
-    const MODULUS = 53; // The Ancestral Gear
-    
-    // Threshold Inference Logic
-    let rollingFluxSum = 0;
-    let processedCount = 0;
+    const MODULUS = 53;
+    let rollingSum = 0;
+    let processed = 0;
 
-    function toggleLineage() {
-        isRunning = !isRunning;
-        const btn = document.getElementById('toggle-btn');
-        btn.innerText = isRunning ? "PAUSE ENGINE" : "RESUME ENGINE";
-        btn.className = isRunning ? "" : "paused";
-        if (isRunning) runGroundLawAudit();
-    }
-async function runGroundLawAudit() {
-    const output = document.getElementById('output-strip');
-    const countEl = document.getElementById('bit-count');
-    const statusEl = document.getElementById('alert-status');
+    async function runAudit() {
+        const output = document.getElementById('output-strip');
+        const countEl = document.getElementById('bit-count');
+        const statusEl = document.getElementById('alert-status');
 
-    // LINKAGE: Fetching a RAW Light Curve CSV (Example: Kepler-22)
-    // This is the actual data stream from the telescope
-    const RAW_DATA_URL = "https://exoplanetarchive.ipac.caltech.edu/data/KeplerData/010/010593/010593626/lightcurve/kplr010593626-2009166043257_llc.csv";
-    const PROXY_URL = `https://corsproxy.io/?${encodeURIComponent(RAW_DATA_URL)}`;
+        // Handshake with actual Kepler-22 light curve
+        const RAW_URL = "https://exoplanetarchive.ipac.caltech.edu/data/KeplerData/010/010593/010593626/lightcurve/kplr010593626-2009166043257_llc.csv";
+        const PROXY = `https://corsproxy.io/?${encodeURIComponent(RAW_URL)}`;
 
-    try {
-        statusEl.innerHTML = "STREAMING RAW PHOTONS";
-        const response = await fetch(PROXY_URL);
-        const csvText = await response.text();
-        const rows = csvText.split('\n').slice(1); // Strip the header
+        try {
+            const resp = await fetch(PROXY);
+            const reader = resp.body.getReader();
+            const decoder = new TextDecoder();
+            let partialChunk = "";
 
-        let batchHtml = ""; // Memory buffer for the build
+            statusEl.innerText = "STREAMING PHOTONS";
 
-        for (let row of rows) {
-            if (!isRunning) return;
-            const cols = row.split(',');
-            if (cols.length < 3) continue;
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
 
-            const t = parseFloat(cols[0]); 
-            const F = parseFloat(cols[7]); 
-            if (isNaN(t) || isNaN(F)) continue;
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = (partialChunk + chunk).split("\n");
+                partialChunk = lines.pop();
 
-            // THE GROUND LAW SURGERY (O1 - Remains Cold/Fast)
-            const R_phase = Math.floor(t * 1000) % MODULUS;
-            const I_phase = Math.floor(t * 1000 / MODULUS);
+                let fragment = document.createDocumentFragment();
 
-            processedCount++;
-            rollingFluxSum += F;
-            const medianInference = rollingFluxSum / processedCount;
-            const isTransit = (F < medianInference * 0.998);
+                for (let line of lines) {
+                    if (line.startsWith('TIME') || line.trim() === "") continue;
+                    const cols = line.split(',');
+                    const t = parseFloat(cols[0]);
+                    const F = parseFloat(cols[7]);
 
-            // Add to Batch instead of DOM
-            const glowClass = isTransit ? "glow-residue" : "";
-            batchHtml += `
-                <div class="audit-entry ${glowClass}">
-                    <strong>Photon ${globalIndex}:</strong> Phase ${R_phase}<br>
-                    <span>&gt; Flux: ${F.toFixed(2)} | AC: ${isTransit ? 'TRANSIT ✓' : 'STABLE'}</span>
-                </div>`;
+                    if (isNaN(t) || isNaN(F)) continue;
 
-            globalIndex++;
+                    // THE GROUND LAW FOLDING
+                    const scaledT = Math.round(t * 1000);
+                    const R_phase = scaledT % MODULUS;
+                    const I_inference = Math.floor(scaledT / MODULUS);
 
-            // Only update the screen every 25 bits
-            if (globalIndex % 25 === 0) {
-                output.innerHTML = batchHtml; // Total rewrite is faster than append for batch
-                countEl.innerText = globalIndex;
-                batchHtml = ""; // Clear buffer
-                await new Promise(r => requestAnimationFrame(r)); // Hardware Sync
+                    processed++;
+                    rollingSum += F;
+                    const avg = rollingSum / processed;
+                    const isTransit = F < (avg * 0.999); // Sensitivity threshold
+
+                    const div = document.createElement('div');
+                    div.className = `audit-entry ${isTransit ? 'glow-residue' : ''}`;
+                    div.innerHTML = `<strong>B:${globalIndex}</strong> | Phase:${R_phase} | I:${I_inference} | Flux:${F.toFixed(4)} ${isTransit ? ' [TRANSIT ✓]' : ''}`;
+                    
+                    fragment.appendChild(div);
+                    globalIndex++;
+
+                    if (output.childNodes.length > 40) output.removeChild(output.lastChild);
+                }
+
+                output.insertBefore(fragment, output.firstChild);
+                countEl.innerText = globalIndex.toLocaleString();
+                
+                // Allow the GPU to breathe
+                await new Promise(r => requestAnimationFrame(r));
             }
+            statusEl.innerText = "LINEAGE COMPLETE";
+        } catch (e) {
+            statusEl.innerText = "LATTICE SEVERED";
+            console.error(e);
         }
-    } catch (e) {
-        statusEl.innerHTML = "LATTICE SEVERED";
     }
-}
-    
 
-    window.onload = runGroundLawAudit;
+    window.onload = runAudit;
 </script>
 </body>
 </html>
