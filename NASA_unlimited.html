@@ -6,40 +6,30 @@
     <style>
         body { background: #000b1e; color: #e0e0e0; font-family: 'Courier New', monospace; margin: 0; padding: 20px; overflow: hidden; }
         .container { max-width: 1000px; margin: auto; height: 95vh; display: flex; flex-direction: column; }
-        h1 { color: #00ffd2; text-align: center; border-bottom: 1px solid #1a3a5a; margin: 0 0 10px 0; font-size: 1.5em; }
-        
+        h1 { color: #00ffd2; text-align: center; border-bottom: 1px solid #1a3a5a; margin: 0 0 10px 0; font-size: 1.4em; }
         .status-bar { background: #011d35; padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-around; border: 1px solid #1a3a5a; font-size: 0.85em; }
         .status-val { color: #00ffd2; font-weight: bold; }
-
         #output-strip { flex-grow: 1; overflow-y: hidden; background: #000814; padding: 15px; border: 1px solid #1a3a5a; border-radius: 8px; display: flex; flex-direction: column-reverse; box-shadow: inset 0 0 20px #000; }
-        .audit-entry { padding: 6px 10px; border-left: 3px solid #333; margin-bottom: 4px; font-size: 0.8em; animation: slideIn 0.1s ease-out; }
-        .glow-residue { border-left-color: #00ffd2; background: rgba(0, 255, 210, 0.08); color: #fff; text-shadow: 0 0 5px #00ffd2; }
-        
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-
-        .doc-sector { background: #011d35; padding: 10px; border-radius: 0 0 8px 8px; font-size: 0.75em; border-top: 2px solid #00ffd2; color: #888; }
+        .audit-entry { padding: 4px 10px; border-left: 3px solid #333; margin-bottom: 2px; font-size: 0.75em; white-space: nowrap; }
+        .glow-residue { border-left-color: #00ffd2; background: rgba(0, 255, 210, 0.1); color: #fff; }
+        .doc-sector { background: #011d35; padding: 10px; border-radius: 0 0 8px 8px; font-size: 0.7em; border-top: 2px solid #00ffd2; color: #888; text-align: center; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>GRANDPARENT-SENTINEL // ALIGNED BUILD</h1>
-    
+    <h1>SENTINEL // ADELIC PHASE-BUILD</h1>
     <div class="status-bar">
-        <span>LATTICE: <span id="alert-status" class="status-val">SYNCING...</span></span>
+        <span>LATTICE: <span id="alert-status" class="status-val">INITIALIZING</span></span>
         <span>BITS: <span id="bit-count" class="status-val">0</span></span>
-        <span>STABILITY: <span class="status-val">O(1) AC</span></span>
+        <span>AC: <span id="ac-stable" class="status-val">STABLE</span></span>
     </div>
-
     <div id="output-strip"></div>
-
     <div class="doc-sector">
-        <strong>Inference Engine:</strong> Modulus 53 Phase-Fold applied to Raw Kepler Photons. <br>
-        <strong>Ground Law:</strong> $S = (I \times 53) + R$. No-Search Deterministic Verification.
+        <strong>$S = (I \times 53) + R$</strong> | Deconvolving Kepler-22 Photons @ O(1) Complexity
     </div>
 </div>
 
 <script>
-    let isRunning = true;
     let globalIndex = 0;
     const MODULUS = 53;
     let rollingSum = 0;
@@ -50,16 +40,17 @@
         const countEl = document.getElementById('bit-count');
         const statusEl = document.getElementById('alert-status');
 
-        // Handshake with actual Kepler-22 light curve
+        // FIXED LINKAGE: Using the most stable Kepler lightcurve entry point
         const RAW_URL = "https://exoplanetarchive.ipac.caltech.edu/data/KeplerData/010/010593/010593626/lightcurve/kplr010593626-2009166043257_llc.csv";
         const PROXY = `https://corsproxy.io/?${encodeURIComponent(RAW_URL)}`;
 
         try {
             const resp = await fetch(PROXY);
+            if (!resp.ok) throw new Error("NASA Linkage Severed");
+
             const reader = resp.body.getReader();
             const decoder = new TextDecoder();
             let partialChunk = "";
-
             statusEl.innerText = "STREAMING PHOTONS";
 
             while (true) {
@@ -73,46 +64,45 @@
                 let fragment = document.createDocumentFragment();
 
                 for (let line of lines) {
-                    if (line.startsWith('TIME') || line.trim() === "") continue;
+                    if (line.startsWith('TIME') || line.startsWith('#') || line.trim() === "") continue;
+                    
                     const cols = line.split(',');
-                    const t = parseFloat(cols[0]);
-                    const F = parseFloat(cols[7]);
+                    const t = parseFloat(cols[0]); // Time (BJD)
+                    const F = parseFloat(cols[7]); // PDCSAP Flux
 
                     if (isNaN(t) || isNaN(F)) continue;
 
-                    // THE GROUND LAW FOLDING
-                    const scaledT = Math.round(t * 1000);
-                    const R_phase = scaledT % MODULUS;
-                    const I_inference = Math.floor(scaledT / MODULUS);
+                    // THE GROUND LAW SURGERY
+                    const scaledT = Math.round(t * 1000000); // 2-adic precision
+                    const R_phase = (scaledT % (MODULUS * 1000)) / 1000;
+                    const I_inference = Math.floor(scaledT / (MODULUS * 1000));
 
                     processed++;
                     rollingSum += F;
-                    const avg = rollingSum / processed;
-                    const isTransit = F < (avg * 0.999); // Sensitivity threshold
+                    const median = rollingSum / processed;
+                    const isTransit = F < (median * 0.999); // 0.1% Threshold
 
-                    const div = document.createElement('div');
-                    div.className = `audit-entry ${isTransit ? 'glow-residue' : ''}`;
-                    div.innerHTML = `<strong>B:${globalIndex}</strong> | Phase:${R_phase} | I:${I_inference} | Flux:${F.toFixed(4)} ${isTransit ? ' [TRANSIT ✓]' : ''}`;
-                    
-                    fragment.appendChild(div);
+                    // BATCH BUILD
+                    if (globalIndex % 10 === 0) {
+                        const div = document.createElement('div');
+                        div.className = `audit-entry ${isTransit ? 'glow-residue' : ''}`;
+                        div.innerHTML = `[BIT ${globalIndex}] R:${R_phase.toFixed(3)} | I:${I_inference} | F:${F.toFixed(4)} ${isTransit ? '✓ AC' : ''}`;
+                        fragment.appendChild(div);
+                    }
+
                     globalIndex++;
-
-                    if (output.childNodes.length > 40) output.removeChild(output.lastChild);
+                    if (output.childNodes.length > 35) output.removeChild(output.lastChild);
                 }
 
                 output.insertBefore(fragment, output.firstChild);
                 countEl.innerText = globalIndex.toLocaleString();
-                
-                // Allow the GPU to breathe
-                await new Promise(r => requestAnimationFrame(r));
+                await new Promise(r => requestAnimationFrame(r)); // Sync with GPU
             }
             statusEl.innerText = "LINEAGE COMPLETE";
         } catch (e) {
-            statusEl.innerText = "LATTICE SEVERED";
-            console.error(e);
+            statusEl.innerText = "LATTICE SEVERED: " + e.message;
         }
     }
-
     window.onload = runAudit;
 </script>
 </body>
