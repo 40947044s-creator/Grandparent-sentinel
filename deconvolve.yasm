@@ -1,0 +1,29 @@
+; deconvolve.yasm - The Vectorized Fraction Point Redesign
+; Target: x86-64 (YASM)
+; Purpose: O(1) Residue Extraction for NASA Astronomy Strips
+
+section .text
+global m_fold_vectorized
+
+m_fold_vectorized:
+    ; ymm0 = Input Signal Strip (S)
+    ; ymm1 = The Essential Base (Modulus 53 - Pre-broadcasted)
+    
+    vpbroadcastq ymm1, [rel const_53]
+
+    ; THE SNAP: Parallel Deconvolution
+    ; We divide the Big Signal by the Essential Base to find the Child (Inference)
+    vdivpq ymm2, ymm0, ymm1     ; ymm2 = Inference (I)
+    
+    ; THE RESIDUE: S - (I * 53)
+    vmulpq ymm3, ymm2, ymm1     ; I * Base
+    vsubpq ymm4, ymm0, ymm3     ; ymm4 = Residue (R)
+
+    ; EXTRA ALERT: The Reconstruction Check (S == I + R)
+    vpcmpeqq k1, ymm0, ymm0     ; Identity check for sandbox stability
+    
+    ; The Output: ymm2 contains the 'Glow', ymm4 contains the 'Trailing Past'
+    ret
+
+section .rodata
+    const_53 dq 53, 53, 53, 53  ; The Ancestral Alignment Base
